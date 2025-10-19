@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>Университетский колледж Волгу</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Muli:300,400,700,900" rel="stylesheet">
+    <link rel="stylesheet" href="../fonts/icomoon/style.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/jquery-ui.css">
+    <link rel="stylesheet" href="../css/owl.carousel.min.css">
+    <link rel="stylesheet" href="../css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="../css/jquery.fancybox.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="../fonts/flaticon/font/flaticon.css">
+    <link rel="stylesheet" href="../css/aos.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/program.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    
+  </head>
+
+  
+  
+  <body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
+
+  <div class="site-wrap">
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <div class="mobile-menu-header">
+        <div class="mobile-menu-logo">
+          <img src="../images/logo.jpg" alt="Университетский колледж ВолГУ" class="mobile-logo-image">
+        </div>
+        <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Закрыть меню">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="mobile-menu-search">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Поиск по сайту..." id="mobileSearch">
+        </div>
+      </div>
+      
+      <div class="mobile-menu-nav">
+        <div class="menu-section">
+          <h4>Навигация</h4>
+          <ul>
+            <li><a href="#home-section" onclick="toggleMobileMenu()"><i class="fas fa-home"></i> Главная</a></li>
+            <li><a href="#news-section" onclick="toggleMobileMenu()"><i class="fas fa-newspaper"></i> Новости</a></li>
+            <li><a href="#programs-section" onclick="toggleMobileMenu()"><i class="fas fa-book"></i> Специальности</a></li>
+            <li><a href="#about-section" onclick="toggleMobileMenu()"><i class="fas fa-info-circle"></i> О нас</a></li>
+            <li><a href="#contact-section" onclick="toggleMobileMenu()"><i class="fas fa-phone"></i> Контакты</a></li>
+          </ul>
+        </div>
+        
+        <div class="menu-section">
+          <h4>Аккаунт</h4>
+          <ul>
+            <li><a href="#" onclick="toggleMobileMenu()" class="login-link"><i class="fas fa-sign-in-alt"></i> Войти</a></li>
+            <li><a href="#" onclick="toggleMobileMenu()" class="register-link"><i class="fas fa-user-plus"></i> Регистрация</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="mobile-menu-footer">
+        <div class="social-links">
+          <a href="#" aria-label="ВКонтакте"><i class="fab fa-vk"></i></a>
+          <a href="#" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        </div>
+        <p>&copy; 2024 Колледж ВолГУ</p>
+      </div>
+    </div>
+
+    
+
+
+    <header class="site-navbar py-4 js-sticky-header site-navbar-target" role="banner">
+      
+      <div class="container-fluid">
+        <div class="d-flex align-items-center">
+          <div class="site-logo mr-auto"><img src="../images/logo.jpg" alt="Университетский колледж ВолГУ" class="logo-image"></div>
+
+          <div class="mx-auto text-center desktop-menu">
+            <nav class="site-navigation position-relative text-right" role="navigation">
+              <ul class="site-menu main-menu js-clone-nav mx-auto d-none d-lg-block  m-0 p-0">
+                <li><a href="#home-section" class="nav-link">Главная</a></li>
+                <li><a href="#news-section" class="nav-link">Новости</a></li>
+                <li><a href="#programs-section" class="nav-link">Специальности</a></li>
+                <li><a href="#about-section" class="nav-link">О нас</a></li>
+                <li class="cta"><a href="#contact-section" class="nav-link"><span>Контакты</span></a></li>
+              </ul>
+            </nav>
+          </div>
+
+          <div class="ml-auto">
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <a href="#" class="d-inline-block d-lg-none site-menu-toggle js-menu-toggle text-black float-right"><span class="icon-menu h3"></span></a>
+          </div>
+        </div>
+      </div>
+      
+    </header>
+
+    <div class="intro-section" id="home-section">
+      
+      <div class="slide-1" style="background-image: url('../images/hero_1.jpg');" data-stellar-background-ratio="0.5">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-12">
+              <div class="row align-items-center">
+                <div class="col-lg-6 mb-4">
+                  <h1  data-aos="fade-up" data-aos-delay="100">Учитесь у профессионалов!</h1>
+                  <p class="mb-4"  data-aos="fade-up" data-aos-delay="200">Закон, в котором заключена обязанность, состоит в том, чтобы создать элиту. Принцип, согласно которому ничто не является необходимым, является естественным.</p>
+                  
+
+                </div>
+
+                <div class="col-lg-5 ml-auto" data-aos="fade-up" data-aos-delay="500">
+                  <div class="form-box">
+                    <div class="form-tabs">
+                      <button class="tab-btn active" data-tab="login">Вход</button>
+                      <button class="tab-btn" data-tab="register">Регистрация</button>
+                    </div>
+                    
+           <!-- Форма входа -->
+           <form id="loginForm" class="auth-form active">
+             <h3 class="h4 text-black mb-4">Вход в систему</h3>
+             <div class="form-group">
+               <label >Email</label>
+               <input type="email" name="email" class="form-control" placeholder="Введите ваш email" required>
+             </div>
+             <div class="form-group">
+               <label >Пароль</label>
+               <input type="password" name="password" class="form-control" placeholder="Введите пароль" required>
+             </div>
+             <div class="form-group mb-4">
+               <div class="form-check">
+                 <input type="checkbox" class="form-check-input" id="rememberMe">
+                 <label class="form-check-label" for="rememberMe">Запомнить меня</label>
+               </div>
+             </div>
+             <div class="form-group">
+               <button type="submit" class="btn py-3 px-5 btn-pill w-100">Войти</button>
+             </div>
+             <div class="text-center">
+               <a href="#" class="forgot-password">Забыли пароль?</a>
+             </div>
+           </form>
+                    
+                    <!-- Форма регистрации -->
+                    <form id="registerForm" class="auth-form">
+                      <h3 class="h4 text-black mb-4 animate-fade-in">Регистрация</h3>
+                      <div class="form-group">
+                        <label >Имя и фамилия</label>
+                        <input type="text" name="full_name" class="form-control" placeholder="Введите ваше полное имя" required>
+                      </div>
+                      <div class="form-group">
+                        <label >Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="Введите ваш email" required>
+                      </div>
+                      <div class="form-group">
+                        <label >Специальность</label>
+                        <select name="specialty" class="form-control" required>
+                          <option value="">Выберите специальность</option>
+                          <option value="10.02.04">10.02.04 Информационная безопасность телекоммуникационных систем</option>
+                          <option value="10.02.05">10.02.05 Информационная безопасность автоматизированных систем</option>
+                          <option value="15.02.10">15.02.10 Мехатроника и мобильная робототехника</option>
+                          <option value="09.02.06">09.02.06 Сетевое и системное администрирование</option>
+                          <option value="09.02.07">09.02.07 Информационные системы и программирование</option>
+                          <option value="11.02.15">11.02.15 Инфокоммуникационные сети и системы связи</option>
+                          <option value="38.02.01">38.02.01 Экономика и бухгалтерский учет</option>
+                          <option value="46.02.01">46.02.01 Документационное обеспечение управления</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label >Пароль</label>
+                        <input type="password" name="password" class="form-control" placeholder="Введите пароль" required>
+                      </div>
+                      <div class="form-group">
+                        <label >Подтверждение пароля</label>
+                        <input type="password" name="confirm_password" class="form-control" placeholder="Повторите пароль" required>
+                      </div>
+                      <div class="form-group mb-4">
+                        <div class="form-check">
+                          <input type="checkbox" class="form-check-input" id="agreeTerms" required>
+                          <label class="form-check-label" for="agreeTerms">
+                            Я согласен с <a href="#" class="terms-link">условиями использования</a>
+                          </label>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <button type="submit" class="btn py-3 px-5 btn-pill w-100">Зарегистрироваться</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+
+
+    <!-- Новости -->
+    <div class="site-section" id="news-section">
+      <div class="container">
+        <div class="row mb-5 justify-content-center">
+          <div class="col-lg-7 text-center" data-aos="fade-up" data-aos-delay="">
+            <h2 class="section-title">Новости колледжа</h2>
+            <p class="mb-4">Следите за последними событиями и важными объявлениями</p>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="news-card">
+              <div class="news-image">
+                <img src="../images/slide_1.jpg" alt="Новость 1" class="img-fluid">
+                <div class="news-date">
+                  <span class="day">15</span>
+                  <span class="month">Дек</span>
+                </div>
+              </div>
+              <div class="news-content">
+                <h4>День открытых дверей</h4>
+                <p>Приглашаем всех желающих на день открытых дверей, который состоится 20 декабря в 14:00 в главном корпусе колледжа.</p>
+                <a href="#" class="news-link">Подробнее <i class="fas fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="news-card">
+              <div class="news-image">
+                <img src="../images/slide_2.jpg" alt="Новость 2" class="img-fluid">
+                <div class="news-date">
+                  <span class="day">10</span>
+                  <span class="month">Дек</span>
+                </div>
+              </div>
+              <div class="news-content">
+                <h4>Новые образовательные программы</h4>
+                <p>С 2024 года колледж запускает новые программы по информационным технологиям и робототехнике.</p>
+                <a href="#" class="news-link">Подробнее <i class="fas fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="news-card">
+              <div class="news-image">
+                <img src="../images/slide_3.jpg" alt="Новость 3" class="img-fluid">
+                <div class="news-date">
+                  <span class="day">05</span>
+                  <span class="month">Дек</span>
+                </div>
+              </div>
+              <div class="news-content">
+                <h4>Студенческая конференция</h4>
+                <p>Наши студенты приняли участие в региональной конференции по информационным технологиям и заняли призовые места.</p>
+                <a href="#" class="news-link">Подробнее <i class="fas fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+            <div class="news-card">
+              <div class="news-image">
+                <img src="../images/slide_4.jpg" alt="Новость 4" class="img-fluid">
+                <div class="news-date">
+                  <span class="day">28</span>
+                  <span class="month">Ноя</span>
+                </div>
+              </div>
+              <div class="news-content">
+                <h4>Обновление лабораторий</h4>
+                <p>В колледже завершено обновление компьютерных лабораторий с установкой современного оборудования.</p>
+                <a href="#" class="news-link">Подробнее <i class="fas fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
+            <div class="news-card">
+              <div class="news-image">
+                <img src="../images/img_1.jpg" alt="Новость 5" class="img-fluid">
+                <div class="news-date">
+                  <span class="day">20</span>
+                  <span class="month">Ноя</span>
+                </div>
+              </div>
+              <div class="news-content">
+                <h4>Встреча с работодателями</h4>
+                <p>Состоялась встреча студентов с представителями ведущих IT-компаний региона для обсуждения трудоустройства.</p>
+                <a href="#" class="news-link">Подробнее <i class="fas fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="600">
+            <div class="news-card">
+              <div class="news-image">
+                <img src="../images/img_2.jpg" alt="Новость 6" class="img-fluid">
+                <div class="news-date">
+                  <span class="day">15</span>
+                  <span class="month">Ноя</span>
+                </div>
+              </div>
+              <div class="news-content">
+                <h4>Спортивные достижения</h4>
+                <p>Команда колледжа заняла первое место в городских соревнованиях по волейболу среди учебных заведений.</p>
+                <a href="#" class="news-link">Подробнее <i class="fas fa-arrow-right"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-12 text-center">
+            <a href="#" class="btn btn-primary py-3 px-5 btn-pill">Все новости</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-section" id="programs-section">
+      <div class="container">
+        <div class="row mb-5 justify-content-center">
+          <div class="col-lg-7 text-center" data-aos="fade-up" data-aos-delay="">
+            <h2 class="section-title">Наши программы</h2>
+                <div class="specialties-accordion">
+                  <!-- Специальность 1 -->
+                  <div class="specialty-item">
+                    <div class="specialty-header" onclick="toggleSpecialty('specialty1')">
+                      <h3>10.02.04 Обеспечение информационной безопасности телекоммуникационных систем</h3>
+                      <span class="toggle-icon" id="icon-specialty1">+</span>
+                    </div>
+                    <div class="specialty-content" id="specialty1">
+                      <div class="specialty-inner">
+                        <p><strong>Квалификация:</strong> Техник по защите информации</p>
+                        <p><strong>Срок обучения:</strong> 3 года 10 месяцев</p>
+                        <p><strong>О специальности:</strong> Подготовка специалистов по защите информации в телекоммуникационных системах. Выпускники работают в сфере обеспечения безопасности сетей связи и передачи данных.</p>
+                        <p><strong>Основные дисциплины:</strong> Криптографическая защита информации, Техническая защита информации, Сети и системы передачи информации, Программирование в телекоммуникационных системах</p>
+                        <p><strong>Перспективы трудоустройства:</strong> IT-компании, телекоммуникационные компании, банки, государственные структуры</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Специальность 2 -->
+                  <div class="specialty-item">
+                    <div class="specialty-header" onclick="toggleSpecialty('specialty2')">
+                      <h3>10.02.05 Обеспечение информационной безопасности автоматизированных систем</h3>
+                      <span class="toggle-icon" id="icon-specialty2">+</span>
+                    </div>
+                    <div class="specialty-content" id="specialty2">
+                      <div class="specialty-inner">
+                        <p><strong>Квалификация:</strong> Техник по защите информации</p>
+                        <p><strong>Срок обучения:</strong> 3 года 10 месяцев</p>
+                        <p><strong>О специальности:</strong> Подготовка специалистов по защите информации в компьютерных системах и сетях. Выпускники занимаются обеспечением безопасности автоматизированных систем.</p>
+                        <p><strong>Основные дисциплины:</strong> Основы информационной безопасности, Организационно-правовое обеспечение информационной безопасности, Программно-аппаратные средства защиты информации</p>
+                        <p><strong>Перспективы трудоустройства:</strong> Центры информационной безопасности, IT-отделы предприятий, компании-интеграторы систем безопасности</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Специальность 3 -->
+                  <div class="specialty-item">
+                    <div class="specialty-header" onclick="toggleSpecialty('specialty3')">
+                      <h3>15.02.10 Мехатроника и мобильная робототехника (по отраслям)</h3>
+                      <span class="toggle-icon" id="icon-specialty3">+</span>
+                    </div>
+                    <div class="specialty-content" id="specialty3">
+                      <div class="specialty-inner">
+                        <p><strong>Квалификация:</strong> Техник-мехатроник</p>
+                        <p><strong>Срок обучения:</strong> 3 года 10 месяцев</p>
+                        <p><strong>О специальности:</strong> Подготовка специалистов в области разработки, программирования и обслуживания роботизированных систем и комплексов.</p>
+                        <p><strong>Основные дисциплины:</strong> Техническая механика, Электротехника и электроника, Программирование мехатронных систем, Разработка и моделирование робототехнических комплексов</p>
+                        <p><strong>Перспективы трудоустройства:</strong> Промышленные предприятия, научно-исследовательские центры, компании-разработчики робототехники</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Специальность 4 -->
+                  <div class="specialty-item">
+                    <div class="specialty-header" onclick="toggleSpecialty('specialty4')">
+                      <h3>09.02.06 Сетевое и системное администрирование</h3>
+                      <span class="toggle-icon" id="icon-specialty4">+</span>
+                    </div>
+                    <div class="specialty-content" id="specialty4">
+                      <div class="specialty-inner">
+                        <p><strong>Квалификация:</strong> Сетевой и системный администратор</p>
+                        <p><strong>Срок обучения:</strong> 3 года 10 месяцев</p>
+                        <p><strong>О специальности:</strong> Подготовка специалистов по настройке, обслуживанию и администрированию компьютерных сетей и систем.</p>
+                        <p><strong>Основные дисциплины:</strong> Операционные системы, Компьютерные сети, Администрирование сетевых операционных систем, Безопасность компьютерных сетей</p>
+                        <p><strong>Перспективы трудоустройства:</strong> IT-компании, системные интеграторы, корпоративные IT-отделы</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Специальность 5 -->
+                  <div class="specialty-item">
+                    <div class="specialty-header" onclick="toggleSpecialty('specialty5')">
+                      <h3>09.02.07 Информационные системы и программирование</h3>
+                      <span class="toggle-icon" id="icon-specialty5">+</span>
+                    </div>
+                    <div class="specialty-content" id="specialty5">
+                      <div class="specialty-inner">
+                        <p><strong>Квалификация:</strong> Программист / Разработчик веб и мультимедийных приложений</p>
+                        <p><strong>Срок обучения:</strong> 3 года 10 месяцев</p>
+                        <p><strong>О специальности:</strong> Подготовка разработчиков программного обеспечения, специалистов по тестированию и внедрению информационных систем.</p>
+                        <p><strong>Основные дисциплины:</strong> Основы программирования, Базы данных, Веб-программирование, Разработка мобильных приложений</p>
+                        <p><strong>Перспективы трудоустройства:</strong> IT-компании, веб-студии, стартапы, фриланс</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Специальность 6 -->
+                  <div class="specialty-item">
+                    <div class="specialty-header" onclick="toggleSpecialty('specialty6')">
+                      <h3>11.02.15 Инфокоммуникационные сети и системы связи</h3>
+                      <span class="toggle-icon" id="icon-specialty6">+</span>
+                    </div>
+                    <div class="specialty-content" id="specialty6">
+                      <div class="specialty-inner">
+                        <p><strong>Квалификация:</strong> Специалист по обслуживанию телекоммуникаций</p>
+                        <p><strong>Срок обучения:</strong> 4 года 10 месяцев</p>
+                        <p><strong>О специальности:</strong> Подготовка специалистов в области проектирования, монтажа и эксплуатации современных систем связи и телекоммуникаций.</p>
+                        <p><strong>Основные дисциплины:</strong> Теория электросвязи, Вычислительная техника, Основы телекоммуникаций, Многоканальные телекоммуникационные системы</p>
+                        <p><strong>Перспективы трудоустройства:</strong> Телекоммуникационные компании, операторы связи, провайдеры интернет-услуг</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Специальность 7 -->
+                  <div class="specialty-item">
+                    <div class="specialty-header" onclick="toggleSpecialty('specialty7')">
+                      <h3>38.02.01 Экономика и бухгалтерский учет (по отраслям)</h3>
+                      <span class="toggle-icon" id="icon-specialty7">+</span>
+                    </div>
+                    <div class="specialty-content" id="specialty7">
+                      <div class="specialty-inner">
+                        <p><strong>Квалификация:</strong> Бухгалтер</p>
+                        <p><strong>Срок обучения:</strong> 2 года 10 месяцев</p>
+                        <p><strong>О специальности:</strong> Подготовка бухгалтеров и экономистов, способных вести учет, анализировать финансовую деятельность и составлять отчетность.</p>
+                        <p><strong>Основные дисциплины:</strong> Экономика организации, Бухгалтерский учет, Налоги и налогообложение, Финансы, денежное обращение и кредит</p>
+                        <p><strong>Перспективы трудоустройства:</strong> Бухгалтерии предприятий, аудиторские компании, финансовые отделы организаций</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Специальность 8 -->
+                  <div class="specialty-item">
+                    <div class="specialty-header" onclick="toggleSpecialty('specialty8')">
+                      <h3>46.02.01 Документационное обеспечение управления и архивоведение</h3>
+                      <span class="toggle-icon" id="icon-specialty8">+</span>
+                    </div>
+                    <div class="specialty-content" id="specialty8">
+                      <div class="specialty-inner">
+                        <p><strong>Квалификация:</strong> Специалист по документационному обеспечению управления, архивист</p>
+                        <p><strong>Срок обучения:</strong> 2 года 10 месяцев</p>
+                        <p><strong>О специальности:</strong> Подготовка специалистов по организации документооборота, архивному хранению документов и информационному обеспечению деятельности организации.</p>
+                        <p><strong>Основные дисциплины:</strong> Документационное обеспечение управления, Архивоведение, Государственные и муниципальные архивы, Информационные технологии в ДОУ</p>
+                        <p><strong>Перспективы трудоустройства:</strong> Архивы, канцелярии, отделы кадров, секретариаты организаций</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                
+            
+            
+            <p class="mt-4">Благодарим вас за проявленный интерес к нашему колледжу, выпускающему квалифицированных специалистов среднего звена. Будем уверены, что вы станете студентом нашего колледжа!</p>
+          </div>
+        </div>
+        
+        <div class="row mb-5 align-items-center">
+          <div class="col-lg-7 mb-5" data-aos="fade-up" data-aos-delay="100">
+            <img src="../images/undraw_youtube_tutorial.svg" alt="Image" class="img-fluid">
+          </div>
+          <div class="col-lg-4 ml-auto" data-aos="fade-up" data-aos-delay="200">
+            <h2 class="text-black mb-4">Мы Превосходны в Области образования</h2>
+            <p class="mb-4">Кто достиг высот образования, должен заранее предположить, что большинство будет против него.</p>
+
+            <div class="d-flex align-items-center custom-icon-wrap mb-3">
+              <span class="custom-icon-inner mr-3"><span class="icon icon-graduation-cap"></span></span>
+              <div><h3 class="m-0">более 1500 студентов</h3></div>
+            </div>
+
+            <div class="d-flex align-items-center custom-icon-wrap">
+              <span class="custom-icon-inner mr-3"><span class="icon icon-university"></span></span>
+              <div><h3 class="m-0">Обучение в здании университета</h3></div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="row mb-5 align-items-center">
+          <div class="col-lg-7 mb-5 order-1 order-lg-2" data-aos="fade-up" data-aos-delay="100">
+            <img src="../images/undraw_teaching.svg" alt="Image" class="img-fluid">
+          </div>
+          <div class="col-lg-4 mr-auto order-2 order-lg-1" data-aos="fade-up" data-aos-delay="200">
+            <h2 class="text-black mb-4">Стремитесь к превосходному</h2>
+            <p class="mb-4">Образованный человек тем и отличается от необразованного, что продолжает считать свое образование незаконченным.</p>
+
+            <div class="d-flex align-items-center custom-icon-wrap mb-3">
+              <span class="custom-icon-inner mr-3"><span class="icon icon-graduation-cap"></span></span>
+              <div><h3 class="m-0">более 1500 студентов</h3></div>
+            </div>
+
+            <div class="d-flex align-items-center custom-icon-wrap">
+              <span class="custom-icon-inner mr-3"><span class="icon icon-university"></span></span>
+              <div><h3 class="m-0">Обучение в здании университета</h3></div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="row mb-5 align-items-center">
+          <div class="col-lg-7 mb-5" data-aos="fade-up" data-aos-delay="100">
+            <img src="../images/undraw_teacher.svg" alt="Image" class="img-fluid">
+          </div>
+          <div class="col-lg-4 ml-auto" data-aos="fade-up" data-aos-delay="200">
+            <h2 class="text-black mb-4">Образование - это жизнь</h2>
+            <p class="mb-4">Образование – это то, что остается, когда все выученное забыто.</p>
+
+            <div class="d-flex align-items-center custom-icon-wrap mb-3">
+              <span class="custom-icon-inner mr-3"><span class="icon icon-graduation-cap"></span></span>
+              <div><h3 class="m-0">более 1500 студентов</h3></div>
+            </div>
+
+            <div class="d-flex align-items-center custom-icon-wrap">
+              <span class="custom-icon-inner mr-3"><span class="icon icon-university"></span></span>
+              <div><h3 class="m-0">Обучение в здании университета</h3></div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- О нас -->
+    <div class="site-section" id="about-section">
+      <div class="container">
+        <!-- Заголовок секции -->
+        <div class="row justify-content-center">
+          <div class="col-lg-8 text-center" data-aos="fade-up" data-aos-delay="">
+            <h2 class="section-title">О нас</h2>
+            <p class="mb-4">Университетский колледж ВолГУ - современное образовательное учреждение, готовящее специалистов среднего звена</p>
+          </div>
+        </div>
+        
+        <!-- История и изображение -->
+        <div class="row align-items-center mb-4">
+          <!-- История -->
+          <div class="col-lg-12" data-aos="fade-up" data-aos-delay="100">
+            <div class="about-content">
+              <h3 class="mb-3">Наша история</h3>
+              <p class="mb-3">Университетский колледж ВолГУ был основан в 2018 году как структурное подразделение Волгоградского государственного университета. За годы работы мы подготовили более 2000 квалифицированных специалистов.</p>
+              <p class="mb-2">Колледж является одним из ведущих образовательных учреждений среднего профессионального образования в Волгоградской области.</p>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Миссия и достижения на одном уровне -->
+        <div class="row align-items-center">
+          <!-- Миссия -->
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="about-mission">
+              <h3 class="mb-3">Наша миссия</h3>
+              <p class="mb-3">Мы стремимся обеспечить качественное профессиональное образование, которое поможет нашим студентам стать востребованными специалистами на рынке труда.</p>
+              <p class="mb-3">Наша цель - подготовить компетентных, инициативных и творческих специалистов, способных адаптироваться к быстро меняющимся условиям современной экономики.</p>
+              <div class="mission-values">
+                <div class="value-item">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Инновационность</span>
+                </div>
+                <div class="value-item">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Качество</span>
+                </div>
+                <div class="value-item">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Профессионализм</span>
+                </div>
+                <div class="value-item">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Развитие</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Достижения -->
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="achievements-block">
+              <h3 class="mb-3">Наши достижения</h3>
+              <div class="achievements-grid">
+                <div class="achievement-item">
+                  <div class="achievement-number" data-target="1500">0</div>
+                  <div class="achievement-label">Студентов</div>
+                </div>
+                <div class="achievement-item">
+                  <div class="achievement-number" data-target="2000">0</div>
+                  <div class="achievement-label">Выпускников</div>
+                </div>
+                <div class="achievement-item">
+                  <div class="achievement-number" data-target="95">0</div>
+                  <div class="achievement-label">% Трудоустройство</div>
+                </div>
+                <div class="achievement-item">
+                  <div class="achievement-number" data-target="7">0</div>
+                  <div class="achievement-label">Лет опыта</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-section pb-0">
+
+      <div class="future-blobs">
+        <div class="blob_2">
+          <img src="../images/blob_2.svg" alt="Image">
+        </div>
+        <div class="blob_1">
+          <img src="../images/blob_1.svg" alt="Image">
+        </div>
+      </div>
+      <div class="container">
+        <div class="row mb-5 justify-content-center" data-aos="fade-up" data-aos-delay="">
+          <div class="col-lg-7 text-center">
+            <h2 class="section-title">Почему Вы выбрали именно Нас</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-5 align-self-start" data-aos="fade-up" data-aos-delay="100">
+            <div class="p-4 rounded bg-white why-choose-us-box">
+              <div class="d-flex align-items-center custom-icon-wrap custom-icon-light mb-3">
+                <div class="mr-3"><span class="custom-icon-inner"><span class="icon icon-graduation-cap"></span></span></div>
+                <div><h3 class="m-0">Более 1500 студентов</h3></div>
+              </div>
+
+              <div class="d-flex align-items-center custom-icon-wrap custom-icon-light mb-3">
+                <div class="mr-3"><span class="custom-icon-inner"><span class="icon icon-university"></span></span></div>
+                <div><h3 class="m-0">Обучение в здании университета</h3></div>
+              </div>
+
+              <div class="d-flex align-items-center custom-icon-wrap custom-icon-light mb-3">
+                <div class="mr-3"><span class="custom-icon-inner"><span class="icon icon-graduation-cap"></span></span></div>
+                <div><h3 class="m-0">Лучшие профессиональные преподователи</h3></div>
+              </div>
+
+              <div class="d-flex align-items-center custom-icon-wrap custom-icon-light mb-3">
+                <div class="mr-3"><span class="custom-icon-inner"><span class="icon icon-university"></span></span></div>
+                <div><h3 class="m-0">Расширяйте свои знания</h3></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-7 align-self-end" data-aos="fade-left" data-aos-delay="200">
+            <img src="../images/person_transparent.png" alt="Image" class="img-fluid person-image-large">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+
+
+
+    <div class="site-section bg-light" id="contact-section">
+      <div class="container">
+
+        <div class="row justify-content-center">
+          <div class="col-md-7">
+
+
+            
+            <h2 class="section-title mb-3">Напишите нам сообщение</h2>
+            <p class="mb-5">Заполните форму, представленную ниже, мы с вами свяжемс через некоторое время.</p>
+          
+            <form method="post" data-aos="fade">
+              <div class="form-group row">
+                <div class="col-md-6 mb-3 mb-lg-0">
+                  <input type="text" class="form-control" placeholder="Имя">
+                </div>
+                <div class="col-md-6">
+                  <input type="text" class="form-control" placeholder="Фамилия">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-md-12">
+                  <input type="text" class="form-control" placeholder="Специальность">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-md-12">
+                  <input type="email" class="form-control" placeholder="Email">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-md-12">
+                  <textarea class="form-control" id="" cols="30" rows="10" placeholder="Напишите свое сообщение здесь."></textarea>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-md-6">
+                  
+                  <input type="submit" class="btn btn-primary py-3 px-5 btn-block btn-pill" value="Отправить сообщение">
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+     
+    <footer class="footer-section bg-white">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <h3>Контакты</h3>
+            <p>
+              +79608779068
+            </p>
+            <p><a href="https://t.me/volsu_official">Группа ВК</a></p>
+            <p><a href="https://t.me/volsu_official">Тегеграмм Канал</a></p>
+          </div>
+
+          <div class="col-md-3 ml-auto">
+            <h3>Разделы</h3>
+            <ul class="list-unstyled footer-links">
+              <li><a href="#home-section">Главная</a></li>
+              <li><a href="#news-section">Новости</a></li>
+              <li><a href="#programs-section">Специальности</a></li>
+              <li><a href="#about-section">О нас</a></li>
+              <li><a href="#contact-section">Контакты</a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-4">
+            <h3>Подписываться</h3>
+            <p>Рассылка о мероприятиях колледжа.</p>
+            <form action="#" class="footer-subscribe">
+              <div class="d-flex mb-5">
+                <input type="text" class="form-control rounded-0" placeholder="Email">
+                <input type="submit" class="btn btn-primary rounded-0" value="Отправить">
+              </div>
+            </form>
+          </div>
+
+        </div>
+
+        
+          
+        </div>
+      </div>
+    </footer>
+
+  
+    
+  </div> <!-- .site-wrap -->
+
+  <script src="../js/jquery-3.3.1.min.js"></script>
+  <script src="../js/jquery-migrate-3.0.1.min.js"></script>
+  <script src="../js/jquery-ui.js"></script>
+  <script src="../js/popper.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  <script src="../js/owl.carousel.min.js"></script>
+  <script src="../js/jquery.stellar.min.js"></script>
+  <script src="../js/jquery.countdown.min.js"></script>
+  <script src="../js/bootstrap-datepicker.min.js"></script>
+  <script src="../js/jquery.easing.1.3.js"></script>
+  <script src="../js/aos-modern.js"></script>
+  <script src="../js/jquery.fancybox.min.js"></script>
+  <script src="../js/modern-sticky.js"></script>
+  <script src="../js/forms.js"></script>
+  <script src="../js/program.js"></script>
+  
+  <script src="../js/main.js"></script>
+  <script src="../js/auth-forms.js"></script>
+  <script src="../js/mobile-responsive.js"></script>
+  <script src="../js/achievements.js"></script>
+    
+  </body>
+</html>

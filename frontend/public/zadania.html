@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задания - Личный кабинет студента колледжа</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/lk.css">
+    <link rel="stylesheet" href="../css/zadania.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Университетский Колледж<span> ВолГУ</span></h1>
+            </div>
+            <div class="user-panel">
+                <div class="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                    <div class="notifications-dropdown">
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-book"></i></div>
+                            <div class="notification-content">
+                                <p>Новый материал по дисциплине "Программирование"</p>
+                                <span class="notification-time">2 часа назад</span>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-tasks"></i></div>
+                            <div class="notification-content">
+                                <p>Новое задание по дисциплине "Базы данных"</p>
+                                <span class="notification-time">Вчера</span>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div class="notification-content">
+                                <p>Изменения в расписании на следующую неделю</p>
+                                <span class="notification-time">2 дня назад</span>
+                            </div>
+                        </div>
+                        <a href="#" class="all-notifications">Все уведомления</a>
+                    </div>
+                </div>
+                <div class="user-info">
+                    <img src="../images/avatar.png" alt="Фото профиля" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                    <span>Иванов Иван</span>
+                    <i class="fas fa-chevron-down"></i>
+                    <div class="user-dropdown">
+                        <ul>
+                            <li><a href="#"><i class="fas fa-user"></i> Профиль</a></li>
+                            <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Выход</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <aside class="sidebar">
+                <nav>
+                    <ul>
+                        <li><a href="lk.html"><i class="fas fa-home"></i> Главная</a></li>
+                        <li><a href="raspis.html"><i class="fas fa-calendar-alt"></i> Расписание</a></li>
+                        <li><a href="ych_mat.html"><i class="fas fa-book"></i> Учебные материалы</a></li>
+                        <li class="active"><a href="zadania.html"><i class="fas fa-tasks"></i> Задания</a></li>
+                        <li><a href="usp.html"><i class="fas fa-chart-line"></i> Успеваемость</a></li>
+                        
+                    </ul>
+                </nav>
+                
+            </aside>
+            
+            <main>
+                <section class="page-header">
+                    <h2>Задания</h2>
+                    <div class="filter-controls">
+                        <div class="search-box">
+                            <input type="text" placeholder="Поиск заданий...">
+                            <button><i class="fas fa-search"></i></button>
+                        </div>
+                        <div class="filter-dropdown">
+                            <button class="filter-btn">
+                                <i class="fas fa-filter"></i> Фильтр
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="filter-options">
+                                <div class="filter-group">
+                                    <h4>Статус</h4>
+                                    <label><input type="checkbox" checked> Активные</label>
+                                    <label><input type="checkbox"> Выполненные</label>
+                                    <label><input type="checkbox" checked> Просроченные</label>
+                                </div>
+                                <div class="filter-group">
+                                    <h4>Предмет</h4>
+                                    <label><input type="checkbox" checked> Все предметы</label>
+                                    <label><input type="checkbox"> Программирование</label>
+                                    <label><input type="checkbox"> Базы данных</label>
+                                    <label><input type="checkbox"> Математика</label>
+                                    <label><input type="checkbox"> Информационная безопасность</label>
+                                </div>
+                                <div class="filter-group">
+                                    <h4>Срок сдачи</h4>
+                                    <label><input type="checkbox" checked> Все сроки</label>
+                                    <label><input type="checkbox"> Сегодня</label>
+                                    <label><input type="checkbox"> На этой неделе</label>
+                                    <label><input type="checkbox"> На следующей неделе</label>
+                                </div>
+                                <div class="filter-actions">
+                                    <button class="apply-filter">Применить</button>
+                                    <button class="reset-filter">Сбросить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="assignments-tabs">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="active">Активные</button>
+                        <button class="tab-btn" data-tab="completed">Выполненные</button>
+                        <button class="tab-btn" data-tab="all">Все задания</button>
+                    </div>
+                    
+                    <div class="tab-content active" id="active-tab">
+                        <div class="assignments-list">
+                            <div class="assignment-item urgent" data-id="1">
+                                <div class="assignment-header">
+                                    <h3>Лабораторная работа №5</h3>
+                                    <div class="assignment-status">Срочно</div>
+                                </div>
+                                <div class="assignment-details">
+                                    <div class="assignment-subject">
+                                        <i class="fas fa-book"></i> Программирование
+                                    </div>
+                                    <div class="assignment-deadline">
+                                        <i class="fas fa-clock"></i> Срок сдачи: 17 сентября 2023, 23:59
+                                    </div>
+                                    <div class="assignment-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 30%;"></div>
+                                        </div>
+                                        <span>30%</span>
+                                    </div>
+                                </div>
+                                <div class="assignment-description">
+                                    <p>Разработка программы для обработки данных с использованием структур и алгоритмов сортировки.</p>
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn-view"><i class="fas fa-eye"></i> Просмотр</button>
+                                    <button class="btn-submit" data-assignment-id="1"><i class="fas fa-upload"></i> Сдать работу</button>
+                                </div>
+                            </div>
+                            
+                            <div class="assignment-item pending" data-id="2">
+                                <div class="assignment-header">
+                                    <h3>Курсовая работа</h3>
+                                    <div class="assignment-status">В процессе</div>
+                                </div>
+                                <div class="assignment-details">
+                                    <div class="assignment-subject">
+                                        <i class="fas fa-book"></i> Базы данных
+                                    </div>
+                                    <div class="assignment-deadline">
+                                        <i class="fas fa-clock"></i> Срок сдачи: 25 сентября 2023, 23:59
+                                    </div>
+                                    <div class="assignment-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 60%;"></div>
+                                        </div>
+                                        <span>60%</span>
+                                    </div>
+                                </div>
+                                <div class="assignment-description">
+                                    <p>Разработка базы данных для информационной системы предприятия. Необходимо спроектировать структуру БД, создать таблицы, связи и написать основные запросы.</p>
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn-view"><i class="fas fa-eye"></i> Просмотр</button>
+                                    <button class="btn-submit" data-assignment-id="2"><i class="fas fa-upload"></i> Сдать работу</button>
+                                </div>
+                            </div>
+                            
+                            <div class="assignment-item pending" data-id="3">
+                                <div class="assignment-header">
+                                    <h3>Реферат</h3>
+                                    <div class="assignment-status">В процессе</div>
+                                </div>
+                                <div class="assignment-details">
+                                    <div class="assignment-subject">
+                                        <i class="fas fa-book"></i> История
+                                    </div>
+                                    <div class="assignment-deadline">
+                                        <i class="fas fa-clock"></i> Срок сдачи: 30 сентября 2023, 23:59
+                                    </div>
+                                    <div class="assignment-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 45%;"></div>
+                                        </div>
+                                        <span>45%</span>
+                                    </div>
+                                </div>
+                                <div class="assignment-description">
+                                    <p>Написание реферата на тему "История развития компьютерных технологий". Объем работы - не менее 15 страниц.</p>
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn-view"><i class="fas fa-eye"></i> Просмотр</button>
+                                    <button class="btn-submit" data-assignment-id="3"><i class="fas fa-upload"></i> Сдать работу</button>
+                                </div>
+                            </div>
+                            
+                            <div class="assignment-item new" data-id="4">
+                                <div class="assignment-header">
+                                    <h3>Практическая работа №3</h3>
+                                    <div class="assignment-status">Новое</div>
+                                </div>
+                                <div class="assignment-details">
+                                    <div class="assignment-subject">
+                                        <i class="fas fa-book"></i> Информационная безопасность
+                                    </div>
+                                    <div class="assignment-deadline">
+                                        <i class="fas fa-clock"></i> Срок сдачи: 5 октября 2023, 23:59
+                                    </div>
+                                    <div class="assignment-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 0%;"></div>
+                                        </div>
+                                        <span>0%</span>
+                                    </div>
+                                </div>
+                                <div class="assignment-description">
+                                    <p>Настройка и анализ защищенного соединения. Необходимо выполнить практическую работу по настройке SSL/TLS и провести анализ безопасности.</p>
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn-view"><i class="fas fa-eye"></i> Просмотр</button>
+                                    <button class="btn-submit" data-assignment-id="4"><i class="fas fa-upload"></i> Сдать работу</button>
+                                </div>
+                            </div>
+                            
+                            <div class="assignment-item new" data-id="5">
+                                <div class="assignment-header">
+                                    <h3>Контрольная работа</h3>
+                                    <div class="assignment-status">Новое</div>
+                                </div>
+                                <div class="assignment-details">
+                                    <div class="assignment-subject">
+                                        <i class="fas fa-book"></i> Математика
+                                    </div>
+                                    <div class="assignment-deadline">
+                                        <i class="fas fa-clock"></i> Срок сдачи: 15 сентября 2023, 11:30
+                                    </div>
+                                    <div class="assignment-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 0%;"></div>
+                                        </div>
+                                        <span>0%</span>
+                                    </div>
+                                </div>
+                                <div class="assignment-description">
+                                    <p>Подготовка к контрольной работе по теме "Дифференциальные уравнения". Необходимо решить задачи из методического пособия.</p>
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn-view"><i class="fas fa-eye"></i> Просмотр</button>
+                                    <button class="btn-submit" data-assignment-id="5"><i class="fas fa-upload"></i> Сдать работу</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="completed-tab">
+                        <div class="assignments-list">
+                            <div class="assignment-item completed" data-id="6">
+                                <div class="assignment-header">
+                                    <h3>Лабораторная работа №4</h3>
+                                    <div class="assignment-status">Выполнено</div>
+                                </div>
+                                <div class="assignment-details">
+                                    <div class="assignment-subject">
+                                        <i class="fas fa-book"></i> Программирование
+                                    </div>
+                                    <div class="assignment-deadline">
+                                        <i class="fas fa-clock"></i> Сдано: 5 сентября 2023
+                                    </div>
+                                    <div class="assignment-grade">
+                                        <i class="fas fa-star"></i> Оценка: 5 (отлично)
+                                    </div>
+                                </div>
+                                <div class="assignment-description">
+                                    <p>Разработка программы с использованием объектно-ориентированного программирования.</p>
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn-view"><i class="fas fa-eye"></i> Просмотр</button>
+                                    <button class="btn-feedback"><i class="fas fa-comment"></i> Отзыв преподавателя</button>
+                                </div>
+                            </div>
+                            
+                            <div class="assignment-item completed" data-id="7">
+                                <div class="assignment-header">
+                                    <h3>Практическая работа №2</h3>
+                                    <div class="assignment-status">Выполнено</div>
+                                </div>
+                                <div class="assignment-details">
+                                    <div class="assignment-subject">
+                                        <i class="fas fa-book"></i> Информационная безопасность
+                                    </div>
+                                    <div class="assignment-deadline">
+                                        <i class="fas fa-clock"></i> Сдано: 1 сентября 2023
+                                    </div>
+                                    <div class="assignment-grade">
+                                        <i class="fas fa-star"></i> Оценка: 4 (хорошо)
+                                    </div>
+                                </div>
+                                <div class="assignment-description">
+                                    <p>Настройка файервола и анализ сетевого трафика.</p>
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn-view"><i class="fas fa-eye"></i> Просмотр</button>
+                                    <button class="btn-feedback"><i class="fas fa-comment"></i> Отзыв преподавателя</button>
+                                </div>
+                            </div>
+                            
+                            <div class="assignment-item completed" data-id="8">
+                                <div class="assignment-header">
+                                    <h3>Тест по теме "Нормализация БД"</h3>
+                                    <div class="assignment-status">Выполнено</div>
+                                </div>
+                                <div class="assignment-details">
+                                    <div class="assignment-subject">
+                                        <i class="fas fa-book"></i> Базы данных
+                                    </div>
+                                    <div class="assignment-deadline">
+                                        <i class="fas fa-clock"></i> Сдано: 28 августа 2023
+                                    </div>
+                                    <div class="assignment-grade">
+                                        <i class="fas fa-star"></i> Оценка: 5 (отлично)
+                                    </div>
+                                </div>
+                                <div class="assignment-description">
+                                    <p>Тестирование по теме "Нормализация баз данных".</p>
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn-view"><i class="fas fa-eye"></i> Просмотр</button>
+                                    <button class="btn-feedback"><i class="fas fa-comment"></i> Отзыв преподавателя</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="all-tab">
+                        <div class="assignments-list">
+                            <!-- Здесь будут отображаться все задания (и активные, и выполненные) -->
+                            <!-- Содержимое будет загружено с помощью JavaScript -->
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="upcoming-deadlines">
+                    <h3>Ближайшие сроки сдачи</h3>
+                    <div class="deadline-timeline">
+                        <div class="timeline-item urgent">
+                            <div class="timeline-date">
+                                <span class="day">15</span>
+                                <span class="month">Сен</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Контрольная работа</h4>
+                                <p>Математика</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item urgent">
+                            <div class="timeline-date">
+                                <span class="day">17</span>
+                                <span class="month">Сен</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Лабораторная работа №5</h4>
+                                <p>Программирование</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">
+                                <span class="day">25</span>
+                                <span class="month">Сен</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Курсовая работа</h4>
+                                <p>Базы данных</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">
+                                <span class="day">30</span>
+                                <span class="month">Сен</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Реферат</h4>
+                                <p>История</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">
+                                <span class="day">5</span>
+                                <span class="month">Окт</span>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Практическая работа №3</h4>
+                                <p>Информационная безопасность</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="assignment-statistics">
+                    <h3>Статистика выполнения заданий</h3>
+                    <div class="statistics-cards">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>Всего заданий</h4>
+                                <p class="stat-value">30</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>Выполнено</h4>
+                                <p class="stat-value">24</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>В процессе</h4>
+                                <p class="stat-value">3</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>Просрочено</h4>
+                                <p class="stat-value">3</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="performance-chart">
+                        <h4>Успеваемость по предметам</h4>
+                        <div class="chart-container">
+                            <!-- Здесь будет график успеваемости, который будет отрисован с помощью JavaScript -->
+                            <div class="chart-placeholder">
+                                <div class="chart-bar" style="height: 90%;">
+                                    <span class="bar-label">Прогр.</span>
+                                    <span class="bar-value">4.5</span>
+                                </div>
+                                <div class="chart-bar" style="height: 80%;">
+                                    <span class="bar-label">БД</span>
+                                    <span class="bar-value">4.0</span>
+                                </div>
+                                <div class="chart-bar" style="height: 100%;">
+                                    <span class="bar-label">ИБ</span>
+                                    <span class="bar-value">5.0</span>
+                                </div>
+                                <div class="chart-bar" style="height: 70%;">
+                                    <span class="bar-label">Мат.</span>
+                                    <span class="bar-value">3.5</span>
+                                </div>
+                                <div class="chart-bar" style="height: 90%;">
+                                    <span class="bar-label">Ист.</span>
+                                    <span class="bar-value">4.5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+        
+    </div>
+
+
+    
+    <!-- Support Button -->
+    <div class="support-btn" id="supportBtn">
+        <i class="fas fa-headset"></i>
+        <span>Поддержка</span>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/student-dashboard.js"></script>
+    <script src="../js/assignment-submission.js"></script>
+    <script src="../js/support-chat.js"></script>
+       

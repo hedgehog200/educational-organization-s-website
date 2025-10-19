@@ -1,0 +1,129 @@
+/* Стили для аккордеона специальностей */
+.specialties-accordion {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.specialty-item {
+  margin-bottom: 15px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+.specialty-item:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.specialty-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #163edd;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.specialty-header:hover {
+  background-color: #163edd;
+}
+
+.specialty-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.toggle-icon {
+  font-size: 24px;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+.toggle-icon.active {
+  transform: rotate(45deg);
+}
+
+.specialty-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+
+.specialty-inner {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+.specialty-inner p {
+  margin-bottom: 10px;
+  text-align: left;
+  color: #495057;
+}
+
+.specialty-inner p strong {
+  color: #212529;
+  font-weight: 600;
+}
+
+/* Анимация для открытия/закрытия */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.specialty-content.active .specialty-inner {
+  animation: fadeIn 0.5s ease-in-out
+}
+/* Дополнительные стили для улучшения внешнего вида */
+.specialty-inner p:last-child {
+  margin-bottom: 0;
+}
+
+/* Стили для мобильных устройств */
+@media (max-width: 768px) {
+  .specialty-header h3 {
+    font-size: 16px;
+  }
+  
+  .specialty-inner {
+    padding: 15px;
+  }
+}
+
+/* Стили для кнопки "Подать заявку" */
+.apply-button {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 20px;
+  background-color: #28a745;
+  color: white;
+  border-radius: 30px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.apply-button:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для индикатора популярности */
+.popularity-badge {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 3px 8px;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}

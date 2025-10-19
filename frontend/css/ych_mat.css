@@ -1,0 +1,801 @@
+/* Main styles for the learning materials page */
+
+/* Materials filter section */
+.materials-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    background-color: #f5f7fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 14px;
+}
+
+/* Materials section */
+.materials-section {
+    margin-top: 20px;
+}
+
+.material-category {
+    margin-bottom: 40px;
+}
+
+.material-category h3 {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    border-bottom: 2px solid #e0e6ed;
+    padding-bottom: 10px;
+}
+
+.material-category h3 i {
+    margin-right: 10px;
+    color: #3498db;
+}
+
+.materials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+/* Material card styles */
+.material-card {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    border: 1px solid #e0e6ed;
+}
+
+.material-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.material-card.new::after {
+    content: "Новое";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #e74c3c;
+    color: white;
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.material-icon {
+    background-color: #f5f7fa;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #e0e6ed;
+}
+
+.material-icon i {
+    font-size: 36px;
+    color: #3498db;
+}
+
+.material-info {
+    padding: 15px;
+    flex-grow: 1;
+}
+
+.material-info h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: #2c3e50;
+    line-height: 1.4;
+}
+
+.material-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.material-type {
+    background-color: #e0e6ed;
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: #34495e;
+}
+
+.material-description {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.material-actions {
+    display: flex;
+    border-top: 1px solid #e0e6ed;
+    background-color: #f9fafb;
+}
+
+.material-actions button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: #7f8c8d;
+}
+
+.material-actions button:hover {
+    background-color: #ecf0f1;
+    color: #3498db;
+}
+
+.material-actions .favorite-btn.active i {
+    color: #f1c40f;
+}
+
+.view-all-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.view-all-link:hover {
+    color: #2980b9;
+}
+
+.view-all-link i {
+    margin-left: 5px;
+    font-size: 12px;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    gap: 5px;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #555;
+    background-color: #f5f7fa;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.page-link:hover {
+    background-color: #e0e6ed;
+}
+
+.page-link.active {
+    background-color: #3498db;
+    color: white;
+}
+
+.page-separator {
+    color: #7f8c8d;
+}
+
+/* Search container */
+.search-container {
+    display: flex;
+    max-width: 400px;
+}
+
+.search-container input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+    font-size: 14px;
+}
+
+.search-container button {
+    padding: 10px 15px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-container button:hover {
+    background-color: #2980b9;
+}
+
+/* Page header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-header h2 {
+    margin: 0;
+    color: var(--primary-color);
+    
+}
+
+/* Footer styles */
+footer {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 40px 0 20px;
+    margin-top: 60px;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-logo h3 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+}
+
+.footer-logo p {
+    margin: 0;
+    color: #bdc3c7;
+}
+
+.footer-links, .footer-contact {
+    margin-top: 20px;
+}
+
+.footer-links h4, .footer-contact h4 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 8px;
+}
+
+.footer-links a {
+    color: #bdc3c7;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: #3498db;
+}
+
+.footer-contact p {
+    margin: 0 0 8px 0;
+    color: #bdc3c7;
+}
+
+.footer-contact i {
+    margin-right: 8px;
+    color: #3498db;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    margin-top: 30px;
+    border-top: 1px solid #34495e;
+    font-size: 14px;
+    color: #bdc3c7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .materials-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .search-container {
+        margin-top: 15px;
+        width: 100%;
+        max-width: none;
+    }
+    
+    .footer-content > div {
+        flex-basis: 100%;
+        margin-bottom: 30px;
+    }
+}
+/* Upload button and modal styles */
+.actions-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.upload-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+}
+
+.upload-btn:hover {
+    background-color: #45a049;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #888;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+/* Form styles */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.file-info {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #666;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancel-btn {
+    background-color: #f1f1f1;
+    color: #333;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.submit-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #45a049;
+}
+
+.cancel-btn:hover {
+    background-color: #e1e1e1;
+}
+
+/* File input styling */
+input[type="file"] {
+    border: 1px solid #ddd;
+    padding: 8px;
+    border-radius: 4px;
+    width: 100%;
+    background-color: #f9f9f9;
+}
+
+/* New material highlight */
+.material-card.new {
+    position: relative;
+    border: 1px solid #4CAF50;
+}
+
+.material-card.new::after {
+    content: "Новое";
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .actions-container {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .search-container {
+        width: 100%;
+    }
+    
+    .upload-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+        padding: 15px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .cancel-btn, .submit-btn {
+        width: 100%;
+    }
+}
+
+/* Loading state */
+.submit-btn:disabled {
+    background-color: #8bc78e;
+    cursor: not-allowed;
+}
+
+/* Success message */
+.success-message {
+    background-color: #dff0d8;
+    color: #3c763d;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    display: none;
+}
+
+/* Error message */
+.error-message {
+    background-color: #f2dede;
+    color: #a94442;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    display: none;
+}
+
+/* Progress bar for upload */
+.progress-container {
+    width: 100%;
+    height: 20px;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    margin-top: 10px;
+    display: none;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #4CAF50;
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.3s;
+}
+
+/* Drag and drop area */
+.drop-area {
+    border: 2px dashed #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s;
+}
+
+.drop-area.highlight {
+    background-color: #e9f5e9;
+    border-color: #4CAF50;
+}
+
+.drop-area p {
+    margin: 0;
+    color: #666;
+}
+
+/* File preview */
+.file-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    margin-top: 10px;
+    display: none;
+}
+
+.file-preview i {
+    font-size: 20px;
+    color: #555;
+}
+
+.file-preview .file-name {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-preview .remove-file {
+    color: #d9534f;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Filter active state */
+.filter-group select:focus {
+    border-color: #4CAF50;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Material card hover effect */
+.material-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.material-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Action buttons hover effects */
+.material-actions button {
+    transition: background-color 0.2s;
+}
+
+.view-btn:hover {
+    background-color: #e3f2fd;
+}
+
+.download-btn:hover {
+    background-color: #e8f5e9;
+}
+
+.favorite-btn:hover {
+    background-color: #fff3e0;
+}
+
+/* Tooltip for buttons */
+.material-actions button {
+    position: relative;
+}
+
+.material-actions button::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.material-actions button:hover::after {
+    visibility: visible;
+    opacity: 1;
+}
+/* Preview modal styles */
+.preview-modal .modal-content {
+    width: 90%;
+    max-width: 900px;
+    height: 80vh;
+    max-height: 800px;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-container {
+    flex: 1;
+    overflow: auto;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no-preview {
+    text-align: center;
+    color: #666;
+    padding: 30px;
+}
+
+.no-preview i {
+    margin-bottom: 15px;
+    color: #999;
+}
+
+.download-preview-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    margin-top: 15px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.download-preview-btn:hover {
+    background-color: #45a049;
+}
+
+/* Animation for new material */
+@keyframes highlightNew {
+    0% { background-color: #e8f5e9; }
+    100% { background-color: transparent; }
+}
+
+.material-card.new {
+    animation: highlightNew 2s ease-out;
+}
+
+/* Empty state for materials */
+.empty-materials {
+    text-align: center;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.empty-materials i {
+    font-size: 48px;
+    color: #ccc;
+    margin-bottom: 15px;
+}
+
+.empty-materials p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.add-material-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.add-material-btn:hover {
+    background-color: #45a049;
+}
+

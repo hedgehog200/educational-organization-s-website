@@ -1,0 +1,410 @@
+/* Импорт основных стилей из lk.css */
+@import url('lk.css');
+
+/* Стили для страницы успеваемости */
+
+/* Общие стили для секций */
+.performance-overview,
+.grades-section,
+.attendance-section,
+.academic-achievements,
+.recommendations-section {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+/* Селектор семестра */
+.semester-selector {
+    display: flex;
+    align-items: center;
+}
+
+.semester-selector label {
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.semester-selector select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+}
+
+/* Графики */
+.performance-chart,
+.attendance-chart-container {
+    margin-top: 20px;
+    height: 300px;
+    position: relative;
+}
+
+/* Таблица оценок */
+.grades-table-container {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.grades-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.grades-table th {
+    background-color: #f5f5f5;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+}
+
+.grades-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.subject-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.subject-row:hover {
+    background-color: #f9f9f9;
+}
+
+.details-row {
+    display: none;
+    background-color: #f9f9f9;
+}
+
+.details-row.active {
+    display: table-row;
+}
+
+.subject-details {
+    padding: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.assignments-list {
+    flex: 1;
+    min-width: 300px;
+}
+
+.assignments-list h4,
+.teacher-comments h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #444;
+    font-size: 16px;
+}
+
+.assignments-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.assignments-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.teacher-comments {
+    flex: 1;
+    min-width: 300px;
+}
+
+.teacher-comments p {
+    margin: 0;
+    line-height: 1.5;
+    color: #555;
+}
+
+/* Оценки и статусы */
+.grade,
+.assignment-grade {
+    font-weight: 600;
+    text-align: center;
+}
+
+.excellent {
+    color: #28a745;
+}
+
+.good {
+    color: #17a2b8;
+}
+
+.satisfactory {
+    color: #ffc107;
+}
+
+.unsatisfactory {
+    color: #dc3545;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    color: white;
+}
+
+.status-badge.excellent {
+    background-color: #28a745;
+}
+
+.status-badge.good {
+    background-color: #17a2b8;
+}
+
+.status-badge.satisfactory {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.status-badge.unsatisfactory {
+    background-color: #dc3545;
+}
+
+/* Кнопки деталей */
+.details-btn {
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.details-btn:hover {
+    color: #007bff;
+}
+
+/* Фильтры предметов */
+.filter-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-btn {
+    padding: 6px 12px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* Секция посещаемости */
+.period-selector {
+    display: flex;
+    gap: 10px;
+}
+
+.period-btn {
+    padding: 6px 12px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.period-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.attendance-details {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.attendance-stat {
+    text-align: center;
+}
+
+.stat-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 24px;
+    font-weight: 600;
+    color: white;
+}
+
+.stat-circle.present {
+    background-color: #28a745;
+}
+
+.stat-circle.absent {
+    background-color: #dc3545;
+}
+
+.stat-circle.excused {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.attendance-stat p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Академические достижения */
+.achievements-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.achievement-card {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.achievement-icon {
+    font-size: 24px;
+    color: #007bff;
+    margin-right: 15px;
+}
+
+.achievement-info h3 {
+    margin: 0 0 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+.achievement-info p {
+    margin: 0 0 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+.achievement-date {
+    font-size: 12px;
+    color: #777;
+}
+
+/* Рекомендации */
+.recommendations-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.recommendation-card {
+    display: flex;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border-left: 4px solid #17a2b8;
+}
+
+.recommendation-icon {
+    font-size: 24px;
+    color: #17a2b8;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.recommendation-content h3 {
+    margin: 0 0 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+.recommendation-content p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .subject-details {
+        flex-direction: column;
+    }
+    
+    .attendance-details {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .filter-controls,
+    .period-selector {
+        flex-wrap: wrap;
+    }
+    
+    .grades-table th,
+    .grades-table td {
+        padding: 8px;
+    }
+    
+    .grades-table {
+        font-size: 13px;
+    }
+    
+    .stat-circle {
+        width: 80px;
+        height: 80px;
+        font-size: 20px;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.details-row.active {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.achievement-card:hover,
+.recommendation-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}

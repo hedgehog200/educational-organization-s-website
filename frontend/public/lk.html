@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет студента - Колледж ВолГУ</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/lk.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <div class="container dashboard-container">
+        <header>
+            <div class="logo">
+                <a href="/index.html"><h1>Университетский Колледж<span> ВолГУ </span></h1></a>
+                <style>a {text-decoration: none;}</style>
+            </div>
+            <div class="user-panel">
+                <div class="notifications desktop-only">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge" id="notificationCount">3</span>
+                    <div class="notifications-dropdown">
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-book"></i></div>
+                            <div class="notification-content">
+                                <p>Новый материал по дисциплине "Программирование"</p>
+                                <span class="notification-time">2 часа назад</span>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-tasks"></i></div>
+                            <div class="notification-content">
+                                <p>Новое задание по дисциплине "Базы данных"</p>
+                                <span class="notification-time">Вчера</span>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div class="notification-content">
+                                <p>Изменения в расписании на следующую неделю</p>
+                                <span class="notification-time">2 дня назад</span>
+                            </div>
+                        </div>
+                        <a href="#" class="all-notifications">Все уведомления</a>
+                    </div>
+                </div>
+                <div class="user-info">
+                    <img src="../images/avatar.png" alt="Фото профиля" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                    <span id="studentName" class="desktop-only">Иванов Иван</span>
+                    <i class="fas fa-chevron-down desktop-only"></i>
+                    <div class="user-dropdown">
+                        <ul>
+                            <li><a href="#" onclick="showProfileModal()"><i class="fas fa-user"></i> Профиль</a></li>
+                            <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выход</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-header">
+                <div class="mobile-menu-logo">
+                    <h3>Личный кабинет</h3>
+                </div>
+                <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Закрыть меню">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mobile-menu-user">
+                <div class="user-info-mobile">
+                    <img src="../images/avatar.png" alt="Фото профиля" class="user-avatar-mobile">
+                    <div class="user-details">
+                        <span class="user-name" id="studentNameMobile">Иванов Иван</span>
+                        <span class="user-role">Студент</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mobile-menu-nav">
+                <div class="menu-section">
+                    <h4>Учеба</h4>
+                    <ul>
+                        <li><a href="#dashboard" onclick="toggleMobileMenu()"><i class="fas fa-home"></i> Главная</a></li>
+                        <li><a href="#schedule" onclick="toggleMobileMenu()"><i class="fas fa-calendar-alt"></i> Расписание</a></li>
+                        <li><a href="#materials" onclick="toggleMobileMenu()"><i class="fas fa-book"></i> Учебные материалы</a></li>
+                        <li><a href="#assignments" onclick="toggleMobileMenu()"><i class="fas fa-tasks"></i> Задания</a></li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <h4>Успеваемость</h4>
+                    <ul>
+                        <li><a href="#performance" onclick="toggleMobileMenu()"><i class="fas fa-chart-line"></i> Успеваемость</a></li>
+                        <li><a href="#attendance" onclick="toggleMobileMenu()"><i class="fas fa-calendar-check"></i> Посещаемость</a></li>
+                        <li><a href="#grades" onclick="toggleMobileMenu()"><i class="fas fa-star"></i> Оценки</a></li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <h4>Профиль</h4>
+                    <ul>
+                        <li><a href="#profile" onclick="toggleMobileMenu()"><i class="fas fa-user"></i> Профиль</a></li>
+                        <li><a href="#settings" onclick="toggleMobileMenu()"><i class="fas fa-cog"></i> Настройки</a></li>
+                        <li id="adminNavItemMobile" style="display: none;"><a href="admin.html" onclick="toggleMobileMenu()"><i class="fas fa-cogs"></i> Администрирование</a></li>
+                        <li><a href="#" onclick="logout(); toggleMobileMenu()"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mobile-menu-footer">
+                <div class="notifications-mobile">
+                    <a href="#" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bell"></i>
+                        <span>Уведомления</span>
+                        <span class="badge" id="notificationCountMobile">3</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <aside class="sidebar desktop-only">
+                <nav>
+                    <ul>
+                        <li class="active"><a href="#dashboard"><i class="fas fa-home"></i> Главная</a></li>
+                        <li><a href="#schedule"><i class="fas fa-calendar-alt"></i> Расписание</a></li>
+                        <li><a href="#materials"><i class="fas fa-book"></i> Учебные материалы</a></li>
+                        <li><a href="#assignments"><i class="fas fa-tasks"></i> Задания</a></li>
+                        <li><a href="#performance"><i class="fas fa-chart-line"></i> Успеваемость</a></li>
+                        <li><a href="#attendance"><i class="fas fa-calendar-check"></i> Посещаемость</a></li>
+                        <li id="adminNavItem" style="display: none;"><a href="admin.html"><i class="fas fa-cogs"></i> Администрирование</a></li>
+                    </ul>
+                </nav>   
+            </aside>
+
+            <main>
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="student-section active">
+                    <div class="section-header">
+                        <h2>Добро пожаловать, <span id="welcomeName">Иван</span>!</h2>
+                        <p id="studentInfo">Группа: ИБАСкд-232 | Специальность: Информационная безопасность автоматизированных систем</p>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="averageGrade">4.7</h3>
+                                <p>Средний балл</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="completedAssignments">24/30</h3>
+                                <p>Выполнено заданий</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="attendanceRate">92%</h3>
+                                <p>Посещаемость</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="currentSemester">3/8</h3>
+                                <p>Семестр</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Grid -->
+                    <div class="dashboard-grid">
+                        <div class="upcoming-events-card">
+                            <div class="card-header">
+                                <h3>Ближайшие события</h3>
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="events-list" id="upcomingEvents">
+                                <div class="event-item">
+                                    <div class="event-date">
+                                        <span class="day">15</span>
+                                        <span class="month">Сен</span>
+                                    </div>
+                                    <div class="event-content">
+                                        <h4>Контрольная работа</h4>
+                                        <p>Математика, 10:00 - 11:30, ауд. 305</p>
+                                    </div>
+                                    <div class="event-actions">
+                                        <button class="action-btn" title="Напомнить">
+                                            <i class="fas fa-bell"></i>
+                                        </button>
+                                        <button class="action-btn" title="Добавить в календарь">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="event-item">
+                                    <div class="event-date">
+                                        <span class="day">17</span>
+                                        <span class="month">Сен</span>
+                                    </div>
+                                    <div class="event-content">
+                                        <h4>Сдача лабораторной работы</h4>
+                                        <p>Программирование, 13:00 - 14:30, ауд. 412</p>
+                                    </div>
+                                    <div class="event-actions">
+                                        <button class="action-btn" title="Напомнить">
+                                            <i class="fas fa-bell"></i>
+                                        </button>
+                                        <button class="action-btn" title="Добавить в календарь">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="quick-actions-card">
+                            <div class="card-header">
+                                <h3>Быстрые действия</h3>
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="quick-actions">
+                                <button class="action-btn" onclick="showSection('assignments')">
+                                    <i class="fas fa-tasks"></i>
+                                    <span>Мои задания</span>
+                                </button>
+                                <button class="action-btn" onclick="showSection('materials')">
+                                    <i class="fas fa-book"></i>
+                                    <span>Материалы</span>
+                                </button>
+                                <button class="action-btn" onclick="showSection('schedule')">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Расписание</span>
+                                </button>
+                                <button class="action-btn" onclick="showSection('performance')">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Успеваемость</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Assignments -->
+                    <div class="assignments-section">
+                        <div class="section-header">
+                            <h2>Текущие задания</h2>
+                            <button class="btn-primary" onclick="showSection('assignments')">
+                                <i class="fas fa-eye"></i> Смотреть все
+                            </button>
+                        </div>
+                        <div class="assignments-grid" id="recentAssignments">
+                            <div class="assignment-card">
+                                <div class="assignment-header">
+                                    <h3>Курсовая работа</h3>
+                                    <span class="assignment-status pending">В процессе</span>
+                                </div>
+                                <div class="assignment-info">
+                                    <p><i class="fas fa-book"></i> Базы данных</p>
+                                    <p><i class="fas fa-calendar"></i> Срок сдачи: 25 сентября</p>
+                                </div>
+                                <div class="progress-section">
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: 60%;"></div>
+                                    </div>
+                                    <span class="progress-text">Выполнено: 60%</span>
+                                </div>
+                            </div>
+                            <div class="assignment-card">
+                                <div class="assignment-header">
+                                    <h3>Лабораторная работа №5</h3>
+                                    <span class="assignment-status urgent">Срочно</span>
+                                </div>
+                                <div class="assignment-info">
+                                    <p><i class="fas fa-book"></i> Программирование</p>
+                                    <p><i class="fas fa-calendar"></i> Срок сдачи: 17 сентября</p>
+                                </div>
+                                <div class="progress-section">
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: 30%;"></div>
+                                    </div>
+                                    <span class="progress-text">Выполнено: 30%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Schedule Section -->
+                <section id="schedule" class="student-section">
+                    <div class="section-header">
+                        <h2>Расписание занятий</h2>
+                        <div class="schedule-controls">
+                            <button class="btn-secondary" onclick="previousWeek()">
+                                <i class="fas fa-chevron-left"></i> Предыдущая неделя
+                            </button>
+                            <span id="currentWeek">Неделя 15-21 сентября</span>
+                            <button class="btn-secondary" onclick="nextWeek()">
+                                Следующая неделя <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="schedule-container">
+                        <div class="schedule-grid" id="scheduleGrid">
+                            <div class="schedule-header">
+                                <div class="time-column">Время</div>
+                                <div class="day-column">Понедельник</div>
+                                <div class="day-column">Вторник</div>
+                                <div class="day-column">Среда</div>
+                                <div class="day-column">Четверг</div>
+                                <div class="day-column">Пятница</div>
+                                <div class="day-column">Суббота</div>
+                            </div>
+                            <div class="schedule-body" id="scheduleBody">
+                                <div class="loading">Загрузка расписания...</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Materials Section -->
+                <section id="materials" class="student-section">
+                    <div class="section-header">
+                        <h2>Учебные материалы</h2>
+                        <div class="materials-controls">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="materialSearch" placeholder="Поиск материалов...">
+                            </div>
+                            <select id="subjectFilter">
+                                <option value="">Все предметы</option>
+                                <option value="programming">Программирование</option>
+                                <option value="databases">Базы данных</option>
+                                <option value="math">Математика</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="materials-grid" id="materialsGrid">
+                        <div class="material-card">
+                            <div class="material-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="material-content">
+                                <h3>Лекция №5 по программированию</h3>
+                                <p>Добавлено: 10 сентября</p>
+                                <div class="material-meta">
+                                    <span class="subject-tag">Программирование</span>
+                                    <span class="file-size">2.3 MB</span>
+                                </div>
+                            </div>
+                            <div class="material-actions">
+                                <button class="btn-primary" onclick="downloadMaterial(1)">
+                                    <i class="fas fa-download"></i> Скачать
+                                </button>
+                            </div>
+                        </div>
+                        <div class="material-card">
+                            <div class="material-icon">
+                                <i class="fas fa-file-video"></i>
+                            </div>
+                            <div class="material-content">
+                                <h3>Видеолекция по базам данных</h3>
+                                <p>Добавлено: 8 сентября</p>
+                                <div class="material-meta">
+                                    <span class="subject-tag">Базы данных</span>
+                                    <span class="file-size">45 мин</span>
+                                </div>
+                            </div>
+                            <div class="material-actions">
+                                <button class="btn-primary" onclick="watchVideo(1)">
+                                    <i class="fas fa-play"></i> Смотреть
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Assignments Section -->
+                <section id="assignments" class="student-section">
+                    <div class="section-header">
+                        <h2>Мои задания</h2>
+                        <div class="assignments-controls">
+                            <div class="filter-tabs">
+                                <button class="filter-tab active" onclick="filterAssignments('all')">Все</button>
+                                <button class="filter-tab" onclick="filterAssignments('pending')">В процессе</button>
+                                <button class="filter-tab" onclick="filterAssignments('completed')">Выполненные</button>
+                                <button class="filter-tab" onclick="filterAssignments('overdue')">Просроченные</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="assignments-list" id="assignmentsList">
+                        <div class="assignment-item">
+                            <div class="assignment-header">
+                                <h3>Курсовая работа</h3>
+                                <span class="assignment-status pending">В процессе</span>
+                            </div>
+                            <div class="assignment-details">
+                                <p><i class="fas fa-book"></i> Базы данных</p>
+                                <p><i class="fas fa-calendar"></i> Срок сдачи: 25 сентября</p>
+                                <p><i class="fas fa-user"></i> Преподаватель: Слепова О.С.</p>
+                            </div>
+                            <div class="assignment-progress">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 60%;"></div>
+                                </div>
+                                <span class="progress-text">Выполнено: 60%</span>
+                            </div>
+                            <div class="assignment-actions">
+                                <button class="btn-primary" onclick="submitAssignment(1)">
+                                    <i class="fas fa-upload"></i> Сдать работу
+                                </button>
+                                <button class="btn-secondary" onclick="viewAssignment(1)">
+                                    <i class="fas fa-eye"></i> Подробнее
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Performance Section -->
+                <section id="performance" class="student-section">
+                    <div class="section-header">
+                        <h2>Успеваемость</h2>
+                        <div class="performance-controls">
+                            <select id="semesterFilter">
+                                <option value="current">Текущий семестр</option>
+                                <option value="all">Все семестры</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="performance-grid">
+                        <div class="performance-chart">
+                            <h3>Средний балл по предметам</h3>
+                            <div class="chart-container" id="performanceChart">
+                                <div class="chart-placeholder">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <p>График успеваемости</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="performance-stats">
+                            <h3>Статистика</h3>
+                            <div class="stats-list">
+                                <div class="stat-item">
+                                    <span class="stat-label">Общий средний балл</span>
+                                    <span class="stat-value">4.7</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Выполнено заданий</span>
+                                    <span class="stat-value">24/30</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Отличных оценок</span>
+                                    <span class="stat-value">18</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Хороших оценок</span>
+                                    <span class="stat-value">6</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subjects-performance">
+                        <h3>Успеваемость по предметам</h3>
+                        <div class="subjects-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Предмет</th>
+                                        <th>Преподаватель</th>
+                                        <th>Средний балл</th>
+                                        <th>Оценок</th>
+                                        <th>Статус</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="subjectsTableBody">
+                                    <tr>
+                                        <td>Программирование</td>
+                                        <td>Сидоров С.С.</td>
+                                        <td>4.8</td>
+                                        <td>12</td>
+                                        <td><span class="status-badge status-excellent">Отлично</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Базы данных</td>
+                                        <td>Слепова О.С.</td>
+                                        <td>4.5</td>
+                                        <td>8</td>
+                                        <td><span class="status-badge status-good">Хорошо</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Attendance Section -->
+                <section id="attendance" class="student-section">
+                    <div class="section-header">
+                        <h2>Посещаемость</h2>
+                        <div class="attendance-controls">
+                            <select id="attendancePeriod">
+                                <option value="current">Текущий месяц</option>
+                                <option value="semester">Семестр</option>
+                                <option value="year">Учебный год</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="attendance-stats">
+                        <div class="stat-card">
+                            <h3>Общая посещаемость</h3>
+                            <div class="progress-circle">
+                                <div class="progress-value">92%</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Пропусков</h3>
+                            <div class="big-number">3</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Опозданий</h3>
+                            <div class="big-number">1</div>
+                        </div>
+                    </div>
+
+                    <div class="attendance-calendar">
+                        <h3>Календарь посещаемости</h3>
+                        <div class="calendar-container" id="attendanceCalendar">
+                            <div class="calendar-placeholder">
+                                <i class="fas fa-calendar-alt"></i>
+                                <p>Календарь посещаемости</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Мой профиль</h3>
+                <button class="close-btn" onclick="closeModal('profileModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="profile-content">
+                <div class="profile-avatar">
+                    <img src="../images/avatar.png" alt="Фото профиля">
+                    <button class="btn-secondary">Изменить фото</button>
+                </div>
+                <div class="profile-info">
+                    <div class="form-group">
+                        <label>Полное имя</label>
+                        <input type="text" value="Иванов Иван Иванович" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" value="ivan.ivanov@student.volgau.ru" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Группа</label>
+                        <input type="text" value="ИБАСкд-232" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Специальность</label>
+                        <input type="text" value="Информационная безопасность автоматизированных систем" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn-secondary" onclick="closeModal('profileModal')">Закрыть</button>
+                <button class="btn-primary" onclick="editProfile()">Редактировать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Загрузка...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/jquery-migrate-3.0.1.min.js"></script>
+    <script src="../js/jquery-ui.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/owl.carousel.min.js"></script>
+    <script src="../js/jquery.stellar.min.js"></script>
+    <script src="../js/jquery.countdown.min.js"></script>
+    <script src="../js/jquery.magnific-popup.min.js"></script>
+    <script src="../js/bootstrap-datepicker.min.js"></script>
+    <script src="../js/aos-modern.js"></script>
+    <script src="../js/modern-sticky.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/student-dashboard.js"></script>
+    <script src="../js/assignment-submission.js"></script>
+    <script src="../js/lk.js"></script>
+    <script src="../js/mobile-responsive.js"></script>
+    <script>
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userData');
+            window.location.href = '/index.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,488 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расписание - Личный кабинет студента колледжа</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/lk.css">
+    <link rel="stylesheet" href="../css/raspis.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Университетский Колледж<span> ВолГУ</span></h1>
+            </div>
+            <div class="user-panel">
+                <div class="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                    <div class="notifications-dropdown">
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-book"></i></div>
+                            <div class="notification-content">
+                                <p>Новый материал по дисциплине "Программирование"</p>
+                                <span class="notification-time">2 часа назад</span>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-tasks"></i></div>
+                            <div class="notification-content">
+                                <p>Новое задание по дисциплине "Базы данных"</p>
+                                <span class="notification-time">Вчера</span>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div class="notification-content">
+                                <p>Изменения в расписании на следующую неделю</p>
+                                <span class="notification-time">2 дня назад</span>
+                            </div>
+                        </div>
+                        <a href="#" class="all-notifications">Все уведомления</a>
+                    </div>
+                </div>
+                <div class="user-info">
+                    <img src="../images/avatar.png" alt="Фото профиля" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                    <span>Иванов Иван</span>
+                    <i class="fas fa-chevron-down"></i>
+                    <div class="user-dropdown">
+                        <ul>
+                            <li><a href="#"><i class="fas fa-user"></i> Профиль</a></li>
+                            <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Выход</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <nav>
+                    <ul>
+                        <li><a href="lk.html"><i class="fas fa-home"></i> Главная</a></li>
+                        <li class="active"><a href="raspis.html"><i class="fas fa-calendar-alt"></i> Расписание</a></li>
+                        <li><a href="ych_mat.html"><i class="fas fa-book"></i> Учебные материалы</a></li>
+                        <li><a href="zadania.html"><i class="fas fa-tasks"></i> Задания</a></li>
+                        <li><a href="usp.html"><i class="fas fa-chart-line"></i> Успеваемость</a></li>
+                        
+                    </ul>
+                </nav>
+            </aside>
+
+            <main>
+                <section class="schedule-header">
+                    <h2>Расписание занятий</h2>
+                    <p>Группа: ИБАСкд - 232 | Семестр: 3</p>
+                    
+                    <div class="schedule-controls">
+                        <div class="date-selector">
+                            <button class="btn-prev"><i class="fas fa-chevron-left"></i></button>
+                            <div class="current-week">12 - 18 сентября 2025</div>
+                            <button class="btn-next"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div class="view-controls">
+                            <button class="btn-view active" data-view="week"><i class="fas fa-calendar-week"></i> Неделя</button>
+                            <button class="btn-view" data-view="day"><i class="fas fa-calendar-day"></i> День</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="schedule-filters">
+                    <div class="filter-group">
+                        <label for="teacher-filter">Преподаватель:</label>
+                        <select id="teacher-filter">
+                            <option value="all">Все преподаватели</option>
+                            <option value="1">Петров П.П.</option>
+                            <option value="2">Сидоров С.С.</option>
+                            <option value="3">Иванова И.И.</option>
+                            <option value="4">Кузнецов К.К.</option>
+                            <option value="4">Фатина Т.П.</option>
+                            <option value="4">Слепова О.С.</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="subject-filter">Предмет:</label>
+                        <select id="subject-filter">
+                            <option value="all">Все предметы</option>
+                            <option value="1">Математика</option>
+                            <option value="2">Программирование</option>
+                            <option value="3">Базы данных</option>
+                            <option value="4">Информационная безопасность</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="room-filter">Аудитория:</label>
+                        <select id="room-filter">
+                            <option value="all">Все аудитории</option>
+                            <option value="305">305</option>
+                            <option value="308">308</option>
+                            <option value="401">401</option>
+                            <option value="412">412</option>
+                        </select>
+                    </div>
+                    <button class="btn-filter-reset"><i class="fas fa-sync-alt"></i> Сбросить</button>
+                </section>
+
+                <section class="schedule-weekly">
+                    <div class="schedule-grid">
+                        <div class="time-column">
+                            <div class="time-header">Время</div>
+                            <div class="time-slot">8:30 - 10:00</div>
+                            <div class="time-slot">10:15 - 11:45</div>
+                            <div class="time-slot">12:30 - 14:00</div>
+                            <div class="time-slot">14:15 - 15:45</div>
+                            <div class="time-slot">16:00 - 17:30</div>
+                        </div>
+                        
+                        <div class="day-column">
+                            <div class="day-header">Понедельник</div>
+                            <div class="class-card">
+                                <h3>Математика</h3>
+                                <p>Лекция</p>
+                                <p>Ауд. 305</p>
+                                <p>Петров П.П.</p>
+                            </div>
+                            <div class="class-card">
+                                <h3>Программирование</h3>
+                                <p>Практика</p>
+                                <p>Ауд. 412</p>
+                                <p>Сидоров С.С.</p>
+                            </div>
+                            <div class="class-card">
+                                <h3>Базы данных</h3>
+                                <p>Лекция</p>
+                                <p>Ауд. 401</p>
+                                <p>Фатина Т.П.</p>
+                            </div>
+                            <div class="empty-slot"></div>
+                            <div class="empty-slot"></div>
+                        </div>
+                        
+                        <div class="day-column">
+                            <div class="day-header">Вторник</div>
+                            <div class="empty-slot"></div>
+                            <div class="class-card">
+                                <h3>Информационная безопасность</h3>
+                                <p>Лекция</p>
+                                <p>Ауд. 308</p>
+                                <p>Слепова О.С.</p>
+                            </div>
+                            <div class="class-card">
+                                <h3>Информационная безопасность</h3>
+                                <p>Практика</p>
+                                <p>Ауд. 308</p>
+                                <p>Слепова О.С.</p>
+                            </div>
+                            <div class="class-card special">
+                                <h3>Физическая культура</h3>
+                                <p>Практика</p>
+                                <p>Спортзал</p>
+                                <p>Смирнов А.А.</p>
+                            </div>
+                            <div class="empty-slot"></div>
+                        </div>
+                        
+                        <div class="day-column">
+                            <div class="day-header">Среда</div>
+                            <div class="class-card">
+                                <h3>Программирование</h3>
+                                <p>Лекция</p>
+                                <p>Ауд. 412</p>
+                                <p>Сидоров С.С.</p>
+                            </div>
+                            <div class="class-card">
+                                <h3>Программирование</h3>
+                                <p>Лабораторная</p>
+                                <p>Ауд. 412</p>
+                                <p>Сидоров С.С.</p>
+                            </div>
+                            <div class="empty-slot"></div>
+                            <div class="class-card">
+                                <h3>Иностранный язык</h3>
+                                <p>Практика</p>
+                                <p>Ауд. 210</p>
+                                <p>Николаева Н.Н.</p>
+                            </div>
+                            <div class="empty-slot"></div>
+                        </div>
+                        
+                        <div class="day-column">
+                            <div class="day-header">Четверг</div>
+                            <div class="class-card">
+                                <h3>Математика</h3>
+                                <p>Практика</p>
+                                <p>Ауд. 305</p>
+                                <p>Петров П.П.</p>
+                            </div>
+                            <div class="empty-slot"></div>
+                            <div class="class-card">
+                                <h3>Базы данных</h3>
+                                <p>Лабораторная</p>
+                                <p>Ауд. 401</p>
+                                <p>Иванова И.И.</p>
+                            </div>
+                            <div class="class-card">
+                                <h3>Базы данных</h3>
+                                <p>Практика</p>
+                                <p>Ауд. 401</p>
+                                <p>Слепова О.С.</p>
+                            </div>
+                            <div class="empty-slot"></div>
+                        </div>
+                        
+                        <div class="day-column">
+                            <div class="day-header">Пятница</div>
+                            <div class="empty-slot"></div>
+                            <div class="class-card special">
+                                <h3>Физическая культура</h3>
+                                <p>Практика</p>
+                                <p>Спортзал</p>
+                                <p>Смирнов А.А.</p>
+                            </div>
+                            <div class="class-card">
+                                <h3>Иностранный язык</h3>
+                                <p>Практика</p>
+                                <p>Ауд. 210</p>
+                                <p>Николаева Н.Н.</p>
+                            </div>
+                            <div class="class-card exam">
+                                <h3>Контрольная работа</h3>
+                                <p>Математика</p>
+                                <p>Ауд. 305</p>
+                                <p>Петров П.П.</p>
+                            </div>
+                            <div class="empty-slot"></div>
+                        </div>
+                        
+                        <div class="day-column weekend">
+                            <div class="day-header">Суббота</div>
+                            <div class="empty-slot"></div>
+                            <div class="empty-slot"></div>
+                            <div class="class-card consultation">
+                                <h3>Консультация</h3>
+                                <p>Курсовая работа</p>
+                                <p>Ауд. 401</p>
+                                <p>Фатина Т.П.</p>
+                            </div>
+                            <div class="empty-slot"></div>
+                            <div class="empty-slot"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="schedule-legend">
+                    <h3>Обозначения</h3>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #e3f2fd;"></div>
+                            <div class="legend-text">Лекция</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #e8f5e9;"></div>
+                            <div class="legend-text">Практика</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #fff3e0;"></div>
+                            <div class="legend-text">Лабораторная</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legen"></div>
+                            <div class="legend-color" style="background-color: #fff3e0;"></div>
+                            <div class="legend-text">Лабораторная</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #ffebee;"></div>
+                            <div class="legend-text">Контрольная работа</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #e0f7fa;"></div>
+                            <div class="legend-text">Консультация</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="schedule-download">
+                    <h3>Экспорт расписания</h3>
+                    <div class="download-options">
+                        <a href="#" class="download-btn"><i class="fas fa-file-pdf"></i> PDF</a>
+                        <a href="#" class="download-btn"><i class="fas fa-file-excel"></i> Excel</a>
+                        <a href="#" class="download-btn"><i class="fas fa-calendar-plus"></i> iCal</a>
+                    </div>
+                </section>
+
+                <section class="schedule-changes">
+                    <div class="section-header">
+                        <h2>Изменения в расписании</h2>
+                        <a href="#" class="view-all">Все изменения</a>
+                    </div>
+                    <div class="changes-list">
+                        <div class="change-item">
+                            <div class="change-date">15 сентября</div>
+                            <div class="change-content">
+                                <h3>Отмена занятия</h3>
+                                <p>Математика (10:15 - 11:45, ауд. 305) отменяется в связи с болезнью преподавателя.</p>
+                            </div>
+                            <div class="change-status urgent">Отмена</div>
+                        </div>
+                        <div class="change-item">
+                            <div class="change-date">17 сентября</div>
+                            <div class="change-content">
+                                <h3>Замена преподавателя</h3>
+                                <p>Программирование (13:00 - 14:30, ауд. 412) проведет Новиков А.В. вместо Сидорова С.С.</p>
+                            </div>
+                            <div class="change-status pending">Замена</div>
+                        </div>
+                        <div class="change-item">
+                            <div class="change-date">20 сентября</div>
+                            <div class="change-content">
+                                <h3>Перенос аудитории</h3>
+                                <p>Базы данных (12:30 - 14:00) переносится из ауд. 401 в ауд. 405.</p>
+                            </div>
+                            <div class="change-status info">Перенос</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="teacher-schedule">
+                    <div class="section-header">
+                        <h2>Расписание консультаций преподавателей</h2>
+                    </div>
+                    <div class="teacher-schedule-list">
+                        <div class="teacher-item">
+                            <div class="teacher-info">
+                                
+                                <div>
+                                    <h3>Петров П.П.</h3>
+                                    <p>Математика</p>
+                                </div>
+                            </div>
+                            <div class="consultation-times">
+                                <div class="consultation-day">
+                                    <span>Понедельник:</span> 16:00 - 17:30, ауд. 305
+                                </div>
+                                <div class="consultation-day">
+                                    <span>Четверг:</span> 14:15 - 15:45, ауд. 305
+                                </div>
+                            </div>
+                            <button class="btn-appointment"><i class="fas fa-calendar-check"></i> Записаться</button>
+                        </div>
+                        <div class="teacher-item">
+                            <div class="teacher-info">
+                                
+                                <div>
+                                    <h3>Сидоров С.С.</h3>
+                                    <p>Программирование</p>
+                                </div>
+                            </div>
+                            <div class="consultation-times">
+                                <div class="consultation-day">
+                                    <span>Вторник:</span> 16:00 - 17:30, ауд. 412
+                                </div>
+                                <div class="consultation-day">
+                                    <span>Пятница:</span> 14:15 - 15:45, ауд. 412
+                                </div>
+                            </div>
+                            <button class="btn-appointment"><i class="fas fa-calendar-check"></i> Записаться</button>
+                        </div>
+                        <div class="teacher-item">
+                            <div class="teacher-info">
+                                
+                                <div>
+                                    <h3>Иванова И.И.</h3>
+                                    <p>Базы данных</p>
+                                </div>
+                            </div>
+                            <div class="consultation-times">
+                                <div class="consultation-day">
+                                    <span>Среда:</span> 16:00 - 17:30, ауд. 401
+                                </div>
+                                <div class="consultation-day">
+                                    <span>Суббота:</span> 12:30 - 14:00, ауд. 401
+                                </div>
+                            </div>
+                            <button class="btn-appointment"><i class="fas fa-calendar-check"></i> Записаться</button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        
+        
+    </div>
+
+    <!-- Support Chat Modal -->
+    <div id="supportModal" class="modal">
+        <div class="modal-content support-chat">
+            <span class="close-modal">&times;</span>
+            <h2>Техническая поддержка</h2>
+            
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message support">
+                        <div class="message-content">
+                            <p>Здравствуйте! Чем мы можем вам помочь?</p>
+                            <span class="message-time">10:00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input">
+                    <textarea id="messageInput" placeholder="Введите ваше сообщение..."></textarea>
+                    <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Запись на консультацию</h2>
+            <form id="appointmentForm">
+                <div class="form-group">
+                    <label for="teacher">Преподаватель:</label>
+                    <input type="text" id="teacher" name="teacher" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Предмет:</label>
+                    <input type="text" id="subject" name="subject" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="appointment_date">Дата консультации:</label>
+                    <select id="appointment_date" name="appointment_date" required>
+                        <option value="">Выберите дату</option>
+                        <!-- Даты будут добавлены динамически -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appointment_time">Время консультации:</label>
+                    <select id="appointment_time" name="appointment_time" required>
+                        <option value="">Выберите время</option>
+                        <!-- Время будет добавлено динамически -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appointment_reason">Тема консультации:</label>
+                    <textarea id="appointment_reason" name="appointment_reason" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Записаться</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/student-dashboard.js"></script>
+    <script src="../js/support-chat.js"></script>
+    <script src="../js/raspis.js"></script>
+</body>
+</html>

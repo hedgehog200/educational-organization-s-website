@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Успеваемость студента колледжа</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/lk.css">
+    <link rel="stylesheet" href="../css/uspev.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <a href="index.html"><h1>Университетский Колледж<span> ВолГУ </span></h1></a>
+                <style>a {text-decoration: none;}</style>
+            </div>
+            <div class="user-panel">
+                <div class="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                    <div class="notifications-dropdown">
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-book"></i></div>
+                            <div class="notification-content">
+                                <p>Новый материал по дисциплине "Программирование"</p>
+                                <span class="notification-time">2 часа назад</span>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-tasks"></i></div>
+                            <div class="notification-content">
+                                <p>Новое задание по дисциплине "Базы данных"</p>
+                                <span class="notification-time">Вчера</span>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div class="notification-content">
+                                <p>Изменения в расписании на следующую неделю</p>
+                                <span class="notification-time">2 дня назад</span>
+                            </div>
+                        </div>
+                        <a href="#" class="all-notifications">Все уведомления</a>
+                    </div>
+                </div>
+                <div class="user-info">
+                    <img src="../images/avatar.png" alt="Фото профиля" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                    <span>Иванов Иван</span>
+                    <i class="fas fa-chevron-down"></i>
+                    <div class="user-dropdown">
+                        <ul>
+                            <li><a href="#"><i class="fas fa-user"></i> Профиль</a></li>
+
+                            <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Выход</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <nav>
+                    <ul>
+                        <li><a href="lk.html"><i class="fas fa-home"></i> Главная</a></li>
+                        <li><a href="raspis.html"><i class="fas fa-calendar-alt"></i> Расписание</a></li>
+                        <li><a href="ych_mat.html"><i class="fas fa-book"></i> Учебные материалы</a></li>
+                        <li><a href="zadania.html"><i class="fas fa-tasks"></i> Задания</a></li>
+                        <li class="active"><a href="usp.html"><i class="fas fa-chart-line"></i> Успеваемость</a></li>
+                        <li id="adminNavItem" style="display: none;"><a href="admin.html"><i class="fas fa-cogs"></i> Администрирование</a></li>
+                    </ul>
+                </nav>   
+            </aside>
+
+            <main>
+                <section class="welcome-section">
+                    <h2>Успеваемость</h2>
+                    <p>Группа: ИБАСкд - 232 | Специальность: Информационная безопасность автоматизированных систем</p>
+                    <div class="quick-stats">
+                        <div class="stat-card">
+                            <i class="fas fa-graduation-cap"></i>
+                            <h3>Средний балл</h3>
+                            <p>4.7</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Выполнено заданий</h3>
+                            <p>24/30</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-clock"></i>
+                            <h3>Посещаемость</h3>
+                            <p>92%</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-trophy"></i>
+                            <h3>Рейтинг в группе</h3>
+                            <p>3/25</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="performance-overview">
+                    <div class="section-header">
+                        <h2>Общая успеваемость</h2>
+                    </div>
+                    
+                    <div class="performance-chart">
+                        <canvas id="performanceChart" height="250"></canvas>
+                    </div>
+                </section>
+
+                <section class="grades-section">
+                    <div class="section-header">
+                        <h2>Оценки по предметам</h2>
+                        <div class="filter-controls">
+                            <button class="filter-btn active" data-filter="all">Все</button>
+                            <button class="filter-btn" data-filter="core">Профильные</button>
+                            <button class="filter-btn" data-filter="general">Общие</button>
+                        </div>
+                    </div>
+                    
+                    <div class="grades-table-container">
+                        <table class="grades-table">
+                            <thead>
+                                <tr>
+                                    <th>Предмет</th>
+                                    <th>Преподаватель</th>
+                                    <th>Текущий балл</th>
+                                    <th>Посещаемость</th>
+                                    <th>Статус</th>
+                                    <th>Детали</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="subject-row core">
+                                    <td>Программирование</td>
+                                    <td>Сидоров С.С.</td>
+                                    <td class="grade excellent">5.0</td>
+                                    <td>95%</td>
+                                    <td><span class="status-badge excellent">Отлично</span></td>
+                                    <td><button class="details-btn"><i class="fas fa-chevron-down"></i></button></td>
+                                </tr>
+                                <tr class="details-row core">
+                                    <td colspan="6">
+                                        <div class="subject-details">
+                                            <div class="assignments-list">
+                                                <h4>Задания:</h4>
+                                                <ul>
+                                                    <li>
+                                                        <span class="assignment-name">Лабораторная работа №1</span>
+                                                        <span class="assignment-grade excellent">5</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Лабораторная работа №2</span>
+                                                        <span class="assignment-grade excellent">5</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Лабораторная работа №3</span>
+                                                        <span class="assignment-grade excellent">5</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Лабораторная работа №4</span>
+                                                        <span class="assignment-grade excellent">5</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Контрольная работа</span>
+                                                        <span class="assignment-grade excellent">5</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="teacher-comments">
+                                                <h4>Комментарии преподавателя:</h4>
+                                                <p>Отличная работа на протяжении всего семестра. Продолжайте в том же духе!</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="subject-row core">
+                                    <td>Базы данных</td>
+                                    <td>Фатина Т.П.</td>
+                                    <td class="grade good">4.5</td>
+                                    <td>90%</td>
+                                    <td><span class="status-badge good">Хорошо</span></td>
+                                    <td><button class="details-btn"><i class="fas fa-chevron-down"></i></button></td>
+                                </tr>
+                                <tr class="details-row core">
+                                    <td colspan="6">
+                                        <div class="subject-details">
+                                            <div class="assignments-list">
+                                                <h4>Задания:</h4>
+                                                <ul>
+                                                    <li>
+                                                        <span class="assignment-name">Лабораторная работа №1</span>
+                                                        <span class="assignment-grade excellent">5</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Лабораторная работа №2</span>
+                                                        <span class="assignment-grade good">4</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Лабораторная работа №3</span>
+                                                        <span class="assignment-grade excellent">5</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Контрольная работа</span>
+                                                        <span class="assignment-grade good">4</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="teacher-comments">
+                                                <h4>Комментарии преподавателя:</h4>
+                                                <p>Хорошие результаты. Обратите внимание на оптимизацию запросов.</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="subject-row core">
+                                    <td>Информационная безопасность</td>
+                                    <td>Слепова О.С.</td>
+                                    <td class="grade excellent">4.8</td>
+                                    <td>98%</td>
+                                    <td><span class="status-badge excellent">Отлично</span></td>
+                                    <td><button class="details-btn"><i class="fas fa-chevron-down"></i></button></td>
+                                </tr>
+                                <tr class="details-row core">
+                                    <td colspan="6">
+                                        <div class="subject-details">
+                                            <div class="assignments-list">
+                                                <h4>Задания:</h4>
+                                                <ul>
+                                                    <li>
+                                                        <span class="assignment-name">Практическая работа №1</span>
+                                                        <span class="assignment-grade excellent">5</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Практическая работа №2</span>
+                                                        <span class="assignment-grade excellent">5</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Тест по криптографии</span>
+                                                        <span class="assignment-grade good">4</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="teacher-comments">
+                                                <h4>Комментарии преподавателя:</h4>
+                                                <p>Отличное понимание материала и активное участие в занятиях.</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="subject-row general">
+                                    <td>Математика</td>
+                                    <td>Петров П.П.</td>
+                                    <td class="grade good">4.3</td>
+                                    <td>85%</td>
+                                    <td><span class="status-badge good">Хорошо</span></td>
+                                    <td><button class="details-btn"><i class="fas fa-chevron-down"></i></button></td>
+                                </tr>
+                                <tr class="details-row general">
+                                    <td colspan="6">
+                                        <div class="subject-details">
+                                            <div class="assignments-list">
+                                                <h4>Задания:</h4>
+                                                <ul>
+                                                    <li>
+                                                        <span class="assignment-name">Контрольная работа №1</span>
+                                                        <span class="assignment-grade good">4</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Контрольная работа №2</span>
+                                                        <span class="assignment-grade excellent">5</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Домашнее задание</span>
+                                                        <span class="assignment-grade good">4</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="teacher-comments">
+                                                <h4>Комментарии преподавателя:</h4>
+                                                <p>Хорошие результаты, но требуется больше внимания к деталям при решении задач.</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="subject-row general">
+                                    <td>История</td>
+                                    <td>Смирнова С.М.</td>
+                                    <td class="grade satisfactory">3.8</td>
+                                    <td>80%</td>
+                                    <td><span class="status-badge satisfactory">Удовлетворительно</span></td>
+                                    <td><button class="details-btn"><i class="fas fa-chevron-down"></i></button></td>
+                                </tr>
+                                <tr class="details-row general">
+                                    <td colspan="6">
+                                        <div class="subject-details">
+                                            <div class="assignments-list">
+                                                <h4>Задания:</h4>
+                                                <ul>
+                                                    <li>
+                                                        <span class="assignment-name">Реферат</span>
+                                                        <span class="assignment-grade satisfactory">3</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Доклад</span>
+                                                        <span class="assignment-grade good">4</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Тест</span>
+                                                        <span class="assignment-grade satisfactory">3</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="teacher-comments">
+                                                <h4>Комментарии преподавателя:</h4>
+                                                <p>Необходимо уделять больше внимания подготовке к занятиям и работе с источниками.</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="subject-row general">
+                                    <td>Иностранный язык</td>
+                                    <td>Николаева Н.Н.</td>
+                                    <td class="grade good">4.5</td>
+                                    <td>92%</td>
+                                    <td><span class="status-badge good">Хорошо</span></td>
+                                    <td><button class="details-btn"><i class="fas fa-chevron-down"></i></button></td>
+                                </tr>
+                                <tr class="details-row general">
+                                    <td colspan="6">
+                                        <div class="subject-details">
+                                            <div class="assignments-list">
+                                                <h4>Задания:</h4>
+                                                <ul>
+                                                    <li>
+                                                        <span class="assignment-name">Устный опрос</span>
+                                                        <span class="assignment-grade excellent">5</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Письменная работа</span>
+                                                        <span class="assignment-grade good">4</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="assignment-name">Тест по грамматике</span>
+                                                        <span class="assignment-grade good">4</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="teacher-comments">
+                                                <h4>Комментарии преподавателя:</h4>
+                                                <p>Хорошее владение языком. Рекомендую больше практиковать письменную речь.</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <section class="attendance-section">
+                    <div class="section-header">
+                        <h2>Посещаемость</h2>
+                    </div>
+                    
+                    <div class="attendance-chart-container">
+                        <canvas id="attendanceChart" height="250"></canvas>
+                    </div>
+                    
+                    <div class="attendance-details">
+                        <div class="attendance-stat">
+                            <div class="stat-circle present">
+                                <span>85%</span>
+                            </div>
+                            <p>Присутствие</p>
+                        </div>
+                        <div class="attendance-stat">
+                            <div class="stat-circle absent">
+                                <span>8%</span>
+                            </div>
+                            <p>Отсутствие</p>
+                        </div>
+                        <div class="attendance-stat">
+                            <div class="stat-circle excused">
+                                <span>7%</span>
+                            </div>
+                            <p>По уважительной причине</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="academic-achievements">
+                    <div class="section-header">
+                        <h2>Академические достижения</h2>
+                    </div>
+                    
+                    <div class="achievements-container">
+                        <div class="achievement-card">
+                            <div class="achievement-icon">
+                                <i class="fas fa-medal"></i>
+                            </div>
+                            <div class="achievement-info">
+                                <h3>Отличник семестра</h3>
+                                <p>Получено за высокие оценки в течение 2-го семестра</p>
+                                <span class="achievement-date">Май 2023</span>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-card">
+                            <div class="achievement-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="achievement-info">
+                                <h3>Победитель олимпиады по программированию</h3>
+                                <p>Внутриколледжная олимпиада по программированию</p>
+                                <span class="achievement-date">Апрель 2023</span>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-card">
+                            <div class="achievement-icon">
+                                <i class="fas fa-certificate"></i>
+                            </div>
+                            <div class="achievement-info">
+                                <h3>Участник научной конференции</h3>
+                                <p>Городская научная конференция "Информационные технологии будущего"</p>
+                                <span class="achievement-date">Март 2023</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="recommendations-section">
+                    <div class="section-header">
+                        <h2>Рекомендации по улучшению успеваемости</h2>
+                    </div>
+                    
+                    <div class="recommendations-container">
+                        <div class="recommendation-card">
+                            <div class="recommendation-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="recommendation-content">
+                                <h3>История</h3>
+                                <p>Рекомендуется уделить больше внимания подготовке к занятиям и работе с историческими источниками. Посетите дополнительные консультации преподавателя.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-icon">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <div class="recommendation-content">
+                                <h3>Математика</h3>
+                                <p>Для улучшения результатов рекомендуется регулярно выполнять дополнительные задания и посещать факультативные занятия по предмету.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-icon">
+                                <i class="fas fa-language"></i>
+                            </div>
+                            <div class="recommendation-content">
+                                <h3>Иностранный язык</h3>
+                                <p>Рекомендуется больше практиковать письменную речь и грамматику. Обратите внимание на дополнительные материалы в разделе "Учебные материалы".</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Support Chat Modal -->
+    <div id="supportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Техническая поддержка</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="chat-container">
+                    <div id="chatMessages" class="chat-messages">
+                        <div class="message support">
+                            <div class="message-content">
+                                <p>Добро пожаловать в службу поддержки! Как я могу вам помочь?</p>
+                                <span class="message-time">Сейчас</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <textarea id="messageInput" placeholder="Введите ваше сообщение..." rows="3"></textarea>
+                        <button id="sendMessage" class="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Button -->
+    <button id="supportBtn" class="support-btn">
+        <i class="fas fa-question-circle"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/student-dashboard.js"></script>
+    <script src="../js/support-chat.js"></script>
+    <script src="../js/performance-charts.js"></script>
+    <script src="../js/performance-api.js"></script>
+    <script>
+        // Скрипт для отображения/скрытия деталей по предметам
+        document.querySelectorAll('.details-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const detailsRow = this.closest('tr').nextElementSibling;
+                detailsRow.classList.toggle('active');
+                this.querySelector('i').classList.toggle('fa-chevron-down');
+                this.querySelector('i').classList.toggle('fa-chevron-up');
+            });
+        });
+        
+        // Скрипт для фильтрации предметов
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                const rows = document.querySelectorAll('.subject-row, .details-row');
+                
+                rows.forEach(row => {
+                    if (filter === 'all' || row.classList.contains(filter)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+    </script>   
+</body>
+</html>

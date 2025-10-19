@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учебные материалы - Университетский Колледж</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/lk.css">
+    <link rel="stylesheet" href="../css/ych_mat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Университетский Колледж<span> ВолГУ</span></h1>
+            </div>
+            <div class="user-panel">
+                <div class="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                    <div class="notifications-dropdown">
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-book"></i></div>
+                            <div class="notification-content">
+                                <p>Новый материал по дисциплине "Программирование"</p>
+                                <span class="notification-time">2 часа назад</span>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-tasks"></i></div>
+                            <div class="notification-content">
+                                <p>Новое задание по дисциплине "Базы данных"</p>
+                                <span class="notification-time">Вчера</span>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div class="notification-content">
+                                <p>Изменения в расписании на следующую неделю</p>
+                                <span class="notification-time">2 дня назад</span>
+                            </div>
+                        </div>
+                        <a href="#" class="all-notifications">Все уведомления</a>
+                    </div>
+                </div>
+                <div class="user-info">
+                    <img src="../images/avatar.png" alt="Фото профиля" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                    <span>Иванов Иван</span>
+                    <i class="fas fa-chevron-down"></i>
+                    <div class="user-dropdown">
+                        <ul>
+                            <li><a href="#"><i class="fas fa-user"></i> Профиль</a></li>
+                            <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Выход</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <aside class="sidebar">
+                <nav>
+                    <ul>
+                        <li><a href="lk.html"><i class="fas fa-home"></i> Главная</a></li>
+                        <li><a href="raspis.html"><i class="fas fa-calendar-alt"></i> Расписание</a></li>
+                        <li class="active"><a href="ych_mat.html"><i class="fas fa-book"></i> Учебные материалы</a></li>
+                        <li><a href="zadania.html"><i class="fas fa-tasks"></i> Задания</a></li>
+                        <li><a href="usp.html"><i class="fas fa-chart-line"></i> Успеваемость</a></li>
+                        
+                    </ul>
+                </nav>
+                
+            </aside>
+            
+            <main>
+                <section class="page-header">
+                    <h2>Учебные материалы</h2>
+                    <div class="actions-container">
+                        <div class="search-container">
+                            <input type="text" id="searchMaterials" placeholder="Поиск материалов...">
+                            <button><i class="fas fa-search"></i></button>
+                        </div>
+                        <button id="uploadMaterialBtn" class="upload-btn"><i class="fas fa-upload"></i> Загрузить материал</button>
+                    </div>
+                </section>
+                <div id="uploadModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-modal">&times;</span>
+                        <h3>Загрузка учебного материала</h3>
+                        <form id="uploadMaterialForm" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="materialTitle">Название материала:</label>
+                                <input type="text" id="materialTitle" name="materialTitle" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="materialSubject">Дисциплина:</label>
+                                <select id="materialSubject" name="materialSubject" required>
+                                    <option value="">Выберите дисциплину</option>
+                                    <option value="programming">Программирование</option>
+                                    <option value="databases">Базы данных</option>
+                                    <option value="infosec">Информационная безопасность</option>
+                                    <option value="math">Математика</option>
+                                    <option value="networks">Компьютерные сети</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="materialType">Тип материала:</label>
+                                <select id="materialType" name="materialType" required>
+                                    <option value="">Выберите тип</option>
+                                    <option value="lecture">Лекция</option>
+                                    <option value="lab">Лабораторная работа</option>
+                                    <option value="practice">Практическое задание</option>
+                                    <option value="book">Учебник</option>
+                                    <option value="video">Видеоматериал</option>
+                                    <option value="presentation">Презентация</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="materialSemester">Семестр:</label>
+                                <select id="materialSemester" name="materialSemester" required>
+                                    <option value="">Выберите семестр</option>
+                                    <option value="1">Семестр 1</option>
+                                    <option value="2">Семестр 2</option>
+                                    <option value="3">Семестр 3</option>
+                                    <option value="4">Семестр 4</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="materialDescription">Описание:</label>
+                                <textarea id="materialDescription" name="materialDescription" rows="3" required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="materialFile">Файл материала:</label>
+                                <input type="file" id="materialFile" name="materialFile" required>
+                                <p class="file-info">Максимальный размер файла: 50MB</p>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" class="cancel-btn">Отмена</button>
+                                <button type="submit" class="submit-btn">Загрузить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+                <section class="materials-filter">
+                    <div class="filter-group">
+                        <label for="subjectFilter">Дисциплина:</label>
+                        <select id="subjectFilter">
+                            <option value="all">Все дисциплины</option>
+                            <option value="programming">Программирование</option>
+                            <option value="databases">Базы данных</option>
+                            <option value="infosec">Информационная безопасность</option>
+                            <option value="math">Математика</option>
+                            <option value="networks">Компьютерные сети</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="typeFilter">Тип материала:</label>
+                        <select id="typeFilter">
+                            <option value="all">Все типы</option>
+                            <option value="lecture">Лекции</option>
+                            <option value="lab">Лабораторные работы</option>
+                            <option value="practice">Практические задания</option>
+                            <option value="book">Учебники</option>
+                            <option value="video">Видеоматериалы</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="semesterFilter">Семестр:</label>
+                        <select id="semesterFilter">
+                            <option value="all">Все семестры</option>
+                            <option value="1">Семестр 1</option>
+                            <option value="2">Семестр 2</option>
+                            <option value="3" selected>Семестр 3</option>
+                            <option value="4">Семестр 4</option>
+                        </select>
+                    </div>
+                </section>
+                
+            
+                <div class="material-category">
+                        <h3><i class="fas fa-laptop-code"></i> Программирование</h3>
+                        <div class="materials-grid">
+                            <div class="material-card">
+                                <div class="material-icon"><i class="fas fa-file-pdf"></i></div>
+                                <div class="material-info">
+                                    <h4>Лекция №5: Объектно-ориентированное программирование</h4>
+                                    <p class="material-details">
+                                        <span class="material-type">Лекция</span>
+                                        <span class="material-date">Добавлено: 10 сентября 2023</span>
+                                        <span class="material-size">PDF, 2.5 MB</span>
+                                    </p>
+                                    <div class="material-description">
+                                        Основные принципы ООП: инкапсуляция, наследование, полиморфизм. Примеры реализации на языке Java.
+                                    </div>
+                                </div>
+                                <div class="material-actions">
+                                    <button class="view-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="download-btn"><i class="fas fa-download"></i></button>
+                                    <button class="favorite-btn"><i class="far fa-star"></i></button>
+                                </div>
+                            </div>
+                            
+                            <div class="material-card">
+                                <div class="material-icon"><i class="fas fa-file-code"></i></div>
+                                <div class="material-info">
+                                    <h4>Лабораторная работа №3: Работа с коллекциями</h4>
+                                    <p class="material-details">
+                                        <span class="material-type">Лабораторная работа</span>
+                                        <span class="material-date">Добавлено: 5 сентября 2023</span>
+                                        <span class="material-size">ZIP, 1.8 MB</span>
+                                    </p>
+                                    <div class="material-description">
+                                        Практические задания по работе с коллекциями в Java: List, Set, Map. Исходные файлы и примеры.
+                                    </div>
+                                </div>
+                                <div class="material-actions">
+                                    <button class="view-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="download-btn"><i class="fas fa-download"></i></button>
+                                    <button class="favorite-btn"><i class="far fa-star"></i></button>
+                                </div>
+                            </div>
+                            
+                            <div class="material-card new">
+                                <div class="material-icon"><i class="fas fa-file-video"></i></div>
+                                <div class="material-info">
+                                    <h4>Видеолекция: Многопоточное программирование</h4>
+                                    <p class="material-details">
+                                        <span class="material-type">Видео</span>
+                                        <span class="material-date">Добавлено: 12 сентября 2023</span>
+                                        <span class="material-size">MP4, 350 MB</span>
+                                    </p>
+                                    <div class="material-description">
+                                        Основы многопоточного программирования в Java. Создание и управление потоками, синхронизация.
+                                    </div>
+                                </div>
+                                <div class="material-actions">
+                                    <button class="view-btn"><i class="fas fa-play"></i></button>
+                                    <button class="download-btn"><i class="fas fa-download"></i></button>
+                                    <button class="favorite-btn"><i class="far fa-star"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#" class="view-all-link">Все материалы по программированию <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    
+                    <div class="material-category">
+                        <h3><i class="fas fa-database"></i> Базы данных</h3>
+                        <div class="materials-grid">
+                            <div class="material-card">
+                                <div class="material-icon"><i class="fas fa-file-powerpoint"></i></div>
+                                <div class="material-info">
+                                    <h4>Презентация: Нормализация баз данных</h4>
+                                    <p class="material-details">
+                                        <span class="material-type">Презентация</span>
+                                        <span class="material-date">Добавлено: 8 сентября 2023</span>
+                                        <span class="material-size">PPTX, 4.2 MB</span>
+                                    </p>
+                                    <div class="material-description">
+                                        Нормальные формы баз данных. Процесс нормализации. Примеры приведения к 3НФ.
+                                    </div>
+                                </div>
+                                <div class="material-actions">
+                                    <button class="view-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="download-btn"><i class="fas fa-download"></i></button>
+                                    <button class="favorite-btn"><i class="far fa-star"></i></button>
+                                </div>
+                            </div>
+                            
+                            <div class="material-card">
+                                <div class="material-icon"><i class="fas fa-file-alt"></i></div>
+                                <div class="material-info">
+                                    <h4>Практическое задание: Создание SQL-запросов</h4>
+                                    <p class="material-details">
+                                        <span class="material-type">Практическое задание</span>
+                                        <span class="material-date">Добавлено: 1 сентября 2023</span>
+                                        <span class="material-size">DOCX, 1.1 MB</span>
+                                    </p>
+                                    <div class="material-description">
+                                        Задания на составление сложных SQL-запросов: JOIN, GROUP BY, подзапросы, оконные функции.
+                                    </div>
+                                </div>
+                                <div class="material-actions">
+                                    <button class="view-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="download-btn"><i class="fas fa-download"></i></button>
+                                    <button class="favorite-btn"><i class="fas fa-star"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#" class="view-all-link">Все материалы по базам данных <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    
+                    <div class="material-category">
+                        <h3><i class="fas fa-shield-alt"></i> Информационная безопасность</h3>
+                        <div class="materials-grid">
+                            <div class="material-card">
+                                <div class="material-icon"><i class="fas fa-file-pdf"></i></div>
+                                <div class="material-info">
+                                    <h4>Лекция: Основы криптографии</h4>
+                                    <p class="material-details">
+                                        <span class="material-type">Лекция</span>
+                                        <span class="material-date">Добавлено: 7 сентября 2023</span>
+                                        <span class="material-size">PDF, 3.1 MB</span>
+                                    </p>
+                                    <div class="material-description">
+                                        Введение в криптографию. Симметричное и асимметричное шифрование. Хеш-функции и их применение.
+                                    </div>
+                                </div>
+                                <div class="material-actions">
+                                    <button class="view-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="download-btn"><i class="fas fa-download"></i></button>
+                                    <button class="favorite-btn"><i class="far fa-star"></i></button>
+                                </div>
+                            </div>
+                            
+                            <div class="material-card new">
+                                <div class="material-icon"><i class="fas fa-file-alt"></i></div>
+                                <div class="material-info">
+                                    <h4>Практическое задание: Анализ защищенности веб-приложений</h4>
+                                    <p class="material-details">
+                                        <span class="material-type">Практическое задание</span>
+                                        <span class="material-date">Добавлено: 11 сентября 2023</span>
+                                        <span class="material-size">DOCX, 1.5 MB</span>
+                                    </p>
+                                    <div class="material-description">
+                                        Методы тестирования безопасности веб-приложений. Обнаружение и устранение типичных уязвимостей.
+                                    </div>
+                                </div>
+                                <div class="material-actions">
+                                    <button class="view-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="download-btn"><i class="fas fa-download"></i></button>
+                                    <button class="favorite-btn"><i class="far fa-star"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#" class="view-all-link">Все материалы по информационной безопасности <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    
+                    
+                </div>    
+            </main>            
+        <script src="../js/utils.js"></script>
+        <script src="../js/ych_mat.js"></script>
+        <script src="../js/materials-api.js"></script>            
+    </body>                
+</html>                        
+                    
