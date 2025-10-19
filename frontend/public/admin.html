@@ -17,7 +17,9 @@
     <div class="container admin-container">
         <header>
             <div class="logo">
-                <a href="/index.html"><h1>Университетский Колледж<span> ВолГУ </span></h1></a>
+                <a href="/index.html">
+                    <img src="../images/logo.jpg" alt="Университетский Колледж ВолГУ" class="logo-image">
+                </a>
                 <style>a {text-decoration: none;}</style>
             </div>
             <div class="user-panel">
@@ -355,13 +357,6 @@
                                 <i class="fas fa-calendar-check"></i> Создать отчет
                             </button>
                         </div>
-                        <div class="report-card">
-                            <h3>Финансовый отчет</h3>
-                            <p>Анализ финансовых показателей</p>
-                            <button class="btn-primary" onclick="generateReport('financial')">
-                                <i class="fas fa-dollar-sign"></i> Создать отчет
-                            </button>
-                        </div>
                     </div>
                 </section>
 
@@ -495,6 +490,315 @@
                 </form>
             </div>
         </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Редактировать пользователя</h3>
+                <button class="close-btn" onclick="closeModal('editUserModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editUserForm" class="modal-form">
+                <input type="hidden" id="editUserId" name="userId">
+                <div class="form-group">
+                    <label for="editUserFullName">Полное имя *</label>
+                    <input type="text" id="editUserFullName" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editUserEmail">Email *</label>
+                    <input type="email" id="editUserEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="editUserPassword">Новый пароль</label>
+                    <input type="password" id="editUserPassword" name="password" placeholder="Оставьте пустым, чтобы не менять">
+                </div>
+                <div class="form-group">
+                    <label for="editUserRole">Роль *</label>
+                    <select id="editUserRole" name="role" required>
+                        <option value="">Выберите роль</option>
+                        <option value="student">Студент</option>
+                        <option value="teacher">Преподаватель</option>
+                        <option value="admin">Администратор</option>
+                    </select>
+                </div>
+                <div class="form-group role-specific-field" id="editSpecialtyGroup">
+                    <label for="editUserSpecialty">Специальность</label>
+                    <select id="editUserSpecialty" name="specialty">
+                        <option value="">Выберите специальность</option>
+                        <option value="10.02.04">10.02.04 Информационная безопасность телекоммуникационных систем</option>
+                        <option value="10.02.05">10.02.05 Информационная безопасность автоматизированных систем</option>
+                        <option value="15.02.10">15.02.10 Мехатроника и мобильная робототехника</option>
+                        <option value="09.02.06">09.02.06 Сетевое и системное администрирование</option>
+                        <option value="09.02.07">09.02.07 Информационные системы и программирование</option>
+                        <option value="11.02.15">11.02.15 Инфокоммуникационные сети и системы связи</option>
+                        <option value="38.02.01">38.02.01 Экономика и бухгалтерский учет</option>
+                        <option value="46.02.01">46.02.01 Документационное обеспечение управления</option>
+                    </select>
+                </div>
+                <div class="form-group role-specific-field" id="editGroupGroup">
+                    <label for="editUserGroup">Группа</label>
+                    <select id="editUserGroup" name="group">
+                        <option value="">Выберите группу</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="editUserActive" name="isActive">
+                        <span>Активный пользователь</span>
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('editUserModal')">Отмена</button>
+                    <button type="submit" class="btn-primary">Сохранить изменения</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Group Modal -->
+    <div id="editGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Редактировать группу</h3>
+                <button class="close-btn" onclick="closeModal('editGroupModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editGroupForm" class="modal-form">
+                <input type="hidden" id="editGroupId" name="groupId">
+                <div class="form-group">
+                    <label for="editGroupName">Название группы *</label>
+                    <input type="text" id="editGroupName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="editGroupSpecialty">Специальность *</label>
+                    <input type="text" id="editGroupSpecialty" name="specialty" required>
+                </div>
+                <div class="form-group">
+                    <label for="editGroupYear">Год поступления *</label>
+                    <input type="number" id="editGroupYear" name="year" required>
+                </div>
+                <div class="form-group">
+                    <label for="editGroupDescription">Описание</label>
+                    <textarea id="editGroupDescription" name="description" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('editGroupModal')">Отмена</button>
+                    <button type="submit" class="btn-primary">Сохранить изменения</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Attendance Modal -->
+    <div id="attendanceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Отметить посещаемость</h3>
+                <button class="close-btn" onclick="closeModal('attendanceModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="attendanceForm" class="modal-form">
+                <div class="form-group">
+                    <label for="attendanceGroup">Группа *</label>
+                    <select id="attendanceGroup" name="group" required>
+                        <option value="">Выберите группу</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="attendanceSubject">Предмет *</label>
+                    <input type="text" id="attendanceSubject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="attendanceDate">Дата *</label>
+                    <input type="date" id="attendanceDate" name="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="attendanceTime">Время *</label>
+                    <input type="time" id="attendanceTime" name="time" required>
+                </div>
+                <div class="form-group">
+                    <label>Студенты и их статус *</label>
+                    <div id="studentsList" class="students-attendance-list">
+                        <!-- Список студентов будет загружен динамически -->
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('attendanceModal')">Отмена</button>
+                    <button type="submit" class="btn-primary">Сохранить посещаемость</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Attendance Modal -->
+    <div id="editAttendanceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Редактировать посещаемость</h3>
+                <button class="close-btn" onclick="closeModal('editAttendanceModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editAttendanceForm" class="modal-form">
+                <input type="hidden" id="editAttendanceId" name="attendanceId">
+                <div class="form-group">
+                    <label for="editAttendanceStudent">Студент</label>
+                    <input type="text" id="editAttendanceStudent" name="student" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="editAttendanceGroup">Группа</label>
+                    <input type="text" id="editAttendanceGroup" name="group" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="editAttendanceSubject">Предмет</label>
+                    <input type="text" id="editAttendanceSubject" name="subject" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="editAttendanceDate">Дата</label>
+                    <input type="date" id="editAttendanceDate" name="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAttendanceStatus">Статус *</label>
+                    <select id="editAttendanceStatus" name="status" required>
+                        <option value="">Выберите статус</option>
+                        <option value="present">Присутствовал</option>
+                        <option value="absent">Отсутствовал</option>
+                        <option value="late">Опоздал</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editAttendanceNotes">Примечания</label>
+                    <textarea id="editAttendanceNotes" name="notes" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('editAttendanceModal')">Отмена</button>
+                    <button type="submit" class="btn-primary">Сохранить изменения</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reports Modal -->
+    <div id="reportsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Создать отчёт</h3>
+                <button class="close-btn" onclick="closeModal('reportsModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="reportsForm" class="modal-form">
+                <div class="form-group">
+                    <label for="reportType">Тип отчёта *</label>
+                    <select id="reportType" name="type" required>
+                        <option value="">Выберите тип отчёта</option>
+                        <option value="performance">Отчёт по успеваемости</option>
+                        <option value="attendance">Отчёт по посещаемости</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reportGroup">Группа</label>
+                    <select id="reportGroup" name="group">
+                        <option value="">Все группы</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reportDateFrom">Дата с</label>
+                    <input type="date" id="reportDateFrom" name="dateFrom">
+                </div>
+                <div class="form-group">
+                    <label for="reportDateTo">Дата по</label>
+                    <input type="date" id="reportDateTo" name="dateTo">
+                </div>
+                <div class="form-group">
+                    <label for="reportFormat">Формат отчёта</label>
+                    <select id="reportFormat" name="format">
+                        <option value="pdf">PDF</option>
+                        <option value="excel">Excel</option>
+                        <option value="csv">CSV</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('reportsModal')">Отмена</button>
+                    <button type="submit" class="btn-primary">Создать отчёт</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Настройки системы</h3>
+                <button class="close-btn" onclick="closeModal('settingsModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="settingsForm" class="modal-form">
+                <div class="settings-section">
+                    <h4>Общие настройки</h4>
+                    <div class="form-group">
+                        <label for="settingCollegeName">Название колледжа</label>
+                        <input type="text" id="settingCollegeName" name="collegeName" value="Университетский Колледж ВолГУ">
+                    </div>
+                    <div class="form-group">
+                        <label for="settingAcademicYear">Учебный год</label>
+                        <input type="text" id="settingAcademicYear" name="academicYear" value="2024-2025">
+                    </div>
+                    <div class="form-group">
+                        <label for="settingMaxStudents">Максимум студентов в группе</label>
+                        <input type="number" id="settingMaxStudents" name="maxStudents" value="30" min="1" max="50">
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h4>Уведомления</h4>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="settingEmailNotifications" name="emailNotifications" checked>
+                            <span>Email уведомления</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="settingPushNotifications" name="pushNotifications" checked>
+                            <span>Push уведомления</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="settingAttendanceAlerts" name="attendanceAlerts" checked>
+                            <span>Уведомления о низкой посещаемости</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h4>Безопасность</h4>
+                    <div class="form-group">
+                        <label for="settingSessionTimeout">Таймаут сессии (минуты)</label>
+                        <input type="number" id="settingSessionTimeout" name="sessionTimeout" value="60" min="15" max="480">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="settingRequireStrongPasswords" name="requireStrongPasswords" checked>
+                            <span>Требовать сложные пароли</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('settingsModal')">Отмена</button>
+                    <button type="submit" class="btn-primary">Сохранить настройки</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">

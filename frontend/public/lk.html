@@ -52,7 +52,6 @@
                     <i class="fas fa-chevron-down desktop-only"></i>
                     <div class="user-dropdown">
                         <ul>
-                            <li><a href="#" onclick="showProfileModal()"><i class="fas fa-user"></i> Профиль</a></li>
                             <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выход</a></li>
                         </ul>
                     </div>
@@ -105,9 +104,8 @@
                 </div>
                 
                 <div class="menu-section">
-                    <h4>Профиль</h4>
+                    <h4>Настройки</h4>
                     <ul>
-                        <li><a href="#profile" onclick="toggleMobileMenu()"><i class="fas fa-user"></i> Профиль</a></li>
                         <li><a href="#settings" onclick="toggleMobileMenu()"><i class="fas fa-cog"></i> Настройки</a></li>
                         <li id="adminNavItemMobile" style="display: none;"><a href="admin.html" onclick="toggleMobileMenu()"><i class="fas fa-cogs"></i> Администрирование</a></li>
                         <li><a href="#" onclick="logout(); toggleMobileMenu()"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
@@ -564,53 +562,7 @@
         </div>
     </div>
 
-    <!-- Profile Modal -->
-    <div id="profileModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Мой профиль</h3>
-                <button class="close-btn" onclick="closeModal('profileModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="profile-content">
-                <div class="profile-avatar">
-                    <img src="../images/avatar.png" alt="Фото профиля">
-                    <button class="btn-secondary">Изменить фото</button>
-                </div>
-                <div class="profile-info">
-                    <div class="form-group">
-                        <label>Полное имя</label>
-                        <input type="text" value="Иванов Иван Иванович" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" value="ivan.ivanov@student.volgau.ru" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Группа</label>
-                        <input type="text" value="ИБАСкд-232" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Специальность</label>
-                        <input type="text" value="Информационная безопасность автоматизированных систем" readonly>
-                    </div>
-                </div>
-            </div>
-            <div class="form-actions">
-                <button class="btn-secondary" onclick="closeModal('profileModal')">Закрыть</button>
-                <button class="btn-primary" onclick="editProfile()">Редактировать</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-spinner">
-            <i class="fas fa-spinner fa-spin"></i>
-            <p>Загрузка...</p>
-        </div>
-    </div>
 
     <!-- Scripts -->
     <script src="../js/jquery-3.3.1.min.js"></script>

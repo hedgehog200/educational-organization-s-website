@@ -1122,8 +1122,184 @@ body.modal-open .modal-backdrop {
     background: rgba(255, 255, 255, 0.8);
     z-index: 1;
     transition: opacity 0.3s ease;
+    pointer-events: none; /* Allow interaction with form elements */
 }
 
 .role-specific-field.hidden::after {
     opacity: 0;
+}
+
+/* Additional styles for new modals */
+.settings-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.settings-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.settings-section h4 {
+    color: var(--text-color);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Students attendance list */
+.students-attendance-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    background: var(--light-bg);
+}
+
+.student-attendance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.student-attendance-item:last-child {
+    margin-bottom: 0;
+}
+
+.student-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.student-name {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.student-id {
+    font-size: 12px;
+    color: var(--muted-color);
+}
+
+.attendance-status select {
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+/* Large modals */
+#settingsModal .modal-content {
+    max-width: 700px;
+}
+
+#attendanceModal .modal-content {
+    max-width: 800px;
+}
+
+#reportsModal .modal-content {
+    max-width: 600px;
+}
+
+/* Form validation styles */
+.form-group input:invalid,
+.form-group select:invalid,
+.form-group textarea:invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+}
+
+.form-group input:valid,
+.form-group select:valid,
+.form-group textarea:valid {
+    border-color: #28a745;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.1);
+}
+
+/* Loading states for forms */
+.form-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.form-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--primary-color);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Specialty dropdown specific styles */
+#userSpecialty,
+#editUserSpecialty {
+    position: relative;
+    z-index: 10;
+    background: white;
+    cursor: pointer;
+}
+
+#userSpecialty:focus,
+#editUserSpecialty:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Ensure specialty dropdown is always clickable */
+.role-specific-field:not(.hidden) #userSpecialty,
+.role-specific-field:not(.hidden) #editUserSpecialty {
+    pointer-events: auto;
+    position: relative;
+    z-index: 10;
+}
+
+/* Logo styles */
+.logo-image {
+    height: 50px;
+    width: auto;
+    max-width: 200px;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+.logo-image:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+/* Mobile logo adjustments */
+@media (max-width: 768px) {
+    .logo-image {
+        height: 40px;
+        max-width: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-image {
+        height: 35px;
+        max-width: 120px;
+    }
 }

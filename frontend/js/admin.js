@@ -473,6 +473,42 @@ function initializeEventListeners() {
     if (addGroupForm) {
         addGroupForm.addEventListener('submit', handleAddGroup);
     }
+    
+    // Edit user form
+    const editUserForm = document.getElementById('editUserForm');
+    if (editUserForm) {
+        editUserForm.addEventListener('submit', handleEditUser);
+    }
+    
+    // Edit group form
+    const editGroupForm = document.getElementById('editGroupForm');
+    if (editGroupForm) {
+        editGroupForm.addEventListener('submit', handleEditGroup);
+    }
+    
+    // Attendance form
+    const attendanceForm = document.getElementById('attendanceForm');
+    if (attendanceForm) {
+        attendanceForm.addEventListener('submit', handleAttendance);
+    }
+    
+    // Edit attendance form
+    const editAttendanceForm = document.getElementById('editAttendanceForm');
+    if (editAttendanceForm) {
+        editAttendanceForm.addEventListener('submit', handleEditAttendance);
+    }
+    
+    // Reports form
+    const reportsForm = document.getElementById('reportsForm');
+    if (reportsForm) {
+        reportsForm.addEventListener('submit', handleReports);
+    }
+    
+    // Settings form
+    const settingsForm = document.getElementById('settingsForm');
+    if (settingsForm) {
+        settingsForm.addEventListener('submit', handleSettings);
+    }
 }
 
 // Search users
@@ -525,6 +561,7 @@ document.addEventListener('change', function(event) {
 // Load groups for user form dropdown
 async function loadGroupsForUserForm() {
     try {
+        console.log('Loading groups for user form...');
         const response = await fetch('/api/admin/groups', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -533,44 +570,51 @@ async function loadGroupsForUserForm() {
         
         if (response.ok) {
             const data = await response.json();
+            console.log('Groups response:', data);
             if (data.success) {
-                populateGroupDropdown(data.groups);
+                populateGroupDropdown(data.groups, 'userGroup');
+                console.log('Groups loaded successfully:', data.groups.length);
             } else {
                 console.warn('Failed to load groups:', data.message);
-                populateGroupDropdown([]);
+                populateGroupDropdown([], 'userGroup');
             }
         } else {
             console.warn('Failed to load groups, status:', response.status);
-            populateGroupDropdown([]);
+            populateGroupDropdown([], 'userGroup');
         }
     } catch (error) {
         console.error('Error loading groups for user form:', error);
-        populateGroupDropdown([]);
+        populateGroupDropdown([], 'userGroup');
     }
 }
 
-// Populate group dropdown in user form
-function populateGroupDropdown(groups) {
-    const groupSelect = document.getElementById('userGroup');
-    if (!groupSelect) return;
-    
-    // Clear existing options except the first one
-    groupSelect.innerHTML = '<option value="">Выберите группу</option>';
-    
-    if (groups && groups.length > 0) {
-        groups.forEach(group => {
-            const option = document.createElement('option');
-            option.value = group.name;
-            option.textContent = group.name;
-            groupSelect.appendChild(option);
+// Load groups for edit user form dropdown
+async function loadGroupsForEditForm() {
+    try {
+        console.log('Loading groups for edit user form...');
+        const response = await fetch('/api/admin/groups', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         });
-    } else {
-        // Add option if no groups available
-        const option = document.createElement('option');
-        option.value = '';
-        option.textContent = 'Группы не найдены';
-        option.disabled = true;
-        groupSelect.appendChild(option);
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Groups response for edit:', data);
+            if (data.success) {
+                populateGroupDropdown(data.groups, 'editUserGroup');
+                console.log('Groups loaded successfully for edit:', data.groups.length);
+            } else {
+                console.warn('Failed to load groups for edit:', data.message);
+                populateGroupDropdown([], 'editUserGroup');
+            }
+        } else {
+            console.warn('Failed to load groups for edit, status:', response.status);
+            populateGroupDropdown([], 'editUserGroup');
+        }
+    } catch (error) {
+        console.error('Error loading groups for edit form:', error);
+        populateGroupDropdown([], 'editUserGroup');
     }
 }
 
@@ -587,8 +631,11 @@ function setupRoleBasedFields() {
     const groupGroup = document.getElementById('groupGroup');
     
     if (!roleSelect || !specialtyGroup || !groupGroup) {
+        console.warn('Role-based fields not found');
         return;
     }
+    
+    console.log('Setting up role-based fields');
     
     // Remove any existing event listeners
     const newRoleSelect = roleSelect.cloneNode(true);
@@ -596,18 +643,23 @@ function setupRoleBasedFields() {
     
     // Add event listener for role changes
     newRoleSelect.addEventListener('change', function() {
+        console.log('Role changed to:', this.value);
         toggleFieldsBasedOnRole(this.value, specialtyGroup, groupGroup);
     });
     
     // Set initial state
+    console.log('Initial role:', newRoleSelect.value);
     toggleFieldsBasedOnRole(newRoleSelect.value, specialtyGroup, groupGroup);
 }
 
 // Toggle fields based on selected role
 function toggleFieldsBasedOnRole(role, specialtyGroup, groupGroup) {
     if (!specialtyGroup || !groupGroup) {
+        console.warn('Specialty or group elements not found');
         return;
     }
+    
+    console.log('Toggling fields for role:', role);
     
     // Reset fields
     specialtyGroup.classList.remove('hidden');
@@ -621,14 +673,25 @@ function toggleFieldsBasedOnRole(role, specialtyGroup, groupGroup) {
     
     if (role === 'teacher') {
         // For teachers: hide group, show specialty
+        console.log('Setting up teacher fields');
         groupGroup.classList.add('hidden');
+        specialtyGroup.classList.remove('hidden');
         if (groupSelect) groupSelect.value = '';
         
         // Update labels
         if (specialtyLabel) specialtyLabel.textContent = 'Специальность *';
         if (groupLabel) groupLabel.textContent = 'Группа';
+        
+        // Ensure specialty dropdown is visible and clickable
+        if (specialtySelect) {
+            specialtySelect.style.display = 'block';
+            specialtySelect.style.pointerEvents = 'auto';
+            specialtySelect.style.zIndex = '10';
+            console.log('Specialty select element:', specialtySelect);
+        }
     } else if (role === 'admin') {
         // For admins: hide both group and specialty
+        console.log('Setting up admin fields');
         specialtyGroup.classList.add('hidden');
         groupGroup.classList.add('hidden');
         if (specialtySelect) specialtySelect.value = '';
@@ -639,6 +702,7 @@ function toggleFieldsBasedOnRole(role, specialtyGroup, groupGroup) {
         if (groupLabel) groupLabel.textContent = 'Группа';
     } else if (role === 'student') {
         // For students: show both group and specialty
+        console.log('Setting up student fields');
         specialtyGroup.classList.remove('hidden');
         groupGroup.classList.remove('hidden');
         
@@ -647,6 +711,7 @@ function toggleFieldsBasedOnRole(role, specialtyGroup, groupGroup) {
         if (groupLabel) groupLabel.textContent = 'Группа *';
     } else {
         // Default: show both
+        console.log('Setting up default fields');
         specialtyGroup.classList.remove('hidden');
         groupGroup.classList.remove('hidden');
         
@@ -678,16 +743,19 @@ function clearUserForm() {
     }
 }
 
-function showAttendanceModal() {
-    showNotification('Функция отметки посещаемости будет добавлена позже', 'info');
+async function showAttendanceModal() {
+    await loadGroupsForAttendanceForm();
+    showModal('attendanceModal');
 }
 
 function showReportModal() {
-    showNotification('Функция создания отчетов будет добавлена позже', 'info');
+    loadGroupsForReportForm();
+    showModal('reportsModal');
 }
 
 function showSettingsModal() {
-    showNotification('Функция настроек будет добавлена позже', 'info');
+    loadSettingsData();
+    showModal('settingsModal');
 }
 
 // Form handlers
@@ -842,8 +910,52 @@ async function handleAddGroup(event) {
 }
 
 // User management functions
-function editUser(userId) {
-    showNotification('Функция редактирования пользователя будет добавлена позже', 'info');
+async function editUser(userId) {
+    try {
+        showLoading(true);
+        
+        // Load user data
+        const response = await fetch(`/api/admin/users/${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                const user = data.user;
+                
+                // Populate form
+                document.getElementById('editUserId').value = user.id;
+                document.getElementById('editUserFullName').value = user.full_name || '';
+                document.getElementById('editUserEmail').value = user.email || '';
+                document.getElementById('editUserRole').value = user.role || '';
+                document.getElementById('editUserSpecialty').value = user.specialty || '';
+                document.getElementById('editUserGroup').value = user.group_name || '';
+                document.getElementById('editUserActive').checked = user.is_active || false;
+                
+                // Load groups for dropdown
+                await loadGroupsForEditForm();
+                
+                // Setup role-based fields
+                setTimeout(() => {
+                    setupEditRoleBasedFields();
+                }, 300);
+                
+                showModal('editUserModal');
+            } else {
+                showNotification('Ошибка загрузки данных пользователя', 'error');
+            }
+        } else {
+            showNotification('Ошибка загрузки данных пользователя', 'error');
+        }
+    } catch (error) {
+        console.error('Error loading user data:', error);
+        showNotification('Ошибка загрузки данных пользователя', 'error');
+    } finally {
+        showLoading(false);
+    }
 }
 
 async function deleteUser(userId) {
@@ -882,8 +994,42 @@ async function deleteUser(userId) {
 }
 
 // Group management functions
-function editGroup(groupId) {
-    showNotification('Функция редактирования группы будет добавлена позже', 'info');
+async function editGroup(groupId) {
+    try {
+        showLoading(true);
+        
+        // Load group data
+        const response = await fetch(`/api/admin/groups/${groupId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                const group = data.group;
+                
+                // Populate form
+                document.getElementById('editGroupId').value = group.id;
+                document.getElementById('editGroupName').value = group.name || '';
+                document.getElementById('editGroupSpecialty').value = group.specialty || '';
+                document.getElementById('editGroupYear').value = group.year || '';
+                document.getElementById('editGroupDescription').value = group.description || '';
+                
+                showModal('editGroupModal');
+            } else {
+                showNotification('Ошибка загрузки данных группы', 'error');
+            }
+        } else {
+            showNotification('Ошибка загрузки данных группы', 'error');
+        }
+    } catch (error) {
+        console.error('Error loading group data:', error);
+        showNotification('Ошибка загрузки данных группы', 'error');
+    } finally {
+        showLoading(false);
+    }
 }
 
 async function deleteGroup(groupId) {
@@ -922,8 +1068,44 @@ async function deleteGroup(groupId) {
 }
 
 // Attendance management functions
-function editAttendance(attendanceId) {
-    showNotification('Функция редактирования посещаемости будет добавлена позже', 'info');
+async function editAttendance(attendanceId) {
+    try {
+        showLoading(true);
+        
+        // Load attendance data
+        const response = await fetch(`/api/admin/attendance/${attendanceId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                const attendance = data.attendance;
+                
+                // Populate form
+                document.getElementById('editAttendanceId').value = attendance.id;
+                document.getElementById('editAttendanceStudent').value = attendance.student_name || '';
+                document.getElementById('editAttendanceGroup').value = attendance.group_name || '';
+                document.getElementById('editAttendanceSubject').value = attendance.subject_name || '';
+                document.getElementById('editAttendanceDate').value = attendance.date || '';
+                document.getElementById('editAttendanceStatus').value = attendance.status || '';
+                document.getElementById('editAttendanceNotes').value = attendance.notes || '';
+                
+                showModal('editAttendanceModal');
+            } else {
+                showNotification('Ошибка загрузки данных посещаемости', 'error');
+            }
+        } else {
+            showNotification('Ошибка загрузки данных посещаемости', 'error');
+        }
+    } catch (error) {
+        console.error('Error loading attendance data:', error);
+        showNotification('Ошибка загрузки данных посещаемости', 'error');
+    } finally {
+        showLoading(false);
+    }
 }
 
 async function deleteAttendance(attendanceId) {
@@ -963,12 +1145,530 @@ async function deleteAttendance(attendanceId) {
 
 // Report functions
 function generateReport(type) {
-    showNotification(`Генерация отчета "${type}" будет добавлена позже`, 'info');
+    // Set the report type and show modal
+    document.getElementById('reportType').value = type;
+    loadGroupsForReportForm();
+    showModal('reportsModal');
 }
 
 // Export functions
 function exportUsers() {
     showNotification('Функция экспорта пользователей будет добавлена позже', 'info');
+}
+
+// New modal functions
+async function loadGroupsForAttendanceForm() {
+    try {
+        const response = await fetch('/api/admin/groups', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                populateGroupDropdown(data.groups, 'attendanceGroup');
+            }
+        }
+    } catch (error) {
+        console.error('Error loading groups for attendance:', error);
+    }
+}
+
+function loadGroupsForReportForm() {
+    // Load groups for report form
+    loadGroupsForAttendanceForm().then(() => {
+        const attendanceSelect = document.getElementById('attendanceGroup');
+        const reportSelect = document.getElementById('reportGroup');
+        if (attendanceSelect && reportSelect) {
+            reportSelect.innerHTML = attendanceSelect.innerHTML;
+        }
+    });
+}
+
+async function loadSettingsData() {
+    try {
+        const response = await fetch('/api/admin/settings', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                const settings = data.settings;
+                
+                // Populate settings form
+                document.getElementById('settingCollegeName').value = settings.collegeName || 'Университетский Колледж ВолГУ';
+                document.getElementById('settingAcademicYear').value = settings.academicYear || '2024-2025';
+                document.getElementById('settingMaxStudents').value = settings.maxStudents || 30;
+                document.getElementById('settingEmailNotifications').checked = settings.emailNotifications || true;
+                document.getElementById('settingPushNotifications').checked = settings.pushNotifications || true;
+                document.getElementById('settingAttendanceAlerts').checked = settings.attendanceAlerts || true;
+                document.getElementById('settingSessionTimeout').value = settings.sessionTimeout || 60;
+                document.getElementById('settingRequireStrongPasswords').checked = settings.requireStrongPasswords || true;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading settings:', error);
+    }
+}
+
+// Setup role-based fields for edit user form
+function setupEditRoleBasedFields() {
+    const roleSelect = document.getElementById('editUserRole');
+    const specialtyGroup = document.getElementById('editSpecialtyGroup');
+    const groupGroup = document.getElementById('editGroupGroup');
+    
+    if (!roleSelect || !specialtyGroup || !groupGroup) {
+        return;
+    }
+    
+    // Add event listener for role changes
+    roleSelect.addEventListener('change', function() {
+        toggleEditFieldsBasedOnRole(this.value, specialtyGroup, groupGroup);
+    });
+    
+    // Set initial state
+    toggleEditFieldsBasedOnRole(roleSelect.value, specialtyGroup, groupGroup);
+}
+
+// Toggle fields based on selected role for edit form
+function toggleEditFieldsBasedOnRole(role, specialtyGroup, groupGroup) {
+    if (!specialtyGroup || !groupGroup) {
+        return;
+    }
+    
+    // Reset fields
+    specialtyGroup.classList.remove('hidden');
+    groupGroup.classList.remove('hidden');
+    
+    // Clear values when hiding
+    const specialtySelect = document.getElementById('editUserSpecialty');
+    const groupSelect = document.getElementById('editUserGroup');
+    const specialtyLabel = specialtyGroup.querySelector('label');
+    const groupLabel = groupGroup.querySelector('label');
+    
+    if (role === 'teacher') {
+        // For teachers: hide group, show specialty
+        groupGroup.classList.add('hidden');
+        specialtyGroup.classList.remove('hidden');
+        if (groupSelect) groupSelect.value = '';
+        
+        // Update labels
+        if (specialtyLabel) specialtyLabel.textContent = 'Специальность *';
+        if (groupLabel) groupLabel.textContent = 'Группа';
+    } else if (role === 'admin') {
+        // For admins: hide both group and specialty
+        specialtyGroup.classList.add('hidden');
+        groupGroup.classList.add('hidden');
+        if (specialtySelect) specialtySelect.value = '';
+        if (groupSelect) groupSelect.value = '';
+        
+        // Update labels
+        if (specialtyLabel) specialtyLabel.textContent = 'Специальность';
+        if (groupLabel) groupLabel.textContent = 'Группа';
+    } else if (role === 'student') {
+        // For students: show both group and specialty
+        specialtyGroup.classList.remove('hidden');
+        groupGroup.classList.remove('hidden');
+        
+        // Update labels
+        if (specialtyLabel) specialtyLabel.textContent = 'Специальность *';
+        if (groupLabel) groupLabel.textContent = 'Группа *';
+    } else {
+        // Default: show both
+        specialtyGroup.classList.remove('hidden');
+        groupGroup.classList.remove('hidden');
+        
+        // Update labels
+        if (specialtyLabel) specialtyLabel.textContent = 'Специальность';
+        if (groupLabel) groupLabel.textContent = 'Группа';
+    }
+}
+
+// Populate group dropdown helper
+function populateGroupDropdown(groups, selectId) {
+    const groupSelect = document.getElementById(selectId);
+    if (!groupSelect) {
+        console.warn('Group select element not found:', selectId);
+        return;
+    }
+    
+    console.log('Populating group dropdown for:', selectId, 'with groups:', groups);
+    
+    // Clear existing options except the first one
+    groupSelect.innerHTML = '<option value="">Выберите группу</option>';
+    
+    if (groups && groups.length > 0) {
+        groups.forEach(group => {
+            const option = document.createElement('option');
+            option.value = group.name;
+            option.textContent = group.name;
+            groupSelect.appendChild(option);
+        });
+        console.log('Added', groups.length, 'groups to dropdown');
+    } else {
+        // Add option if no groups available
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'Группы не найдены';
+        option.disabled = true;
+        groupSelect.appendChild(option);
+        console.log('No groups available, added disabled option');
+    }
+}
+
+// Load students for attendance
+async function loadStudentsForAttendance(groupName) {
+    try {
+        const response = await fetch(`/api/admin/groups/${groupName}/students`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                displayStudentsForAttendance(data.students);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading students:', error);
+    }
+}
+
+// Display students for attendance marking
+function displayStudentsForAttendance(students) {
+    const studentsList = document.getElementById('studentsList');
+    if (!studentsList) return;
+    
+    studentsList.innerHTML = students.map(student => `
+        <div class="student-attendance-item">
+            <div class="student-info">
+                <span class="student-name">${student.full_name || student.name}</span>
+                <span class="student-id">ID: ${student.id}</span>
+            </div>
+            <div class="attendance-status">
+                <select name="student_${student.id}_status" required>
+                    <option value="">Выберите статус</option>
+                    <option value="present">Присутствовал</option>
+                    <option value="absent">Отсутствовал</option>
+                    <option value="late">Опоздал</option>
+                </select>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Event listener for group change in attendance form
+document.addEventListener('change', function(event) {
+    if (event.target && event.target.id === 'attendanceGroup') {
+        if (event.target.value) {
+            loadStudentsForAttendance(event.target.value);
+        } else {
+            document.getElementById('studentsList').innerHTML = '';
+        }
+    }
+});
+
+// Form handlers for new modals
+async function handleEditUser(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const userId = formData.get('userId');
+    const userData = {
+        full_name: formData.get('fullName'),
+        email: formData.get('email'),
+        password: formData.get('password'),
+        role: formData.get('role'),
+        specialty: formData.get('specialty'),
+        group_name: formData.get('group'),
+        is_active: formData.get('isActive') === 'on'
+    };
+    
+    // Remove empty password
+    if (!userData.password) {
+        delete userData.password;
+    }
+    
+    try {
+        showLoading(true);
+        
+        const response = await fetch(`/api/admin/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(userData)
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                showNotification('Пользователь успешно обновлен', 'success');
+                closeModal('editUserModal');
+                await loadUsersData();
+            } else {
+                showNotification(data.message || 'Ошибка обновления пользователя', 'error');
+            }
+        } else {
+            const error = await response.json();
+            showNotification(error.message || 'Ошибка обновления пользователя', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating user:', error);
+        showNotification('Ошибка обновления пользователя', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function handleEditGroup(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const groupId = formData.get('groupId');
+    const groupData = {
+        name: formData.get('name'),
+        specialty: formData.get('specialty'),
+        year: formData.get('year'),
+        description: formData.get('description')
+    };
+    
+    try {
+        showLoading(true);
+        
+        const response = await fetch(`/api/admin/groups/${groupId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(groupData)
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                showNotification('Группа успешно обновлена', 'success');
+                closeModal('editGroupModal');
+                await loadGroupsData();
+            } else {
+                showNotification(data.message || 'Ошибка обновления группы', 'error');
+            }
+        } else {
+            const error = await response.json();
+            showNotification(error.message || 'Ошибка обновления группы', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating group:', error);
+        showNotification('Ошибка обновления группы', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function handleAttendance(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const attendanceData = {
+        group: formData.get('group'),
+        subject: formData.get('subject'),
+        date: formData.get('date'),
+        time: formData.get('time'),
+        students: []
+    };
+    
+    // Collect student attendance data
+    const studentSelects = document.querySelectorAll('[name^="student_"][name$="_status"]');
+    studentSelects.forEach(select => {
+        if (select.value) {
+            const studentId = select.name.match(/student_(\d+)_status/)[1];
+            attendanceData.students.push({
+                student_id: studentId,
+                status: select.value
+            });
+        }
+    });
+    
+    try {
+        showLoading(true);
+        
+        const response = await fetch('/api/admin/attendance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(attendanceData)
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                showNotification('Посещаемость успешно отмечена', 'success');
+                closeModal('attendanceModal');
+                await loadAttendanceData();
+            } else {
+                showNotification(data.message || 'Ошибка отметки посещаемости', 'error');
+            }
+        } else {
+            const error = await response.json();
+            showNotification(error.message || 'Ошибка отметки посещаемости', 'error');
+        }
+    } catch (error) {
+        console.error('Error marking attendance:', error);
+        showNotification('Ошибка отметки посещаемости', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function handleEditAttendance(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const attendanceId = formData.get('attendanceId');
+    const attendanceData = {
+        date: formData.get('date'),
+        status: formData.get('status'),
+        notes: formData.get('notes')
+    };
+    
+    try {
+        showLoading(true);
+        
+        const response = await fetch(`/api/admin/attendance/${attendanceId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(attendanceData)
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                showNotification('Посещаемость успешно обновлена', 'success');
+                closeModal('editAttendanceModal');
+                await loadAttendanceData();
+            } else {
+                showNotification(data.message || 'Ошибка обновления посещаемости', 'error');
+            }
+        } else {
+            const error = await response.json();
+            showNotification(error.message || 'Ошибка обновления посещаемости', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating attendance:', error);
+        showNotification('Ошибка обновления посещаемости', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function handleReports(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const reportData = {
+        type: formData.get('type'),
+        group: formData.get('group'),
+        dateFrom: formData.get('dateFrom'),
+        dateTo: formData.get('dateTo'),
+        format: formData.get('format')
+    };
+    
+    try {
+        showLoading(true);
+        
+        const response = await fetch('/api/admin/reports', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(reportData)
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                showNotification('Отчёт успешно создан', 'success');
+                closeModal('reportsModal');
+                
+                // Download the report if URL provided
+                if (data.reportUrl) {
+                    window.open(data.reportUrl, '_blank');
+                }
+            } else {
+                showNotification(data.message || 'Ошибка создания отчёта', 'error');
+            }
+        } else {
+            const error = await response.json();
+            showNotification(error.message || 'Ошибка создания отчёта', 'error');
+        }
+    } catch (error) {
+        console.error('Error creating report:', error);
+        showNotification('Ошибка создания отчёта', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function handleSettings(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const settingsData = {
+        collegeName: formData.get('collegeName'),
+        academicYear: formData.get('academicYear'),
+        maxStudents: parseInt(formData.get('maxStudents')),
+        emailNotifications: formData.get('emailNotifications') === 'on',
+        pushNotifications: formData.get('pushNotifications') === 'on',
+        attendanceAlerts: formData.get('attendanceAlerts') === 'on',
+        sessionTimeout: parseInt(formData.get('sessionTimeout')),
+        requireStrongPasswords: formData.get('requireStrongPasswords') === 'on'
+    };
+    
+    try {
+        showLoading(true);
+        
+        const response = await fetch('/api/admin/settings', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(settingsData)
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                showNotification('Настройки успешно сохранены', 'success');
+                closeModal('settingsModal');
+            } else {
+                showNotification(data.message || 'Ошибка сохранения настроек', 'error');
+            }
+        } else {
+            const error = await response.json();
+            showNotification(error.message || 'Ошибка сохранения настроек', 'error');
+        }
+    } catch (error) {
+        console.error('Error saving settings:', error);
+        showNotification('Ошибка сохранения настроек', 'error');
+    } finally {
+        showLoading(false);
+    }
 }
 
 // Close modal when clicking outside

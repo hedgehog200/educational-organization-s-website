@@ -1,5 +1,7 @@
 // Скрипт для переключения между формами входа и регистрации
 document.addEventListener('DOMContentLoaded', function() {
+  // Проверка статуса сервера при загрузке
+  checkServerStatus();
   const tabButtons = document.querySelectorAll('.tab-btn');
   const authForms = document.querySelectorAll('.auth-form');
   
@@ -102,6 +104,8 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         showMessage('Вход...', 'info');
         
+        console.log('Attempting login with:', { email, password: '***' });
+        
         const response = await fetch('/api/auth/login', {
           method: 'POST',
           headers: {
@@ -111,11 +115,17 @@ document.addEventListener('DOMContentLoaded', function() {
           credentials: 'include' // Важно для сессий
         });
         
+        console.log('Login response status:', response.status);
+        console.log('Login response headers:', response.headers);
+        
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Login error response:', errorText);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const result = await response.json();
+        console.log('Login result:', result);
         
         if (result.success) {
           showMessage('Вход выполнен успешно!', 'success');
@@ -192,5 +202,26 @@ document.addEventListener('DOMContentLoaded', function() {
         messageDiv.remove();
       }
     }, 5000);
+  }
+  
+  // Функция проверки статуса сервера
+  async function checkServerStatus() {
+    try {
+      console.log('Checking server status...');
+      const response = await fetch('/api/auth/status', {
+        method: 'GET',
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Server is running, status:', result);
+      } else {
+        console.warn('Server responded with status:', response.status);
+      }
+    } catch (error) {
+      console.error('Server is not running or not accessible:', error);
+      showMessage('Сервер недоступен. Убедитесь, что бэкенд запущен на порту 3000', 'error');
+    }
   }
 });
