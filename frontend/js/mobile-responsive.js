@@ -3,6 +3,22 @@
  * Обработка мобильного меню и адаптивности
  */
 
+// Скрытие индикатора прокрутки таблицы после первого взаимодействия
+document.addEventListener('DOMContentLoaded', function() {
+    const tableContainers = document.querySelectorAll('.table-container');
+    
+    tableContainers.forEach(container => {
+        let scrolled = false;
+        
+        container.addEventListener('scroll', function() {
+            if (!scrolled) {
+                scrolled = true;
+                container.classList.add('scrolled');
+            }
+        }, { once: true });
+    });
+});
+
 // Enhanced mobile menu functionality
 function toggleMobileMenu() {
     const mobileMenu = document.getElementById('mobileMenu');
@@ -199,7 +215,8 @@ function trackMobileMenuUsage() {
     const isOpen = mobileMenu.classList.contains('active');
     
     // Simple analytics - can be enhanced with actual analytics service
-    console.log(`Mobile menu ${isOpen ? 'opened' : 'closed'}`, {
+    // Track: Mobile menu ${isOpen ? 'opened' : 'closed'}
+    const analytics = {
         timestamp: new Date().toISOString(),
         userAgent: navigator.userAgent,
         screenSize: `${window.innerWidth}x${window.innerHeight}`

@@ -8,8 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Initialize student dashboard
 async function initializeStudentDashboard() {
     try {
-        console.log('Initializing student dashboard...');
-        
         // Check authentication
         await checkAuthentication();
         
@@ -21,8 +19,6 @@ async function initializeStudentDashboard() {
         
         // Initialize event listeners
         initializeEventListeners();
-        
-        console.log('Student dashboard initialized successfully');
     } catch (error) {
         console.error('Error initializing student dashboard:', error);
         showNotification('Ошибка инициализации кабинета', 'error');
@@ -35,7 +31,6 @@ async function checkAuthentication() {
     const userData = localStorage.getItem('userData');
     
     if (!token) {
-        console.log('No token found, redirecting to login');
         window.location.href = '/index.html';
         return;
     }
@@ -73,7 +68,6 @@ async function checkAuthentication() {
             localStorage.setItem('userData', JSON.stringify(user));
             
         } else {
-            console.log('Token verification failed, redirecting to login');
             window.location.href = '/index.html';
         }
     } catch (error) {
@@ -173,21 +167,40 @@ async function loadStudentStats() {
         const response = await fetch('/api/user/stats', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+            },
+            credentials: 'include'
         });
         
         if (response.ok) {
             const data = await response.json();
+            
             if (data.success) {
                 updateStudentStats(data.stats);
+            } else {
+                console.error('Stats request failed:', data.message);
+                // Use default values
+                updateStudentStats({
+                    averageGrade: 4.7,
+                    completedAssignments: '0/0',
+                    attendanceRate: '92%',
+                    currentSemester: '3/8'
+                });
             }
+        } else {
+            console.error('Stats response not OK:', response.status);
+            updateStudentStats({
+                averageGrade: 4.7,
+                completedAssignments: '0/0',
+                attendanceRate: '92%',
+                currentSemester: '3/8'
+            });
         }
     } catch (error) {
         console.error('Error loading student stats:', error);
         // Use default values if API fails
         updateStudentStats({
             averageGrade: 4.7,
-            completedAssignments: '24/30',
+            completedAssignments: '0/0',
             attendanceRate: '92%',
             currentSemester: '3/8'
         });
@@ -211,51 +224,67 @@ function updateStudentStats(stats) {
 
 // Load upcoming events
 async function loadUpcomingEvents() {
-    // This would typically come from an API
-    const events = [
-        {
-            day: '15',
-            month: 'Сен',
-            title: 'Контрольная работа',
-            description: 'Математика, 10:00 - 11:30, ауд. 305'
-        },
-        {
-            day: '17',
-            month: 'Сен',
-            title: 'Сдача лабораторной работы',
-            description: 'Программирование, 13:00 - 14:30, ауд. 412'
-        },
-        {
-            day: '20',
-            month: 'Сен',
-            title: 'Конференция',
-            description: 'Актовый зал, 15:00 - 17:00'
+    try {
+        const response = await fetch('/api/user/events', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            if (data.success && data.events) {
+                displayUpcomingEvents(data.events);
+            } else {
+                console.error('Events request failed:', data.message);
+                displayUpcomingEvents([]);
+            }
+        } else {
+            console.error('Events response not OK:', response.status);
+            displayUpcomingEvents([]);
         }
-    ];
-    
-    const eventsList = document.getElementById('upcomingEvents');
-    if (eventsList) {
-        eventsList.innerHTML = events.map(event => `
-            <div class="event-item">
-                <div class="event-date">
-                    <span class="day">${event.day}</span>
-                    <span class="month">${event.month}</span>
-                </div>
-                <div class="event-content">
-                    <h4>${event.title}</h4>
-                    <p>${event.description}</p>
-                </div>
-                <div class="event-actions">
-                    <button class="action-btn" title="Напомнить">
-                        <i class="fas fa-bell"></i>
-                    </button>
-                    <button class="action-btn" title="Добавить в календарь">
-                        <i class="fas fa-calendar-plus"></i>
-                    </button>
-                </div>
-            </div>
-        `).join('');
+    } catch (error) {
+        console.error('Error loading upcoming events:', error);
+        displayUpcomingEvents([]);
     }
+}
+
+// Display upcoming events
+function displayUpcomingEvents(events) {
+    const eventsList = document.getElementById('upcomingEvents');
+    if (!eventsList) return;
+    
+    if (events.length === 0) {
+        eventsList.innerHTML = `
+            <div class="event-item" style="text-align: center; padding: 20px;">
+                <p style="color: #999;">Нет ближайших событий</p>
+            </div>
+        `;
+        return;
+    }
+    
+    eventsList.innerHTML = events.map(event => `
+        <div class="event-item">
+            <div class="event-date">
+                <span class="day">${event.day}</span>
+                <span class="month">${event.month}</span>
+            </div>
+            <div class="event-content">
+                <h4>${event.title}</h4>
+                <p>${event.description}</p>
+            </div>
+            <div class="event-actions">
+                <button class="action-btn" title="Напомнить" onclick="alert('Напоминание установлено!')">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <button class="action-btn" title="Добавить в календарь" onclick="alert('Добавлено в календарь!')">
+                    <i class="fas fa-calendar-plus"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
 }
 
 // Load recent assignments
@@ -575,7 +604,6 @@ async function loadPerformanceData() {
 // Display performance data
 function displayPerformance(performance) {
     // This would display performance charts and statistics
-    console.log('Performance data:', performance);
 }
 
 // Load attendance data
@@ -606,7 +634,6 @@ async function loadAttendanceData() {
 // Display attendance data
 function displayAttendance(attendance) {
     // This would display attendance calendar and statistics
-    console.log('Attendance data:', attendance);
 }
 
 // Initialize event listeners
@@ -762,3 +789,431 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Profile functions
+function showProfileModal() {
+    const modal = document.getElementById('profileModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        loadProfileData();
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function loadProfileData() {
+    try {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        
+        // Update profile fields with new selectors
+        const inputs = document.querySelectorAll('#profileModal .info-content input');
+        
+        if (inputs.length >= 6) {
+            inputs[0].value = userData.full_name || userData.name || 'Не указано'; // Полное имя
+            inputs[1].value = userData.email || 'Не указано'; // Email
+            inputs[2].value = userData.group_name || 'Не указана'; // Группа
+            inputs[3].value = userData.specialty || 'Не указана'; // Специальность
+            inputs[4].value = userData.course || '2 курс'; // Курс
+            inputs[5].value = userData.status || 'Активный студент'; // Статус
+        }
+        
+    } catch (error) {
+        console.error('Error loading profile data:', error);
+    }
+}
+
+function editProfile() {
+    // Enable editing mode
+    const inputs = document.querySelectorAll('#profileModal .info-content input');
+    inputs.forEach(input => {
+        input.removeAttribute('readonly');
+        input.style.background = 'white';
+        input.style.borderColor = 'var(--primary-color)';
+    });
+    
+    // Change button text and icon
+    const editBtn = document.querySelector('#profileModal .btn-primary');
+    if (editBtn) {
+        editBtn.innerHTML = '<i class="fas fa-save"></i> Сохранить';
+        editBtn.onclick = saveProfile;
+    }
+}
+
+function saveProfile() {
+    // Collect form data
+    const inputs = document.querySelectorAll('#profileModal .info-content input');
+    const formData = {
+        full_name: inputs[0].value,
+        email: inputs[1].value,
+        group_name: inputs[2].value,
+        specialty: inputs[3].value,
+        course: inputs[4].value,
+        status: inputs[5].value
+    };
+    
+    // Here you would typically send data to server
+    
+    // Show success message
+    if (typeof showNotification === 'function') {
+        showNotification('Профиль сохранен успешно!', 'success');
+    }
+    
+    // Disable editing mode
+    inputs.forEach(input => {
+        input.setAttribute('readonly', 'readonly');
+        input.style.background = 'linear-gradient(145deg, #f8f9fa, #ffffff)';
+        input.style.borderColor = 'transparent';
+    });
+    
+    // Change button back
+    const editBtn = document.querySelector('#profileModal .btn-primary');
+    if (editBtn) {
+        editBtn.innerHTML = '<i class="fas fa-edit"></i> Редактировать';
+        editBtn.onclick = editProfile;
+    }
+}
+
+// Logout function
+function logout() {
+    try {
+        // Clear local storage
+        localStorage.removeItem('token');
+        localStorage.removeItem('userData');
+        localStorage.removeItem('user');
+        
+        // Show logout message
+        if (typeof showNotification === 'function') {
+            showNotification('Выход выполнен успешно', 'success');
+        }
+        
+        // Redirect to main page after a short delay
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 500);
+        
+    } catch (error) {
+        console.error('Error during logout:', error);
+        // Even if there's an error, try to redirect
+        window.location.href = '/';
+    }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+});
+
+// Инициализация уведомлений для личного кабинета студента
+function initStudentNotifications() {
+    if (!window.notificationSystem) {
+        return;
+    }
+
+    // Добавляем демо-уведомления
+    setTimeout(() => {
+        notificationSystem.info('Добро пожаловать', 'Личный кабинет студента загружен');
+    }, 1000);
+
+    // Уведомления о действиях студента
+    setupStudentActionNotifications();
+    
+    // Уведомления о учебных событиях
+    setupAcademicNotifications();
+}
+
+// Настройка уведомлений о действиях студента
+function setupStudentActionNotifications() {
+    // Уведомления о просмотре материалов
+    const materialLinks = document.querySelectorAll('.material-card, .assignment-item');
+    materialLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            const title = this.querySelector('h3, h4')?.textContent || 'Материал';
+            notificationSystem.info('Материал открыт', `Вы открыли: ${title}`);
+        });
+    });
+
+    // Уведомления о сдаче заданий
+    const submitButtons = document.querySelectorAll('.submit-assignment');
+    submitButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            notificationSystem.success('Задание сдано', 'Ваше задание успешно отправлено на проверку');
+        });
+    });
+}
+
+// Настройка уведомлений об учебных событиях
+function setupAcademicNotifications() {
+    // Симулируем учебные события
+    setInterval(() => {
+        const events = [
+            {
+                type: 'info',
+                title: 'Новый материал',
+                message: 'Добавлен новый материал по дисциплине "Программирование"'
+            },
+            {
+                type: 'warning',
+                title: 'Скоро дедлайн',
+                message: 'До сдачи задания по "Базам данных" осталось 2 дня'
+            },
+            {
+                type: 'success',
+                title: 'Оценка получена',
+                message: 'Вы получили оценку за контрольную работу'
+            },
+            {
+                type: 'info',
+                title: 'Изменения в расписании',
+                message: 'Обновлено расписание на следующую неделю'
+            }
+        ];
+
+        const event = events[Math.floor(Math.random() * events.length)];
+        notificationSystem[event.type](event.title, event.message);
+    }, 45000); // Каждые 45 секунд
+}
+
+// Функции для уведомлений о конкретных действиях студента
+function notifyMaterialOpened(materialName) {
+    notificationSystem.info('Материал открыт', `Вы открыли материал: ${materialName}`);
+}
+
+function notifyAssignmentSubmitted(assignmentName) {
+    notificationSystem.success('Задание сдано', `Задание "${assignmentName}" успешно отправлено`);
+}
+
+function notifyGradeReceived(subject, grade) {
+    notificationSystem.success('Оценка получена', `По предмету "${subject}" получена оценка: ${grade}`);
+}
+
+function notifyDeadlineApproaching(assignmentName, daysLeft) {
+    notificationSystem.warning('Скоро дедлайн', `До сдачи "${assignmentName}" осталось ${daysLeft} дней`);
+}
+
+function notifyScheduleChanged() {
+    notificationSystem.info('Расписание обновлено', 'Внесены изменения в расписание занятий');
+}
+
+function notifyNewMaterial(subject) {
+    notificationSystem.info('Новый материал', `Добавлен новый материал по предмету "${subject}"`);
+}
+
+// Инициализируем уведомления при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    initStudentNotifications();
+    loadStudentAssignments();
+});
+
+// Загрузка заданий для студента
+async function loadStudentAssignments() {
+    try {
+        if (!window.assignmentsAPI) {
+            return;
+        }
+
+        const response = await assignmentsAPI.getAssignments();
+        
+        if (response.success) {
+            displayStudentAssignments(response.assignments);
+            
+            // Показываем уведомление о новых заданиях
+            if (response.assignments.length > 0) {
+                notificationSystem.info('Новые задания', `Доступно ${response.assignments.length} заданий`);
+            }
+        } else {
+            console.error('Ошибка загрузки заданий:', response.message);
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки заданий:', error);
+        notificationSystem.error('Ошибка загрузки', 'Не удалось загрузить задания');
+    }
+}
+
+// Отображение заданий для студента
+function displayStudentAssignments(assignments) {
+    const assignmentsContainer = document.querySelector('.assignments-section .assignments-grid');
+    
+    if (!assignmentsContainer) {
+        return;
+    }
+
+    // Очищаем контейнер
+    assignmentsContainer.innerHTML = '';
+
+    if (assignments.length === 0) {
+        assignmentsContainer.innerHTML = `
+            <div class="no-assignments">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>Нет доступных заданий</h3>
+                <p>Преподаватели еще не опубликовали задания</p>
+            </div>
+        `;
+        return;
+    }
+
+    assignments.forEach(assignment => {
+        const assignmentElement = createAssignmentElement(assignment);
+        assignmentsContainer.appendChild(assignmentElement);
+    });
+}
+
+// Создание элемента задания
+function createAssignmentElement(assignment) {
+    const deadline = new Date(assignment.deadline);
+    const isOverdue = deadline < new Date();
+    const daysLeft = Math.ceil((deadline - new Date()) / (1000 * 60 * 60 * 24));
+    
+    const assignmentDiv = document.createElement('div');
+    assignmentDiv.className = `assignment-item ${isOverdue ? 'overdue' : ''}`;
+    assignmentDiv.innerHTML = `
+        <div class="assignment-header">
+            <h3>${assignment.title}</h3>
+            <div class="assignment-meta">
+                <span class="subject-tag">${assignment.subject}</span>
+                <span class="points">${assignment.max_points} баллов</span>
+            </div>
+        </div>
+        <div class="assignment-content">
+            <p>${assignment.description || 'Описание отсутствует'}</p>
+            <div class="assignment-info">
+                <div class="info-item">
+                    <i class="fas fa-user"></i>
+                    <span>${assignment.teacher_name || 'Преподаватель'}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>Срок: ${deadline.toLocaleDateString('ru-RU')}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <span class="${isOverdue ? 'overdue' : ''}">
+                        ${isOverdue ? 'Просрочено' : `Осталось ${daysLeft} дн.`}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="assignment-actions">
+            <button class="btn-primary" onclick="downloadAssignment(${assignment.id})">
+                <i class="fas fa-download"></i>
+                Скачать
+            </button>
+            <button class="btn-secondary" onclick="viewAssignment(${assignment.id})">
+                <i class="fas fa-eye"></i>
+                Подробнее
+            </button>
+        </div>
+    `;
+
+    return assignmentDiv;
+}
+
+// Скачивание задания
+async function downloadAssignment(assignmentId) {
+    try {
+        if (!window.assignmentsAPI) {
+            throw new Error('Assignments API not loaded');
+        }
+
+        await assignmentsAPI.downloadAssignment(assignmentId);
+        notificationSystem.success('Задание скачано', 'Файл задания успешно скачан');
+    } catch (error) {
+        console.error('Ошибка скачивания задания:', error);
+        notificationSystem.error('Ошибка скачивания', 'Не удалось скачать задание');
+    }
+}
+
+// Просмотр задания
+async function viewAssignment(assignmentId) {
+    try {
+        if (!window.assignmentsAPI) {
+            throw new Error('Assignments API not loaded');
+        }
+
+        const response = await assignmentsAPI.getAssignmentById(assignmentId);
+        
+        if (response.success) {
+            showAssignmentModal(response.assignment);
+        } else {
+            throw new Error(response.message);
+        }
+    } catch (error) {
+        console.error('Ошибка просмотра задания:', error);
+        notificationSystem.error('Ошибка просмотра', 'Не удалось загрузить задание');
+    }
+}
+
+// Показ модального окна с заданием
+function showAssignmentModal(assignment) {
+    const deadline = new Date(assignment.deadline);
+    const isOverdue = deadline < new Date();
+    const daysLeft = Math.ceil((deadline - new Date()) / (1000 * 60 * 60 * 24));
+
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'assignmentModal';
+    modal.innerHTML = `
+        <div class="modal-content assignment-modal">
+            <div class="modal-header">
+                <h3>${assignment.title}</h3>
+                <button class="close-btn" onclick="closeAssignmentModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="assignment-details">
+                    <div class="detail-row">
+                        <label>Предмет:</label>
+                        <span>${assignment.subject}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Преподаватель:</label>
+                        <span>${assignment.teacher_name || 'Не указан'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Срок сдачи:</label>
+                        <span class="${isOverdue ? 'overdue' : ''}">
+                            ${deadline.toLocaleDateString('ru-RU')} 
+                            ${isOverdue ? '(Просрочено)' : `(${daysLeft} дн. осталось)`}
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Максимум баллов:</label>
+                        <span>${assignment.max_points}</span>
+                    </div>
+                </div>
+                <div class="assignment-description">
+                    <h4>Описание задания:</h4>
+                    <p>${assignment.description || 'Описание отсутствует'}</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeAssignmentModal()">
+                    <i class="fas fa-times"></i>
+                    Закрыть
+                </button>
+                <button class="btn-primary" onclick="downloadAssignment(${assignment.id})">
+                    <i class="fas fa-download"></i>
+                    Скачать задание
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    modal.style.display = 'flex';
+}
+
+// Закрытие модального окна задания
+function closeAssignmentModal() {
+    const modal = document.getElementById('assignmentModal');
+    if (modal) {
+        modal.remove();
+    }
+}

@@ -8,8 +8,13 @@
     <meta http-equiv="Expires" content="0">
     <title>Панель администратора - Колледж ВолГУ</title>
     <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/buttons.css">
+    <link rel="stylesheet" href="../css/forms.css">
+    <link rel="stylesheet" href="../css/modal.css">
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/subjects.css">
+    <link rel="stylesheet" href="../css/notifications.css">
     <link rel="stylesheet" href="../css/mobile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -17,32 +22,15 @@
     <div class="container admin-container">
         <header>
             <div class="logo">
-                <a href="/index.html">
+                <a href="#" onclick="logout(); return false;">
                     <img src="../images/logo.jpg" alt="Университетский Колледж ВолГУ" class="logo-image">
                 </a>
                 <style>a {text-decoration: none;}</style>
             </div>
             <div class="user-panel">
-                <div class="notifications desktop-only">
+                <div class="notification-bell desktop-only" onclick="notificationSystem.toggleNotificationPanel()">
                     <i class="fas fa-bell"></i>
-                    <span class="badge" id="notificationCount">0</span>
-                    <div class="notifications-dropdown">
-                        <div class="notification-item">
-                            <div class="notification-icon"><i class="fas fa-users"></i></div>
-                            <div class="notification-content">
-                                <p>Новые пользователи требуют одобрения</p>
-                                <span class="notification-time">5 минут назад</span>
-                            </div>
-                        </div>
-                        <div class="notification-item">
-                            <div class="notification-icon"><i class="fas fa-exclamation-triangle"></i></div>
-                            <div class="notification-content">
-                                <p>Низкая посещаемость в группе ИБАСкд-232</p>
-                                <span class="notification-time">1 час назад</span>
-                </div>
-            </div>
-                        <a href="#" class="all-notifications">Все уведомления</a>
-        </div>
+                    <span class="notification-badge" style="display: none;">0</span>
                     </div>
                 <div class="user-info">
                     <img src="../images/avatar.png" alt="Фото профиля" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
@@ -89,6 +77,7 @@
                         <li><a href="#dashboard" onclick="toggleMobileMenu()"><i class="fas fa-tachometer-alt"></i> Панель управления</a></li>
                         <li><a href="#users" onclick="toggleMobileMenu()"><i class="fas fa-users"></i> Пользователи</a></li>
                         <li><a href="#groups" onclick="toggleMobileMenu()"><i class="fas fa-layer-group"></i> Группы</a></li>
+                        <li><a href="#subjects" onclick="toggleMobileMenu()"><i class="fas fa-book"></i> Дисциплины</a></li>
                         <li><a href="#attendance" onclick="toggleMobileMenu()"><i class="fas fa-calendar-check"></i> Посещаемость</a></li>
                     </ul>
                 </div>
@@ -122,6 +111,7 @@
                         <li class="active"><a href="#dashboard"><i class="fas fa-tachometer-alt"></i> Панель управления</a></li>
                         <li><a href="#users"><i class="fas fa-users"></i> Пользователи</a></li>
                         <li><a href="#groups"><i class="fas fa-layer-group"></i> Группы</a></li>
+                        <li><a href="#subjects"><i class="fas fa-book"></i> Дисциплины</a></li>
                         <li><a href="#attendance"><i class="fas fa-calendar-check"></i> Посещаемость</a></li>
                         <li><a href="#reports"><i class="fas fa-chart-bar"></i> Отчеты</a></li>
                         <li><a href="#settings"><i class="fas fa-cogs"></i> Настройки</a></li>
@@ -289,6 +279,36 @@
                     </div>
                 </section>
 
+                <!-- Subjects Section -->
+                <section id="subjects" class="admin-section">
+                    <div class="section-header">
+                        <h2>Управление дисциплинами</h2>
+                        <button class="btn-primary" onclick="showAddSubjectModal()">
+                            <i class="fas fa-plus"></i> Создать дисциплину
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Название</th>
+                                    <th>Описание</th>
+                                    <th>Кредиты</th>
+                                    <th>Преподаватели</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subjectsTableBody">
+                                <tr>
+                                    <td colspan="6" class="loading">Загрузка дисциплин...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
                 <!-- Attendance Section -->
                 <section id="attendance" class="admin-section">
                     <div class="section-header">
@@ -402,26 +422,40 @@
     <div id="addUserModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
                     <h3>Добавить пользователя</h3>
+                </div>
                 <button class="close-btn" onclick="closeModal('addUserModal')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
+            <div class="modal-body">
             <form id="addUserForm" class="modal-form">
                 <div class="form-group">
-                    <label for="userFullName">Полное имя *</label>
-                    <input type="text" id="userFullName" name="fullName" required>
+                        <label for="userFullName">
+                            <i class="fas fa-user"></i> Полное имя *
+                        </label>
+                        <input type="text" id="userFullName" name="fullName" placeholder="Введите полное имя" required>
                 </div>
                     <div class="form-group">
-                        <label for="userEmail">Email *</label>
-                        <input type="email" id="userEmail" name="email" required>
+                        <label for="userEmail">
+                            <i class="fas fa-envelope"></i> Email *
+                        </label>
+                        <input type="email" id="userEmail" name="email" placeholder="example@college.ru" required>
                     </div>
                     <div class="form-group">
-                        <label for="userPassword">Пароль *</label>
-                        <input type="password" id="userPassword" name="password" required>
+                        <label for="userPassword">
+                            <i class="fas fa-lock"></i> Пароль *
+                        </label>
+                        <input type="password" id="userPassword" name="password" placeholder="Введите пароль" required>
                     </div>
                     <div class="form-group">
-                        <label for="userRole">Роль *</label>
+                        <label for="userRole">
+                            <i class="fas fa-user-tag"></i> Роль *
+                        </label>
                     <select id="userRole" name="role" required>
                         <option value="">Выберите роль</option>
                             <option value="student">Студент</option>
@@ -430,7 +464,9 @@
                         </select>
                     </div>
                     <div class="form-group role-specific-field" id="specialtyGroup">
-                        <label for="userSpecialty">Специальность</label>
+                        <label for="userSpecialty">
+                            <i class="fas fa-graduation-cap"></i> Специальность
+                        </label>
                         <select id="userSpecialty" name="specialty">
                             <option value="">Выберите специальность</option>
                             <option value="10.02.04">10.02.04 Информационная безопасность телекоммуникационных систем</option>
@@ -444,16 +480,23 @@
                         </select>
                     </div>
                     <div class="form-group role-specific-field" id="groupGroup">
-                        <label for="userGroup">Группа</label>
+                        <label for="userGroup">
+                            <i class="fas fa-users"></i> Группа
+                        </label>
                         <select id="userGroup" name="group">
                             <option value="">Выберите группу</option>
                         </select>
                     </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeModal('addUserModal')">Отмена</button>
-                    <button type="submit" class="btn-primary">Создать пользователя</button>
+                        <button type="button" class="btn-secondary" onclick="closeModal('addUserModal')">
+                            <i class="fas fa-times"></i> Отмена
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i> Создать пользователя
+                        </button>
                 </div>
             </form>
+            </div>
         </div>
     </div>
 
@@ -461,61 +504,95 @@
     <div id="addGroupModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
                 <h3>Создать группу</h3>
+                </div>
                 <button class="close-btn" onclick="closeModal('addGroupModal')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
+            <div class="modal-body">
             <form id="addGroupForm" class="modal-form">
                 <div class="form-group">
-                    <label for="groupName">Название группы *</label>
-                    <input type="text" id="groupName" name="name" required>
+                        <label for="groupName">
+                            <i class="fas fa-tag"></i> Название группы *
+                        </label>
+                        <input type="text" id="groupName" name="name" placeholder="Например: ИБ-21" required>
                 </div>
                 <div class="form-group">
-                    <label for="groupSpecialty">Специальность *</label>
-                    <input type="text" id="groupSpecialty" name="specialty" required>
+                        <label for="groupSpecialty">
+                            <i class="fas fa-graduation-cap"></i> Специальность *
+                        </label>
+                        <input type="text" id="groupSpecialty" name="specialty" placeholder="Например: Информационная безопасность" required>
                 </div>
                 <div class="form-group">
-                    <label for="groupYear">Год поступления *</label>
-                    <input type="number" id="groupYear" name="year" required>
+                        <label for="groupYear">
+                            <i class="fas fa-calendar"></i> Год поступления *
+                        </label>
+                        <input type="number" id="groupYear" name="year" placeholder="2024" required>
                     </div>
                     <div class="form-group">
-                    <label for="groupDescription">Описание</label>
-                    <textarea id="groupDescription" name="description" rows="3"></textarea>
+                        <label for="groupDescription">
+                            <i class="fas fa-align-left"></i> Описание
+                        </label>
+                        <textarea id="groupDescription" name="description" rows="3" placeholder="Введите описание группы"></textarea>
                     </div>
                     <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeModal('addGroupModal')">Отмена</button>
-                    <button type="submit" class="btn-primary">Создать группу</button>
+                        <button type="button" class="btn-secondary" onclick="closeModal('addGroupModal')">
+                            <i class="fas fa-times"></i> Отмена
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i> Создать группу
+                        </button>
                     </div>
                 </form>
+            </div>
             </div>
         </div>
 
     <!-- Edit User Modal -->
-    <div id="editUserModal" class="modal">
+    <div id="editUserModal" class="modal large-modal">
         <div class="modal-content">
             <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-user-edit"></i>
+                    </div>
                 <h3>Редактировать пользователя</h3>
+                </div>
                 <button class="close-btn" onclick="closeModal('editUserModal')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
+            <div class="modal-body">
             <form id="editUserForm" class="modal-form">
                 <input type="hidden" id="editUserId" name="userId">
                 <div class="form-group">
-                    <label for="editUserFullName">Полное имя *</label>
-                    <input type="text" id="editUserFullName" name="fullName" required>
+                        <label for="editUserFullName">
+                            <i class="fas fa-user"></i> Полное имя *
+                        </label>
+                        <input type="text" id="editUserFullName" name="fullName" placeholder="Введите полное имя" required>
                 </div>
                 <div class="form-group">
-                    <label for="editUserEmail">Email *</label>
-                    <input type="email" id="editUserEmail" name="email" required>
+                        <label for="editUserEmail">
+                            <i class="fas fa-envelope"></i> Email *
+                        </label>
+                        <input type="email" id="editUserEmail" name="email" placeholder="example@college.ru" required>
                 </div>
                 <div class="form-group">
-                    <label for="editUserPassword">Новый пароль</label>
-                    <input type="password" id="editUserPassword" name="password" placeholder="Оставьте пустым, чтобы не менять">
+                        <label for="editUserPassword">
+                            <i class="fas fa-lock"></i> Новый пароль
+                        </label>
+                    <input type="password" id="editUserPassword" name="password" placeholder="Введите новый пароль (минимум 6 символов)" minlength="6">
+                        <small class="form-help" style="color: var(--light-text); font-size: var(--font-xs); margin-top: 4px; display: block;">Оставьте пустым, чтобы не менять пароль</small>
                 </div>
                 <div class="form-group">
-                    <label for="editUserRole">Роль *</label>
+                        <label for="editUserRole">
+                            <i class="fas fa-user-tag"></i> Роль *
+                        </label>
                     <select id="editUserRole" name="role" required>
                         <option value="">Выберите роль</option>
                         <option value="student">Студент</option>
@@ -524,7 +601,9 @@
                     </select>
                 </div>
                 <div class="form-group role-specific-field" id="editSpecialtyGroup">
-                    <label for="editUserSpecialty">Специальность</label>
+                        <label for="editUserSpecialty">
+                            <i class="fas fa-graduation-cap"></i> Специальность
+                        </label>
                     <select id="editUserSpecialty" name="specialty">
                         <option value="">Выберите специальность</option>
                         <option value="10.02.04">10.02.04 Информационная безопасность телекоммуникационных систем</option>
@@ -538,22 +617,29 @@
                     </select>
                 </div>
                 <div class="form-group role-specific-field" id="editGroupGroup">
-                    <label for="editUserGroup">Группа</label>
+                        <label for="editUserGroup">
+                            <i class="fas fa-users"></i> Группа
+                        </label>
                     <select id="editUserGroup" name="group">
                         <option value="">Выберите группу</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>
+                        <label class="modal-checkbox-label">
                         <input type="checkbox" id="editUserActive" name="isActive">
                         <span>Активный пользователь</span>
                     </label>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeModal('editUserModal')">Отмена</button>
-                    <button type="submit" class="btn-primary">Сохранить изменения</button>
+                        <button type="button" class="btn-secondary" onclick="closeModal('editUserModal')">
+                            <i class="fas fa-times"></i> Отмена
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Сохранить изменения
+                        </button>
                 </div>
             </form>
+            </div>
         </div>
     </div>
 
@@ -561,34 +647,83 @@
     <div id="editGroupModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
                 <h3>Редактировать группу</h3>
+                </div>
                 <button class="close-btn" onclick="closeModal('editGroupModal')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
+            <div class="modal-body">
             <form id="editGroupForm" class="modal-form">
                 <input type="hidden" id="editGroupId" name="groupId">
                 <div class="form-group">
-                    <label for="editGroupName">Название группы *</label>
-                    <input type="text" id="editGroupName" name="name" required>
+                        <label for="editGroupName">
+                            <i class="fas fa-tag"></i> Название группы *
+                        </label>
+                        <input type="text" id="editGroupName" name="name" placeholder="Например: ИБ-21" required>
                 </div>
                 <div class="form-group">
-                    <label for="editGroupSpecialty">Специальность *</label>
-                    <input type="text" id="editGroupSpecialty" name="specialty" required>
+                        <label for="editGroupSpecialty">
+                            <i class="fas fa-graduation-cap"></i> Специальность *
+                        </label>
+                        <input type="text" id="editGroupSpecialty" name="specialty" placeholder="Например: Информационная безопасность" required>
                 </div>
                 <div class="form-group">
-                    <label for="editGroupYear">Год поступления *</label>
-                    <input type="number" id="editGroupYear" name="year" required>
+                        <label for="editGroupYear">
+                            <i class="fas fa-calendar"></i> Год поступления *
+                        </label>
+                        <input type="number" id="editGroupYear" name="year" placeholder="2024" required>
                 </div>
                 <div class="form-group">
-                    <label for="editGroupDescription">Описание</label>
-                    <textarea id="editGroupDescription" name="description" rows="3"></textarea>
+                        <label for="editGroupDescription">
+                            <i class="fas fa-align-left"></i> Описание
+                        </label>
+                        <textarea id="editGroupDescription" name="description" rows="3" placeholder="Введите описание группы"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeModal('editGroupModal')">Отмена</button>
-                    <button type="submit" class="btn-primary">Сохранить изменения</button>
+                        <button type="button" class="btn-secondary" onclick="closeModal('editGroupModal')">
+                            <i class="fas fa-times"></i> Отмена
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Сохранить изменения
+                        </button>
                 </div>
             </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group Students Modal -->
+    <div id="groupStudentsModal" class="modal large-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                <h3>Студенты группы</h3>
+                </div>
+                <button class="close-btn" onclick="closeModal('groupStudentsModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="max-height: 600px; overflow-y: auto;">
+                <!-- Здесь будет отображаться список студентов -->
+                <div id="groupStudentsContent">
+                    <p style="text-align: center; color: var(--light-text); padding: 40px;">
+                        Загрузка списка студентов...
+                    </p>
+            </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('groupStudentsModal')">
+                    <i class="fas fa-times"></i> Закрыть
+                </button>
+            </div>
         </div>
     </div>
 
@@ -731,61 +866,75 @@
     </div>
 
     <!-- Settings Modal -->
-    <div id="settingsModal" class="modal">
+    <div id="settingsModal" class="modal large-modal">
         <div class="modal-content">
             <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
                 <h3>Настройки системы</h3>
+                </div>
                 <button class="close-btn" onclick="closeModal('settingsModal')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
+            <div class="modal-body">
             <form id="settingsForm" class="modal-form">
-                <div class="settings-section">
-                    <h4>Общие настройки</h4>
+                    <div class="modal-settings-section">
+                        <h4><i class="fas fa-building"></i> Общие настройки</h4>
                     <div class="form-group">
-                        <label for="settingCollegeName">Название колледжа</label>
+                            <label for="settingCollegeName">
+                                <i class="fas fa-university"></i> Название колледжа
+                            </label>
                         <input type="text" id="settingCollegeName" name="collegeName" value="Университетский Колледж ВолГУ">
                     </div>
                     <div class="form-group">
-                        <label for="settingAcademicYear">Учебный год</label>
+                            <label for="settingAcademicYear">
+                                <i class="fas fa-calendar-alt"></i> Учебный год
+                            </label>
                         <input type="text" id="settingAcademicYear" name="academicYear" value="2024-2025">
                     </div>
                     <div class="form-group">
-                        <label for="settingMaxStudents">Максимум студентов в группе</label>
+                            <label for="settingMaxStudents">
+                                <i class="fas fa-users"></i> Максимум студентов в группе
+                            </label>
                         <input type="number" id="settingMaxStudents" name="maxStudents" value="30" min="1" max="50">
                     </div>
                 </div>
                 
-                <div class="settings-section">
-                    <h4>Уведомления</h4>
+                    <div class="modal-settings-section">
+                        <h4><i class="fas fa-bell"></i> Уведомления</h4>
                     <div class="form-group">
-                        <label>
+                            <label class="modal-checkbox-label">
                             <input type="checkbox" id="settingEmailNotifications" name="emailNotifications" checked>
                             <span>Email уведомления</span>
                         </label>
                     </div>
                     <div class="form-group">
-                        <label>
+                            <label class="modal-checkbox-label">
                             <input type="checkbox" id="settingPushNotifications" name="pushNotifications" checked>
                             <span>Push уведомления</span>
                         </label>
                     </div>
                     <div class="form-group">
-                        <label>
+                            <label class="modal-checkbox-label">
                             <input type="checkbox" id="settingAttendanceAlerts" name="attendanceAlerts" checked>
                             <span>Уведомления о низкой посещаемости</span>
                         </label>
                     </div>
                 </div>
 
-                <div class="settings-section">
-                    <h4>Безопасность</h4>
+                    <div class="modal-settings-section">
+                        <h4><i class="fas fa-shield-alt"></i> Безопасность</h4>
                     <div class="form-group">
-                        <label for="settingSessionTimeout">Таймаут сессии (минуты)</label>
+                            <label for="settingSessionTimeout">
+                                <i class="fas fa-clock"></i> Таймаут сессии (минуты)
+                            </label>
                         <input type="number" id="settingSessionTimeout" name="sessionTimeout" value="60" min="15" max="480">
                     </div>
                     <div class="form-group">
-                        <label>
+                            <label class="modal-checkbox-label">
                             <input type="checkbox" id="settingRequireStrongPasswords" name="requireStrongPasswords" checked>
                             <span>Требовать сложные пароли</span>
                         </label>
@@ -793,12 +942,17 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="closeModal('settingsModal')">Отмена</button>
-                    <button type="submit" class="btn-primary">Сохранить настройки</button>
-                </div>
-            </form>
+                        <button type="button" class="btn-secondary" onclick="closeModal('settingsModal')">
+                            <i class="fas fa-times"></i> Отмена
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Сохранить настройки
+                        </button>
+                    </div>
+                </form>
+            </div>
+            </div>
         </div>
-    </div>
 
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
@@ -806,6 +960,102 @@
             <i class="fas fa-spinner fa-spin"></i>
             <p>Загрузка...</p>
                 </div>
+    </div>
+
+    <!-- Add Subject Modal -->
+    <div id="addSubjectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Создать дисциплину</h3>
+                <button class="close-btn" onclick="closeModal('addSubjectModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="addSubjectForm" onsubmit="handleAddSubject(event)">
+                <div class="form-group">
+                    <label for="subjectName">Название дисциплины *</label>
+                    <input type="text" id="subjectName" required placeholder="Например: Математика">
+                </div>
+                <div class="form-group">
+                    <label for="subjectDescription">Описание</label>
+                    <textarea id="subjectDescription" rows="3" placeholder="Краткое описание дисциплины"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="subjectCredits">Кредиты (часы)</label>
+                    <input type="number" id="subjectCredits" min="0" max="100" value="0" placeholder="Количество кредитов">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('addSubjectModal')">Отмена</button>
+                    <button type="submit" class="btn-primary">Создать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Subject Modal -->
+    <div id="editSubjectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Редактировать дисциплину</h3>
+                <button class="close-btn" onclick="closeModal('editSubjectModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editSubjectForm" onsubmit="handleEditSubject(event)">
+                <input type="hidden" id="editSubjectId">
+                <div class="form-group">
+                    <label for="editSubjectName">Название дисциплины *</label>
+                    <input type="text" id="editSubjectName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editSubjectDescription">Описание</label>
+                    <textarea id="editSubjectDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editSubjectCredits">Кредиты (часы)</label>
+                    <input type="number" id="editSubjectCredits" min="0" max="100">
+                </div>
+                <div class="form-group">
+                    <label for="editSubjectActive">
+                        <input type="checkbox" id="editSubjectActive">
+                        Активная дисциплина
+                    </label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('editSubjectModal')">Отмена</button>
+                    <button type="submit" class="btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assign Teacher Modal -->
+    <div id="assignTeacherModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Назначить преподавателя</h3>
+                <button class="close-btn" onclick="closeModal('assignTeacherModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="assignTeacherForm" onsubmit="handleAssignTeacher(event)">
+                <input type="hidden" id="assignSubjectId">
+                <div class="form-group">
+                    <label for="assignSubjectName">Дисциплина:</label>
+                    <input type="text" id="assignSubjectName" readonly style="background: #f5f5f5;">
+                </div>
+                <div class="form-group">
+                    <label for="assignTeacherId">Преподаватель *</label>
+                    <select id="assignTeacherId" required>
+                        <option value="">Выберите преподавателя</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('assignTeacherModal')">Отмена</button>
+                    <button type="submit" class="btn-primary">Назначить</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Scripts -->
@@ -823,6 +1073,7 @@
     <script src="../js/modern-sticky.js"></script>
     <script src="../js/utils.js"></script>
     <script src="../js/main.js"></script>
+    <script src="../js/modal-manager.js"></script>
     <script src="../js/admin.js"></script>
     <script src="../js/mobile-responsive.js"></script>
     <script>
@@ -889,5 +1140,26 @@
             }
         }
     </script>
+
+    <!-- Панель уведомлений -->
+    <div id="notificationPanel" class="notification-panel">
+        <div class="notification-panel-header">
+            <h3 class="notification-panel-title">Уведомления</h3>
+            <button class="notification-panel-close" onclick="notificationSystem.toggleNotificationPanel()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-panel-body" id="notificationPanelBody">
+            <!-- Уведомления будут добавлены динамически -->
+        </div>
+        <div class="notification-panel-footer">
+            <button class="notification-panel-clear" onclick="notificationSystem.clearAllNotifications()">
+                Очистить все
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/notifications.js"></script>
 </body>
 </html>

@@ -1,0 +1,173 @@
+/* =============================================
+   СТИЛИ ЛИЧНОГО КАБИНЕТА ПРЕПОДАВАТЕЛЯ
+   Наследует все стили из admin.css
+   ============================================= */
+
+/* Все базовые стили наследуются из admin.css */
+/* Здесь только специфичные переопределения для преподавателя */
+
+/* Цветовые акценты для преподавателя (если нужны отличия) */
+:root {
+    --teacher-primary: #4a6baf;
+    --teacher-secondary: #5c7cbe;
+}
+
+/* Специфичные стили для секций преподавателя */
+#schedule .dashboard-card {
+    min-height: 400px;
+}
+
+/* Стили для расписания */
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.schedule-table th,
+.schedule-table td {
+    border: 1px solid var(--border-color);
+    padding: var(--spacing);
+    text-align: center;
+}
+
+.schedule-table th {
+    background: var(--primary-color);
+    color: var(--white);
+    font-weight: var(--font-semibold);
+}
+
+.schedule-table td {
+    background: var(--white);
+}
+
+.schedule-table td.has-class {
+    background: linear-gradient(135deg, rgba(74, 107, 175, 0.1), rgba(92, 124, 190, 0.1));
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.schedule-table td.has-class:hover {
+    background: linear-gradient(135deg, rgba(74, 107, 175, 0.2), rgba(92, 124, 190, 0.2));
+}
+
+.class-info {
+    font-size: var(--font-sm);
+    line-height: 1.4;
+}
+
+.class-subject {
+    font-weight: var(--font-semibold);
+    color: var(--primary-color);
+}
+
+.class-group {
+    color: var(--light-text);
+    font-size: var(--font-xs);
+}
+
+.class-time {
+    color: var(--muted-text);
+    font-size: var(--font-xs);
+    margin-top: 4px;
+}
+
+/* Стили для списка студентов в посещаемости */
+.students-attendance-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: var(--spacing);
+    background: var(--light-bg);
+}
+
+.student-attendance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+.student-attendance-item:last-child {
+    margin-bottom: 0;
+}
+
+.student-name {
+    font-weight: var(--font-medium);
+    color: var(--text-color);
+}
+
+.attendance-status select {
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-sm);
+    background: var(--white);
+    cursor: pointer;
+}
+
+.attendance-status select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(74, 107, 175, 0.1);
+}
+
+/* Дополнительные стили для оценок */
+.grade-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-xs);
+    font-weight: var(--font-semibold);
+    color: var(--white);
+}
+
+.grade-badge.grade-5 {
+    background: var(--success-color);
+}
+
+.grade-badge.grade-4 {
+    background: #4CAF50;
+}
+
+.grade-badge.grade-3 {
+    background: var(--warning-color);
+}
+
+.grade-badge.grade-2 {
+    background: var(--error-color);
+}
+
+/* Адаптивность для специфичных элементов преподавателя */
+@media (max-width: 768px) {
+    .schedule-table {
+        font-size: var(--font-xs);
+    }
+    
+    .schedule-table th,
+    .schedule-table td {
+        padding: var(--spacing-xs);
+    }
+    
+    .students-attendance-list {
+        max-height: 300px;
+    }
+    
+    .student-attendance-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+    
+    .attendance-status {
+        width: 100%;
+    }
+    
+    .attendance-status select {
+        width: 100%;
+    }
+}

@@ -754,6 +754,18 @@ body.dashboard-page {
         font-size: 1.2rem;
     }
     
+    .logo-image {
+        height: 50px;
+        width: auto;
+        max-width: 200px;
+        object-fit: contain;
+        transition: all 0.3s ease;
+    }
+    
+    .logo-image:hover {
+        transform: scale(1.05);
+    }
+    
     .user-panel {
         gap: 10px;
     }
@@ -990,6 +1002,11 @@ body.dashboard-page {
         font-size: 1rem;
     }
     
+    .logo-image {
+        height: 40px;
+        max-width: 150px;
+    }
+    
     .user-info img {
         width: 30px;
         height: 30px;
@@ -1209,4 +1226,587 @@ body.dashboard-page {
 
 .status-indicator.busy {
     background: var(--warning-color);
+}
+
+/* Profile Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+}
+
+.profile-modal {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid var(--border-color);
+}
+
+.modal-header {
+    background: var(--primary-color);
+    color: var(--white);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-icon {
+    font-size: 2rem;
+    opacity: 0.9;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    font-size: 1.2rem;
+    color: var(--white);
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.profile-content {
+    padding: var(--spacing-xl);
+}
+
+.profile-avatar-section {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.avatar-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: var(--spacing);
+}
+
+.profile-avatar-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary-color);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(74, 107, 175, 0.8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.avatar-container:hover .avatar-overlay {
+    opacity: 1;
+}
+
+.avatar-overlay i {
+    color: var(--white);
+    font-size: 1.5rem;
+}
+
+.change-photo-btn {
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: var(--font-sm);
+    font-weight: var(--font-medium);
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.change-photo-btn:hover {
+    background: var(--secondary-color);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.profile-info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing);
+}
+
+.info-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: var(--spacing);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing);
+    transition: var(--transition);
+}
+
+.info-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.info-card:hover .info-icon {
+    transform: scale(1.05);
+}
+
+.info-card:hover .info-content label i {
+    color: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.info-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+/* Цветные иконки для разных типов информации */
+.user-icon {
+    background: var(--success-color);
+}
+
+.email-icon {
+    background: var(--primary-color);
+}
+
+.group-icon {
+    background: var(--warning-color);
+}
+
+.specialty-icon {
+    background: var(--secondary-color);
+}
+
+.course-icon {
+    background: var(--accent-color);
+}
+
+.status-icon {
+    background: var(--success-color);
+}
+
+.info-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.info-content label {
+    font-weight: var(--font-medium);
+    color: var(--text-color);
+    font-size: var(--font-sm);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.info-content label i {
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.info-content input {
+    padding: var(--spacing-sm) var(--spacing);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: var(--font-base);
+    background: var(--light-bg);
+    transition: var(--transition);
+    color: var(--text-color);
+}
+
+.info-content input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(74, 107, 175, 0.1);
+    background: var(--white);
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--spacing);
+    justify-content: flex-end;
+    padding: var(--spacing-lg);
+    background: var(--light-bg);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-secondary {
+    background: var(--light-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-sm) var(--spacing);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: var(--font-sm);
+    font-weight: var(--font-medium);
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    box-shadow: var(--shadow);
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: var(--font-sm);
+    font-weight: var(--font-medium);
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    box-shadow: var(--shadow);
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Responsive design for modal */
+@media (max-width: 768px) {
+    .profile-modal {
+        width: 95%;
+        margin: var(--spacing);
+        max-height: 90vh;
+    }
+    
+    .profile-content {
+        padding: var(--spacing);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        padding: var(--spacing);
+    }
+    
+    .btn-secondary,
+    .btn-primary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .info-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
+/* === СТИЛИ ДЛЯ ЗАДАНИЙ === */
+
+/* Контейнер для заданий */
+.assignments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: var(--spacing);
+    margin-top: var(--spacing);
+}
+
+/* Элемент задания */
+.assignment-item {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+}
+
+.assignment-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.assignment-item.overdue {
+    border-left: 4px solid var(--error-color);
+}
+
+.assignment-item.overdue .assignment-header {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+}
+
+/* Заголовок задания */
+.assignment-header {
+    background: linear-gradient(135deg, var(--light-bg), #f8f9fa);
+    padding: var(--spacing);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.assignment-header h3 {
+    color: var(--text-color);
+    font-size: var(--font-lg);
+    font-weight: var(--font-semibold);
+    margin: 0 0 var(--spacing-xs) 0;
+    line-height: 1.3;
+}
+
+.assignment-meta {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.subject-tag {
+    background: var(--primary-color);
+    color: var(--white);
+    padding: 4px var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-xs);
+    font-weight: var(--font-medium);
+}
+
+.points {
+    background: var(--success-color);
+    color: var(--white);
+    padding: 4px var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-xs);
+    font-weight: var(--font-medium);
+}
+
+/* Содержимое задания */
+.assignment-content {
+    padding: var(--spacing);
+}
+
+.assignment-content p {
+    color: var(--light-text);
+    font-size: var(--font-sm);
+    line-height: 1.5;
+    margin: 0 0 var(--spacing) 0;
+}
+
+.assignment-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-sm);
+    color: var(--text-color);
+}
+
+.info-item i {
+    color: var(--primary-color);
+    width: 16px;
+    text-align: center;
+}
+
+.info-item .overdue {
+    color: var(--error-color);
+    font-weight: var(--font-semibold);
+}
+
+/* Действия с заданием */
+.assignment-actions {
+    padding: var(--spacing);
+    background: var(--light-bg);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.assignment-actions .btn-primary,
+.assignment-actions .btn-secondary {
+    flex: 1;
+    justify-content: center;
+    font-size: var(--font-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+/* Модальное окно задания */
+.assignment-modal {
+    max-width: 600px;
+    width: 90%;
+}
+
+.assignment-details {
+    margin-bottom: var(--spacing-lg);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row label {
+    font-weight: var(--font-semibold);
+    color: var(--text-color);
+    margin: 0;
+}
+
+.detail-row span {
+    color: var(--light-text);
+    font-size: var(--font-sm);
+}
+
+.assignment-description {
+    margin-top: var(--spacing-lg);
+}
+
+.assignment-description h4 {
+    color: var(--text-color);
+    font-size: var(--font-base);
+    font-weight: var(--font-semibold);
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+.assignment-description p {
+    color: var(--light-text);
+    font-size: var(--font-sm);
+    line-height: 1.6;
+    margin: 0;
+    padding: var(--spacing);
+    background: var(--light-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+/* Состояние "нет заданий" */
+.no-assignments {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--light-text);
+    grid-column: 1 / -1;
+}
+
+.no-assignments i {
+    font-size: 3rem;
+    color: var(--muted-text);
+    margin-bottom: var(--spacing);
+}
+
+.no-assignments h3 {
+    color: var(--text-color);
+    font-size: var(--font-lg);
+    font-weight: var(--font-semibold);
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+.no-assignments p {
+    color: var(--light-text);
+    font-size: var(--font-sm);
+    margin: 0;
+}
+
+/* Адаптивность для заданий */
+@media (max-width: 768px) {
+    .assignments-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    .assignment-actions {
+        flex-direction: column;
+    }
+    
+    .assignment-actions .btn-primary,
+    .assignment-actions .btn-secondary {
+        width: 100%;
+    }
+    
+    .assignment-modal {
+        width: 95%;
+        margin: var(--spacing);
+    }
+    
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
 }

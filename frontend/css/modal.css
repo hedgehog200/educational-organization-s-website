@@ -1,0 +1,847 @@
+/* =============================================
+   МОДАЛЬНЫЕ ОКНА - ЕДИНАЯ СИСТЕМА ДИЗАЙНА
+   Современный дизайн в стиле проекта
+   ============================================= */
+
+/* ===== БАЗОВЫЕ СТИЛИ МОДАЛЬНЫХ ОКОН ===== */
+
+/* Оверлей модального окна */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(44, 62, 80, 0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: var(--z-modal-backdrop);
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: var(--spacing);
+}
+
+.modal.show,
+.modal[style*="display: flex"],
+.modal[style*="display:flex"] {
+    display: flex !important;
+    animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Контейнер содержимого модального окна */
+.modal-content {
+    position: relative;
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    margin: auto;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ===== ЗАГОЛОВОК МОДАЛЬНОГО ОКНА ===== */
+
+.modal-header {
+    position: relative;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--white);
+    padding: var(--spacing-xl) var(--spacing-xxl);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+    min-height: 80px;
+}
+
+/* Анимированный фон заголовка */
+.modal-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 70%
+    );
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    50% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+}
+
+/* Контейнер заголовка с иконкой */
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    position: relative;
+    z-index: 1;
+}
+
+/* Иконка в заголовке */
+.profile-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-2xl);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.profile-icon:hover {
+    transform: scale(1.05) rotate(5deg);
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.profile-icon i {
+    color: var(--white);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Заголовок модального окна */
+.modal-header h3 {
+    margin: 0;
+    font-size: var(--font-2xl);
+    font-weight: var(--font-bold);
+    color: var(--white);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
+    line-height: 1.3;
+}
+
+/* Кнопка закрытия */
+.close-btn,
+.modal-close {
+    position: relative;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: var(--white);
+    font-size: var(--font-lg);
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    border-radius: 50%;
+    transition: var(--transition);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    flex-shrink: 0;
+}
+
+.close-btn:hover,
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1) rotate(90deg);
+}
+
+.close-btn i,
+.modal-close i {
+    line-height: 1;
+}
+
+/* ===== ТЕЛО МОДАЛЬНОГО ОКНА ===== */
+
+.modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-xxl);
+    background: var(--white);
+    position: relative;
+}
+
+/* Декоративный фон для тела модального окна */
+.modal-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 10% 20%, rgba(74, 107, 175, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(108, 124, 231, 0.03) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Контент модального окна */
+.modal-body > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== ФОРМЫ В МОДАЛЬНЫХ ОКНАХ ===== */
+
+.modal-form {
+    width: 100%;
+}
+
+/* Группа полей формы */
+.form-group {
+    margin-bottom: var(--spacing-xl);
+    position: relative;
+    animation: slideInUp 0.4s ease-out backwards;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.05s; }
+.form-group:nth-child(2) { animation-delay: 0.1s; }
+.form-group:nth-child(3) { animation-delay: 0.15s; }
+.form-group:nth-child(4) { animation-delay: 0.2s; }
+.form-group:nth-child(5) { animation-delay: 0.25s; }
+.form-group:nth-child(6) { animation-delay: 0.3s; }
+.form-group:nth-child(7) { animation-delay: 0.35s; }
+.form-group:nth-child(8) { animation-delay: 0.4s; }
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Метки полей */
+.form-group label,
+.modal-form-group label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    font-weight: var(--font-semibold);
+    color: var(--text-color);
+    font-size: var(--font-sm);
+    letter-spacing: 0.3px;
+}
+
+.form-group label i,
+.modal-form-group label i {
+    color: var(--primary-color);
+    font-size: var(--font-base);
+    opacity: 0.8;
+}
+
+/* Поля ввода */
+.form-group input,
+.form-group select,
+.form-group textarea,
+.modal-form-group input,
+.modal-form-group select,
+.modal-form-group textarea {
+    width: 100%;
+    padding: var(--spacing) var(--spacing-lg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-base);
+    font-family: inherit;
+    transition: var(--transition);
+    background: var(--white);
+    color: var(--text-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus,
+.modal-form-group input:focus,
+.modal-form-group select:focus,
+.modal-form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(74, 107, 175, 0.1), var(--shadow-sm);
+    transform: translateY(-1px);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--muted-text);
+    opacity: 0.7;
+}
+
+/* Стилизация select */
+.form-group select,
+.modal-form-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a6baf' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--spacing) center;
+    padding-right: calc(var(--spacing-lg) + 20px);
+}
+
+/* Textarea */
+.form-group textarea,
+.modal-form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.6;
+}
+
+/* Подсказки к полям */
+.form-help,
+small.form-help {
+    display: block;
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-xs);
+    color: var(--light-text);
+    font-style: italic;
+}
+
+/* ===== ЧЕКБОКСЫ И РАДИО ===== */
+
+.modal-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing);
+    cursor: pointer;
+    font-size: var(--font-base);
+    color: var(--text-color);
+    padding: var(--spacing);
+    border-radius: var(--radius);
+    transition: var(--transition);
+    font-weight: var(--font-normal);
+}
+
+.modal-checkbox-label:hover {
+    background: rgba(74, 107, 175, 0.05);
+    color: var(--primary-color);
+}
+
+.modal-checkbox-label input[type="checkbox"],
+.modal-checkbox-label input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.modal-checkbox-label span {
+    flex: 1;
+}
+
+/* ===== СЕКЦИИ В МОДАЛЬНЫХ ОКНАХ ===== */
+
+.modal-settings-section {
+    margin-bottom: var(--spacing-xxl);
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, var(--light-bg) 0%, rgba(74, 107, 175, 0.03) 100%);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+}
+
+.modal-settings-section h4 {
+    margin: 0 0 var(--spacing-lg) 0;
+    color: var(--text-color);
+    font-size: var(--font-lg);
+    font-weight: var(--font-semibold);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing);
+    padding-bottom: var(--spacing);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.modal-settings-section h4 i {
+    color: var(--primary-color);
+    font-size: var(--font-xl);
+}
+
+/* ===== КНОПКИ ДЕЙСТВИЙ ===== */
+
+.form-actions,
+.modal-footer {
+    display: flex;
+    gap: var(--spacing);
+    justify-content: flex-end;
+    margin-top: var(--spacing-xxl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--border-light);
+    position: relative;
+    z-index: 1;
+}
+
+.form-actions button,
+.modal-footer button,
+.modal-footer .modal-btn {
+    min-width: 140px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-semibold);
+    font-size: var(--font-base);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+}
+
+/* Эффект блика на кнопках */
+.form-actions button::before,
+.modal-footer button::before,
+.modal-footer .modal-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.form-actions button:hover::before,
+.modal-footer button:hover::before,
+.modal-footer .modal-btn:hover::before {
+    left: 100%;
+}
+
+.form-actions button:hover,
+.modal-footer button:hover,
+.modal-footer .modal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.form-actions button i,
+.modal-footer button i,
+.modal-footer .modal-btn i {
+    font-size: var(--font-base);
+    transition: transform 0.3s ease;
+}
+
+.form-actions button:hover i,
+.modal-footer button:hover i,
+.modal-footer .modal-btn:hover i {
+    transform: scale(1.2);
+}
+
+/* Основная кнопка */
+.btn-primary,
+.modal-btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(74, 107, 175, 0.3);
+}
+
+.btn-primary:hover,
+.modal-btn-primary:hover {
+    box-shadow: 0 6px 25px rgba(74, 107, 175, 0.4);
+}
+
+/* Вторичная кнопка */
+.btn-secondary,
+.modal-btn-secondary {
+    background: var(--white);
+    color: var(--text-color);
+    border: 2px solid var(--border-color) !important;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover,
+.modal-btn-secondary:hover {
+    background: var(--light-bg);
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color);
+}
+
+/* Опасная кнопка */
+.btn-danger,
+.modal-btn-danger {
+    background: linear-gradient(135deg, var(--error-color) 0%, #e74c3c 100%);
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.btn-danger:hover,
+.modal-btn-danger:hover {
+    box-shadow: 0 6px 25px rgba(255, 107, 107, 0.4);
+}
+
+/* ===== БОЛЬШИЕ МОДАЛЬНЫЕ ОКНА ===== */
+
+.large-modal .modal-content {
+    max-width: 900px;
+    width: 95vw;
+}
+
+.large-modal .modal-header {
+    padding: var(--spacing-xxl);
+    min-height: 100px;
+}
+
+.large-modal .profile-icon {
+    width: 70px;
+    height: 70px;
+    font-size: var(--font-3xl);
+}
+
+.large-modal .modal-header h3 {
+    font-size: var(--font-3xl);
+}
+
+.large-modal .modal-body {
+    padding: var(--spacing-xxl) calc(var(--spacing-xxl) * 1.5);
+}
+
+/* ===== ИНДИКАТОР ЗАГРУЗКИ ===== */
+
+.modal .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    border-radius: var(--radius-xl);
+}
+
+.modal .loading-overlay.show {
+    display: flex;
+}
+
+.modal .loading-spinner {
+    text-align: center;
+    padding: var(--spacing-xxl);
+}
+
+.modal .loading-spinner i {
+    font-size: var(--font-4xl);
+    color: var(--primary-color);
+    animation: spin 1s linear infinite;
+}
+
+.modal .loading-spinner p {
+    margin-top: var(--spacing-lg);
+    color: var(--text-color);
+    font-weight: var(--font-medium);
+    font-size: var(--font-lg);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+
+@media (max-width: 768px) {
+    .modal {
+        padding: var(--spacing-sm);
+    }
+    
+    .modal-content {
+        max-width: 100%;
+        width: 100%;
+        max-height: 100vh;
+        border-radius: var(--radius-lg);
+        margin: 0;
+    }
+    
+    .modal-header {
+        padding: var(--spacing-lg);
+        min-height: 70px;
+        flex-wrap: wrap;
+    }
+    
+    .header-content {
+        flex: 1;
+        gap: var(--spacing);
+    }
+    
+    .profile-icon {
+        width: 50px;
+        height: 50px;
+        font-size: var(--font-xl);
+    }
+    
+    .modal-header h3 {
+        font-size: var(--font-xl);
+    }
+    
+    .close-btn,
+    .modal-close {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .modal-body {
+        padding: var(--spacing-lg);
+    }
+    
+    .form-actions,
+    .modal-footer {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .form-actions button,
+    .modal-footer button,
+    .modal-footer .modal-btn {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .large-modal .modal-content {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .large-modal .modal-header {
+        padding: var(--spacing-lg);
+        min-height: 70px;
+    }
+    
+    .large-modal .profile-icon {
+        width: 50px;
+        height: 50px;
+        font-size: var(--font-xl);
+    }
+    
+    .large-modal .modal-header h3 {
+        font-size: var(--font-xl);
+    }
+    
+    .large-modal .modal-body {
+        padding: var(--spacing-lg);
+    }
+    
+    .modal-settings-section {
+        padding: var(--spacing-lg);
+    }
+}
+
+@media (max-width: 480px) {
+    .modal {
+        padding: 0;
+    }
+    
+    .modal-content {
+        border-radius: 0;
+        max-height: 100vh;
+    }
+    
+    .modal-header {
+        border-radius: 0;
+        padding: var(--spacing);
+    }
+    
+    .profile-icon {
+        width: 44px;
+        height: 44px;
+        font-size: var(--font-lg);
+    }
+    
+    .modal-header h3 {
+        font-size: var(--font-lg);
+    }
+    
+    .modal-body {
+        padding: var(--spacing);
+    }
+    
+    .form-group {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .modal-settings-section {
+        padding: var(--spacing);
+        margin-bottom: var(--spacing-lg);
+    }
+}
+
+/* ===== ДОПОЛНИТЕЛЬНЫЕ УТИЛИТЫ ===== */
+
+/* Скрыть скролл в модальных окнах на iOS */
+.modal::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal::-webkit-scrollbar-thumb {
+    background: rgba(74, 107, 175, 0.3);
+    border-radius: 4px;
+}
+
+.modal::-webkit-scrollbar-thumb:hover {
+    background: rgba(74, 107, 175, 0.5);
+}
+
+/* Скролл в теле модального окна */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: var(--light-bg);
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: rgba(74, 107, 175, 0.3);
+    border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(74, 107, 175, 0.5);
+}
+
+/* Блокировка скролла body при открытом модальном окне */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Фокус на полях */
+.form-group input:focus-visible,
+.form-group select:focus-visible,
+.form-group textarea:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Состояние disabled */
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+    background: var(--light-bg);
+    color: var(--muted-text);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Состояние readonly */
+.form-group input:read-only {
+    background: var(--light-bg);
+    border-color: var(--border-light);
+}
+
+/* Сообщения об ошибках */
+.form-error {
+    color: var(--error-color);
+    font-size: var(--font-sm);
+    margin-top: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.form-error i {
+    font-size: var(--font-xs);
+}
+
+/* Поля с ошибками */
+.form-group.has-error input,
+.form-group.has-error select,
+.form-group.has-error textarea {
+    border-color: var(--error-color);
+}
+
+.form-group.has-error label {
+    color: var(--error-color);
+}
+
+/* Успешная валидация */
+.form-group.has-success input,
+.form-group.has-success select,
+.form-group.has-success textarea {
+    border-color: var(--success-color);
+}
+
+/* Список без стилей в модальных окнах */
+.modal-body ul,
+.modal-body ol {
+    padding-left: var(--spacing-xl);
+    margin-bottom: var(--spacing);
+}
+
+.modal-body ul li,
+.modal-body ol li {
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.6;
+}
+
+/* Нет данных */
+.no-data {
+    text-align: center;
+    padding: var(--spacing-xxl);
+    color: var(--light-text);
+    font-size: var(--font-lg);
+}
+
+.no-data i {
+    font-size: var(--font-4xl);
+    color: var(--muted-text);
+    display: block;
+    margin-bottom: var(--spacing);
+}
+

@@ -351,6 +351,15 @@
         <script src="../js/utils.js"></script>
         <script src="../js/ych_mat.js"></script>
         <script src="../js/materials-api.js"></script>            
+        
+        <!-- Проверка аутентификации -->
+        <script src="../js/auth-check.js"></script>
+        <script>
+            // Проверяем аутентификацию при загрузке страницы
+            document.addEventListener('DOMContentLoaded', function() {
+                checkAuthentication();
+            });
+        </script>
     </body>                
 </html>                        
                     

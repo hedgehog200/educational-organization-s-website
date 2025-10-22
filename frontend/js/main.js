@@ -214,11 +214,9 @@ jQuery(document).ready(function($) {
 	  });
 
 		$('.slide-one-item').on('translated.owl.carousel', function(event) {
-			console.log('translated');
 			$('.owl-item.active').find('.js-slide-text').addClass('active');
 		});
 		$('.slide-one-item').on('translate.owl.carousel', function(event) {
-			console.log('translate');
 			$('.owl-item.active').find('.js-slide-text').removeClass('active');
 		});
 		
@@ -266,11 +264,8 @@ jQuery(document).ready(function($) {
 	var siteSticky = function(retryCount = 0) {
 		if (typeof $.fn.sticky !== 'undefined') {
 			$(".js-sticky-header").sticky({topSpacing:0});
-			console.log('Sticky header functionality initialized successfully');
 		} else if (retryCount < 20) { // Максимум 20 попыток (2 секунды)
 			setTimeout(() => siteSticky(retryCount + 1), 100);
-		} else {
-			console.warn('Sticky plugin not available, skipping sticky header functionality');
 		}
 	};
 	

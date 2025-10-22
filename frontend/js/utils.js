@@ -3,15 +3,14 @@
 function showModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
-        modal.classList.add('active');
+        // ИСПРАВЛЕНО: Используем класс 'show' вместо 'active' для совместимости с CSS
+        modal.classList.add('show');
+        modal.style.display = 'flex'; // Явно устанавливаем display
         document.body.style.overflow = 'hidden';
         
         // Force remove any backdrop elements
         const backdrops = document.querySelectorAll('.modal-backdrop');
         backdrops.forEach(backdrop => backdrop.remove());
-        
-        // Force transparent background
-        modal.style.background = 'transparent';
         
         // Remove any dark overlays
         const overlays = document.querySelectorAll('[class*="backdrop"], [class*="overlay"]');
@@ -22,7 +21,9 @@ function showModal(modalId) {
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
-        modal.classList.remove('active');
+        // ИСПРАВЛЕНО: Используем класс 'show' вместо 'active'
+        modal.classList.remove('show');
+        modal.style.display = 'none'; // Явно скрываем
         document.body.style.overflow = 'auto';
         
         // Очищаем форму пользователя при закрытии модального окна
@@ -49,7 +50,14 @@ function showLoading(show) {
 
 // Функция для показа уведомлений
 function showNotification(message, type = 'info') {
-    // Создаем контейнер для уведомлений, если его нет
+    // Используем глобальную систему уведомлений если она доступна
+    if (window.notificationSystem) {
+        const title = type === 'success' ? 'Успешно' : type === 'error' ? 'Ошибка' : 'Информация';
+        window.notificationSystem.addNotification(title, message, type);
+        return;
+    }
+    
+    // Fallback: Создаем контейнер для уведомлений, если его нет
     let notificationContainer = document.getElementById('notificationContainer');
     if (!notificationContainer) {
         notificationContainer = document.createElement('div');
@@ -151,46 +159,95 @@ function validatePhone(phone) {
     return re.test(phone.replace(/\s/g, ''));
 }
 
-// Функция для получения CSRF токена
-function getCSRFToken() {
-    const token = document.querySelector('meta[name="csrf-token"]');
-    return token ? token.getAttribute('content') : '';
+// ============================================
+// CSRF Protection Support (ОБНОВЛЕНО для безопасности)
+// ============================================
+
+/**
+ * Получить CSRF токен с сервера
+ */
+async function getCsrfToken() {
+    try {
+        const response = await fetch('/api/csrf-token', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            return null;
+        }
+        
+        const data = await response.json();
+        return data.csrfToken;
+    } catch (error) {
+        console.error('Error getting CSRF token:', error);
+        return null;
+    }
 }
 
-// Функция для выполнения AJAX запросов
-async function makeRequest(url, options = {}) {
-    const defaultOptions = {
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': getCSRFToken()
-        }
-    };
-
-    const mergedOptions = { ...defaultOptions, ...options };
-    
-    if (mergedOptions.body && typeof mergedOptions.body === 'object') {
-        mergedOptions.body = JSON.stringify(mergedOptions.body);
-    }
-
+/**
+ * Универсальная функция для API запросов с CSRF (ОБНОВЛЕНО)
+ */
+async function apiRequest(url, options = {}) {
     try {
-        const response = await fetch(url, mergedOptions);
+        // Для POST/PUT/DELETE добавляем CSRF токен
+        if (options.method && options.method !== 'GET') {
+            const csrfToken = await getCsrfToken();
+            
+            if (!options.headers) {
+                options.headers = {};
+            }
+            
+            if (csrfToken) {
+                options.headers['X-CSRF-Token'] = csrfToken;
+            }
+        }
+        
+        // Всегда отправляем credentials
+        options.credentials = 'include';
+        
+        // Если есть Content-Type, сохраняем его
+        if (options.headers && !options.headers['Content-Type'] && !options.body instanceof FormData) {
+            options.headers['Content-Type'] = 'application/json';
+        }
+        
+        // Выполняем запрос
+        const response = await fetch(url, options);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
+        // Если ответ JSON, парсим
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
             return await response.json();
-        } else {
-            return await response.text();
         }
+        
+        return response;
     } catch (error) {
-        console.error('Request failed:', error);
-        showNotification('Ошибка при выполнении запроса', 'error');
+        console.error('API request error:', error);
         throw error;
     }
 }
+
+// Старая функция для обратной совместимости (DEPRECATED)
+function getCSRFToken() {
+    const token = document.querySelector('meta[name="csrf-token"]');
+    return token ? token.getAttribute('content') : '';
+}
+
+// Старая функция для обратной совместимости (DEPRECATED)
+async function makeRequest(url, options = {}) {
+    return apiRequest(url, options);
+}
+
+// Экспортируем функции глобально
+window.getCsrfToken = getCsrfToken;
+window.apiRequest = apiRequest;
 
 // Функция для обработки ошибок
 function handleError(error, context = '') {

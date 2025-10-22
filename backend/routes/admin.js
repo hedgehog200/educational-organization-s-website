@@ -113,7 +113,9 @@ router.post('/users', requireAdmin, async (req, res) => {
 router.put('/users/:id', requireAdmin, async (req, res) => {
     try {
     const { id } = req.params;
-    const { email, full_name, role, specialty, group_name, is_active } = req.body;
+    const { email, full_name, role, specialty, group_name, is_active, password } = req.body;
+    
+    console.log('Updating user:', id, 'with data:', { email, full_name, role, specialty, group_name, is_active });
     
     // Проверяем, существует ли пользователь
         const existingUser = await dbOperations.findUserById(id);
@@ -121,25 +123,40 @@ router.put('/users/:id', requireAdmin, async (req, res) => {
             return res.status(404).json({ success: false, message: 'Пользователь не найден' });
         }
         
-        // Обновляем пользователя через dbOperations
-        const result = await dbOperations.updateUser(id, {
+        // Подготавливаем данные для обновления
+        const updateData = {
             email,
             full_name,
             role,
-            specialty,
-            group_name,
+            // Если specialty пустая строка, устанавливаем null
+            specialty: specialty && specialty.trim() !== '' ? specialty : null,
+            // Если group_name пустая строка, устанавливаем null
+            group_name: group_name && group_name.trim() !== '' ? group_name : null,
             is_active
-        });
+        };
+        
+        // Если пароль предоставлен, хешируем его
+        if (password && password.trim() !== '') {
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+            updateData.password = hashedPassword;
+        }
+        
+        // Обновляем пользователя через dbOperations
+        const result = await dbOperations.updateUser(id, updateData);
+        
+        console.log('Update result:', result);
         
         if (result.success) {
             res.json({ success: true, message: 'Пользователь успешно обновлен' });
         } else {
+            console.error('Update failed:', result);
             res.status(500).json({ success: false, message: 'Ошибка обновления пользователя' });
         }
         
     } catch (error) {
         console.error('Ошибка обновления пользователя:', error);
-        res.status(500).json({ success: false, message: 'Ошибка обновления пользователя' });
+        res.status(500).json({ success: false, message: 'Ошибка обновления пользователя: ' + error.message });
     }
 });
 
@@ -197,33 +214,57 @@ router.get('/stats', requireAdmin, async (req, res) => {
     }
 });
 
-// Сбросить пароль пользователя
-router.post('/users/:id/reset-password', requireAdmin, (req, res) => {
-    const { id } = req.params;
-    const { newPassword } = req.body;
-    
-    if (!newPassword) {
-        return res.status(400).json({ success: false, message: 'Новый пароль не указан' });
+// Получить последние активности
+router.get('/activity', requireAdmin, async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 10;
+        const activities = await dbOperations.getRecentActivity(limit);
+        
+        res.json({
+            success: true,
+            activities: activities
+        });
+    } catch (error) {
+        console.error('Ошибка получения активности:', error);
+        res.status(500).json({ success: false, message: 'Ошибка получения активности' });
     }
-    
-    const db = new sqlite3.Database(dbPath);
-    
-    bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
-        if (err) {
-            db.close();
-            return res.status(500).json({ success: false, message: 'Ошибка хеширования пароля' });
+});
+
+// Сбросить пароль пользователя
+router.post('/users/:id/reset-password', requireAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { newPassword } = req.body;
+        
+        if (!newPassword) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Новый пароль не указан' 
+            });
         }
         
-        db.run('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, id], function(err) {
-            if (err) {
-                db.close();
-                return res.status(500).json({ success: false, message: 'Ошибка обновления пароля' });
-            }
-            
-            db.close();
+        // ИСПРАВЛЕНО: Валидация пароля
+        if (newPassword.length < 12) {
+            return res.status(400).json({
+                success: false,
+                message: 'Пароль должен содержать минимум 12 символов'
+            });
+        }
+        
+        // ИСПРАВЛЕНО: Использование dbOperations вместо прямого SQL
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const result = await dbOperations.updateUser(id, { password: hashedPassword });
+        
+        if (result.success) {
+            console.log(`[SECURITY] Password reset by admin for user ${id}`);
             res.json({ success: true, message: 'Пароль успешно сброшен' });
-        });
-    });
+        } else {
+            res.status(500).json({ success: false, message: 'Ошибка обновления пароля' });
+        }
+    } catch (error) {
+        console.error('Ошибка сброса пароля:', error);
+        res.status(500).json({ success: false, message: 'Ошибка сброса пароля' });
+    }
 });
 
 // ===== ГРУППЫ =====
@@ -237,6 +278,31 @@ router.get('/groups', requireAdmin, async (req, res) => {
         console.error('Ошибка получения групп:', error);
         res.status(500).json({ success: false, message: 'Ошибка получения групп' });
     }
+});
+
+// Получить студентов группы по имени группы
+router.get('/groups/:groupName/students', requireAdmin, (req, res) => {
+    const { groupName } = req.params;
+    const db = new sqlite3.Database(dbPath);
+    
+    console.log('Loading students for group:', groupName);
+    
+    db.all(`
+        SELECT id, full_name, email, specialty, group_name
+        FROM users
+        WHERE role = 'student' AND group_name = ? AND is_active = 1
+        ORDER BY full_name
+    `, [groupName], (err, students) => {
+        db.close();
+        
+        if (err) {
+            console.error('Error loading students for group:', err);
+            return res.status(500).json({ success: false, message: 'Ошибка получения студентов группы' });
+        }
+        
+        console.log('Found students:', students.length);
+        res.json({ success: true, students: students });
+    });
 });
 
 // Получить группу по ID
@@ -579,6 +645,277 @@ router.delete('/attendance/:id', requireAdmin, (req, res) => {
         db.close();
         res.json({ success: true, message: 'Запись посещаемости успешно удалена' });
     });
+});
+
+// ===================================
+// УПРАВЛЕНИЕ ДИСЦИПЛИНАМИ
+// ===================================
+
+// Создать дисциплину
+router.post('/subjects', requireAdmin, async (req, res) => {
+    try {
+        const { name, description, credits } = req.body;
+        const admin_id = req.userId;
+
+        if (!name) {
+            return res.status(400).json({ success: false, message: 'Название дисциплины обязательно' });
+        }
+
+        const db = new sqlite3.Database(dbPath);
+        
+        db.run(`
+            INSERT INTO subjects (name, description, credits, is_active)
+            VALUES (?, ?, ?, 1)
+        `, [name, description || '', credits || 0], function(err) {
+            db.close();
+            
+            if (err) {
+                console.error('Error creating subject:', err);
+                return res.status(500).json({ success: false, message: 'Ошибка создания дисциплины' });
+            }
+
+            // Логирование
+            dbOperations.addActivityLog({
+                user_id: admin_id,
+                action_type: 'subject_created',
+                action_description: `Создана дисциплина "${name}"`,
+                entity_type: 'subject',
+                entity_id: this.lastID
+            }).catch(err => console.error('Failed to log activity:', err));
+
+            res.json({
+                success: true,
+                message: 'Дисциплина успешно создана',
+                subject_id: this.lastID
+            });
+        });
+
+    } catch (error) {
+        console.error('Error in create subject:', error);
+        res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера' });
+    }
+});
+
+// Обновить дисциплину
+router.put('/subjects/:id', requireAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, description, credits, is_active } = req.body;
+
+        const db = new sqlite3.Database(dbPath);
+        
+        db.run(`
+            UPDATE subjects 
+            SET name = ?, description = ?, credits = ?, is_active = ?
+            WHERE id = ?
+        `, [name, description, credits, is_active, id], function(err) {
+            db.close();
+            
+            if (err) {
+                console.error('Error updating subject:', err);
+                return res.status(500).json({ success: false, message: 'Ошибка обновления дисциплины' });
+            }
+
+            res.json({
+                success: true,
+                message: 'Дисциплина успешно обновлена'
+            });
+        });
+
+    } catch (error) {
+        console.error('Error in update subject:', error);
+        res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера' });
+    }
+});
+
+// Удалить дисциплину
+router.delete('/subjects/:id', requireAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const db = new sqlite3.Database(dbPath);
+        
+        // Мягкое удаление (деактивация)
+        db.run(`
+            UPDATE subjects SET is_active = 0 WHERE id = ?
+        `, [id], function(err) {
+            db.close();
+            
+            if (err) {
+                console.error('Error deleting subject:', err);
+                return res.status(500).json({ success: false, message: 'Ошибка удаления дисциплины' });
+            }
+
+            res.json({
+                success: true,
+                message: 'Дисциплина успешно удалена'
+            });
+        });
+
+    } catch (error) {
+        console.error('Error in delete subject:', error);
+        res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера' });
+    }
+});
+
+// Назначить преподавателя на дисциплину
+router.post('/subjects/:id/assign', requireAdmin, async (req, res) => {
+    try {
+        const { id: subject_id } = req.params;
+        const { teacher_id } = req.body;
+        const admin_id = req.userId;
+
+        if (!teacher_id) {
+            return res.status(400).json({ success: false, message: 'ID преподавателя обязателен' });
+        }
+
+        // Проверяем, что пользователь является преподавателем
+        const teacher = await dbOperations.findUserById(teacher_id);
+        if (!teacher || (teacher.role !== 'teacher' && teacher.role !== 'admin')) {
+            return res.status(400).json({ success: false, message: 'Указанный пользователь не является преподавателем' });
+        }
+
+        const db = new sqlite3.Database(dbPath);
+        
+        db.run(`
+            INSERT OR IGNORE INTO teacher_subjects (teacher_id, subject_id, assigned_by)
+            VALUES (?, ?, ?)
+        `, [teacher_id, subject_id, admin_id], function(err) {
+            if (err) {
+                db.close();
+                console.error('Error assigning teacher to subject:', err);
+                return res.status(500).json({ success: false, message: 'Ошибка назначения преподавателя' });
+            }
+
+            // Получаем информацию о дисциплине для логирования
+            db.get('SELECT name FROM subjects WHERE id = ?', [subject_id], (err2, subject) => {
+                db.close();
+                
+                if (!err2 && subject) {
+                    // Логирование
+                    dbOperations.addActivityLog({
+                        user_id: admin_id,
+                        action_type: 'teacher_assigned',
+                        action_description: `Преподаватель ${teacher.full_name} назначен на дисциплину "${subject.name}"`,
+                        entity_type: 'teacher_subject',
+                        entity_id: this.lastID
+                    }).catch(err => console.error('Failed to log activity:', err));
+                }
+
+                res.json({
+                    success: true,
+                    message: 'Преподаватель успешно назначен на дисциплину'
+                });
+            });
+        });
+
+    } catch (error) {
+        console.error('Error in assign teacher:', error);
+        res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера' });
+    }
+});
+
+// Получить преподавателей дисциплины
+router.get('/subjects/:id/teachers', requireAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const db = new sqlite3.Database(dbPath);
+        
+        db.all(`
+            SELECT 
+                ts.*,
+                u.full_name as teacher_name,
+                u.email as teacher_email,
+                admin.full_name as assigned_by_name
+            FROM teacher_subjects ts
+            LEFT JOIN users u ON ts.teacher_id = u.id
+            LEFT JOIN users admin ON ts.assigned_by = admin.id
+            WHERE ts.subject_id = ?
+            ORDER BY ts.created_at DESC
+        `, [id], (err, rows) => {
+            db.close();
+            
+            if (err) {
+                console.error('Error getting subject teachers:', err);
+                return res.status(500).json({ success: false, message: 'Ошибка получения преподавателей' });
+            }
+
+            res.json({
+                success: true,
+                teachers: rows
+            });
+        });
+
+    } catch (error) {
+        console.error('Error in get subject teachers:', error);
+        res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера' });
+    }
+});
+
+// Убрать преподавателя с дисциплины
+router.delete('/subjects/:subjectId/teachers/:teacherId', requireAdmin, async (req, res) => {
+    try {
+        const { subjectId, teacherId } = req.params;
+
+        const db = new sqlite3.Database(dbPath);
+        
+        db.run(`
+            DELETE FROM teacher_subjects 
+            WHERE subject_id = ? AND teacher_id = ?
+        `, [subjectId, teacherId], function(err) {
+            db.close();
+            
+            if (err) {
+                console.error('Error removing teacher from subject:', err);
+                return res.status(500).json({ success: false, message: 'Ошибка удаления назначения' });
+            }
+
+            res.json({
+                success: true,
+                message: 'Преподаватель успешно убран с дисциплины'
+            });
+        });
+
+    } catch (error) {
+        console.error('Error in remove teacher assignment:', error);
+        res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера' });
+    }
+});
+
+// Получить все дисциплины с информацией о преподавателях
+router.get('/subjects-detailed', requireAdmin, async (req, res) => {
+    try {
+        const db = new sqlite3.Database(dbPath);
+        
+        db.all(`
+            SELECT 
+                s.*,
+                GROUP_CONCAT(u.full_name, ', ') as teachers
+            FROM subjects s
+            LEFT JOIN teacher_subjects ts ON s.id = ts.subject_id
+            LEFT JOIN users u ON ts.teacher_id = u.id
+            WHERE s.is_active = 1
+            GROUP BY s.id
+            ORDER BY s.name
+        `, (err, rows) => {
+            db.close();
+            
+            if (err) {
+                console.error('Error getting detailed subjects:', err);
+                return res.status(500).json({ success: false, message: 'Ошибка получения дисциплин' });
+            }
+
+            res.json({
+                success: true,
+                subjects: rows
+            });
+        });
+
+    } catch (error) {
+        console.error('Error in get detailed subjects:', error);
+        res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера' });
+    }
 });
 
 module.exports = router;

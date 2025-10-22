@@ -1,0 +1,408 @@
+/* Стили для системы уведомлений */
+
+/* Контейнер уведомлений */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    max-width: 400px;
+    pointer-events: none;
+}
+
+/* Отдельное уведомление */
+.notification-item {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: var(--spacing-sm);
+    border-left: 4px solid var(--primary-color);
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    overflow: hidden;
+}
+
+.notification-item.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification-item.hide {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+/* Типы уведомлений */
+.notification-item.success {
+    border-left-color: var(--success-color);
+}
+
+.notification-item.error {
+    border-left-color: var(--error-color);
+}
+
+.notification-item.warning {
+    border-left-color: var(--warning-color);
+}
+
+.notification-item.info {
+    border-left-color: var(--primary-color);
+}
+
+/* Содержимое уведомления */
+.notification-content {
+    display: flex;
+    align-items: flex-start;
+    padding: var(--spacing);
+    gap: var(--spacing-sm);
+}
+
+.notification-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.notification-item.success .notification-icon {
+    color: var(--success-color);
+}
+
+.notification-item.error .notification-icon {
+    color: var(--error-color);
+}
+
+.notification-item.warning .notification-icon {
+    color: var(--warning-color);
+}
+
+.notification-item.info .notification-icon {
+    color: var(--primary-color);
+}
+
+.notification-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-weight: var(--font-semibold);
+    color: var(--text-color);
+    font-size: var(--font-sm);
+    margin-bottom: 2px;
+    line-height: 1.3;
+}
+
+.notification-message {
+    color: var(--light-text);
+    font-size: var(--font-xs);
+    line-height: 1.4;
+    margin-bottom: 4px;
+}
+
+.notification-time {
+    color: var(--muted-text);
+    font-size: 0.75rem;
+    font-weight: var(--font-medium);
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: var(--muted-text);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: var(--transition);
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-close:hover {
+    background: var(--light-bg);
+    color: var(--text-color);
+}
+
+/* Панель уведомлений */
+.notification-panel {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    width: 350px;
+    max-height: 500px;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.notification-panel.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.notification-panel-header {
+    padding: var(--spacing);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--light-bg);
+    border-radius: var(--radius) var(--radius) 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notification-panel-title {
+    font-weight: var(--font-semibold);
+    color: var(--text-color);
+    font-size: var(--font-base);
+    margin: 0;
+}
+
+.notification-panel-close {
+    background: none;
+    border: none;
+    color: var(--muted-text);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.notification-panel-close:hover {
+    background: var(--border-color);
+    color: var(--text-color);
+}
+
+.notification-panel-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-panel-item {
+    padding: var(--spacing);
+    border-bottom: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+}
+
+.notification-panel-item:hover {
+    background: var(--light-bg);
+}
+
+.notification-panel-item:last-child {
+    border-bottom: none;
+}
+
+.notification-panel-item.unread {
+    background: rgba(74, 107, 175, 0.05);
+    border-left: 3px solid var(--primary-color);
+}
+
+.notification-panel-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.notification-panel-icon.success {
+    color: var(--success-color);
+}
+
+.notification-panel-icon.error {
+    color: var(--error-color);
+}
+
+.notification-panel-icon.warning {
+    color: var(--warning-color);
+}
+
+.notification-panel-icon.info {
+    color: var(--primary-color);
+}
+
+.notification-panel-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-panel-remove {
+    background: none;
+    border: none;
+    color: var(--muted-text);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: var(--transition);
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-panel-remove:hover {
+    background: var(--light-bg);
+    color: var(--error-color);
+}
+
+.notification-panel-title {
+    font-weight: var(--font-medium);
+    color: var(--text-color);
+    font-size: var(--font-sm);
+    margin-bottom: 2px;
+    line-height: 1.3;
+}
+
+.notification-panel-message {
+    color: var(--light-text);
+    font-size: var(--font-xs);
+    line-height: 1.4;
+    margin-bottom: 4px;
+}
+
+.notification-panel-time {
+    color: var(--muted-text);
+    font-size: 0.75rem;
+    font-weight: var(--font-medium);
+}
+
+.notification-panel-footer {
+    padding: var(--spacing);
+    border-top: 1px solid var(--border-color);
+    background: var(--light-bg);
+    border-radius: 0 0 var(--radius) var(--radius);
+    text-align: center;
+}
+
+.notification-panel-clear {
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: var(--spacing-xs) var(--spacing);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: var(--font-xs);
+    font-weight: var(--font-medium);
+    transition: var(--transition);
+}
+
+.notification-panel-clear:hover {
+    background: var(--secondary-color);
+    transform: translateY(-1px);
+}
+
+.no-notifications {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--muted-text);
+    font-size: var(--font-sm);
+    font-style: italic;
+}
+
+/* Колокольчик с бейджем */
+.notification-bell {
+    position: relative;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: var(--transition);
+    padding: var(--spacing-xs);
+    border-radius: var(--radius);
+}
+
+.notification-bell:hover {
+    color: var(--primary-color);
+    background: var(--light-bg);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: var(--error-color);
+    color: var(--white);
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    font-weight: var(--font-semibold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--white);
+    box-shadow: var(--shadow);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .notification-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .notification-panel {
+        top: 50px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+    }
+    
+    .notification-item {
+        margin-bottom: var(--spacing-xs);
+    }
+}
+
+/* Анимации */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+.notification-item.animate-in {
+    animation: slideInRight 0.3s ease;
+}
+
+.notification-item.animate-out {
+    animation: slideOutRight 0.3s ease;
+}

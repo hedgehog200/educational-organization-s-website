@@ -102,16 +102,17 @@ function initializeDatabase() {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
             description TEXT,
-            subject_id INTEGER,
-            teacher_id INTEGER,
-            group_id INTEGER,
-            due_date DATETIME,
+            subject TEXT NOT NULL,
+            teacher_id INTEGER NOT NULL,
+            file_path TEXT,
+            file_type TEXT,
+            file_size INTEGER,
+            deadline DATETIME,
             max_points INTEGER DEFAULT 100,
+            is_published INTEGER DEFAULT 0,
             is_active INTEGER DEFAULT 1,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (subject_id) REFERENCES subjects (id),
-            FOREIGN KEY (teacher_id) REFERENCES users (id),
-            FOREIGN KEY (group_id) REFERENCES groups (id)
+            FOREIGN KEY (teacher_id) REFERENCES users (id)
         )`,
         
         // Сдача заданий
@@ -184,6 +185,32 @@ function initializeDatabase() {
             is_published INTEGER DEFAULT 1,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (author_id) REFERENCES users (id)
+        )`,
+        
+        // Логи активности (для админ панели)
+        `CREATE TABLE IF NOT EXISTS activity_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            action_type TEXT NOT NULL,
+            action_description TEXT NOT NULL,
+            entity_type TEXT,
+            entity_id INTEGER,
+            ip_address TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )`,
+        
+        // Связь преподавателей и дисциплин
+        `CREATE TABLE IF NOT EXISTS teacher_subjects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            teacher_id INTEGER NOT NULL,
+            subject_id INTEGER NOT NULL,
+            assigned_by INTEGER,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (teacher_id) REFERENCES users (id),
+            FOREIGN KEY (subject_id) REFERENCES subjects (id),
+            FOREIGN KEY (assigned_by) REFERENCES users (id),
+            UNIQUE(teacher_id, subject_id)
         )`
     ];
 
@@ -208,8 +235,15 @@ function initializeDatabase() {
 function createDefaultData() {
     // Создание администратора
     const adminEmail = 'admin@college.ru';
+    
+    // КРИТИЧНО: Генерируем случайный пароль или берем из переменной окружения
+    // const crypto = require('crypto');
+    // const adminPassword = process.env.DEFAULT_ADMIN_PASSWORD || crypto.randomBytes(16).toString('hex');
+    
+    // ВРЕМЕННО: Фиксированный пароль для отладки (потом включить генерацию!)
     const adminPassword = 'admin123';
     
+
     db.get('SELECT id FROM users WHERE email = ?', [adminEmail], (err, row) => {
         if (err) {
             console.error('Ошибка проверки администратора:', err.message);
@@ -225,7 +259,10 @@ function createDefaultData() {
                 if (err) {
                     console.error('Ошибка создания администратора:', err.message);
                 } else {
-                    console.log('Администратор по умолчанию создан: admin@college.ru / admin123');
+                    console.log('\n✅ Администратор создан:');
+                    console.log('   Email:', adminEmail);
+                    console.log('   Пароль:', adminPassword);
+                    console.log('');
                 }
             });
         }
@@ -358,15 +395,61 @@ const dbOperations = {
 
     updateUser: (id, userData) => {
         return new Promise((resolve, reject) => {
-            const { email, full_name, specialty, role, group_name, is_active } = userData;
-            db.run(`
-                UPDATE users 
-                SET email = ?, full_name = ?, specialty = ?, role = ?, group_name = ?, is_active = ?
-                WHERE id = ?
-            `, [email, full_name, specialty, role, group_name, is_active ? 1 : 0, id], function(err) {
+            const { email, full_name, specialty, role, group_name, is_active, password } = userData;
+            
+            console.log('Database updateUser called with:', { id, email, full_name, specialty, role, group_name, is_active });
+            
+            // Подготавливаем поля для обновления
+            let updateFields = [];
+            let updateValues = [];
+            
+            if (email !== undefined) {
+                updateFields.push('email = ?');
+                updateValues.push(email);
+            }
+            if (full_name !== undefined) {
+                updateFields.push('full_name = ?');
+                updateValues.push(full_name);
+            }
+            if (role !== undefined) {
+                updateFields.push('role = ?');
+                updateValues.push(role);
+            }
+            if (specialty !== undefined) {
+                updateFields.push('specialty = ?');
+                updateValues.push(specialty);
+            }
+            if (group_name !== undefined) {
+                updateFields.push('group_name = ?');
+                updateValues.push(group_name);
+            }
+            if (is_active !== undefined) {
+                updateFields.push('is_active = ?');
+                updateValues.push(is_active ? 1 : 0);
+            }
+            if (password !== undefined) {
+                updateFields.push('password = ?');
+                updateValues.push(password);
+            }
+            
+            if (updateFields.length === 0) {
+                resolve({ success: true, changes: 0 });
+                return;
+            }
+            
+            updateValues.push(id);
+            
+            const sql = `UPDATE users SET ${updateFields.join(', ')} WHERE id = ?`;
+            
+            console.log('Executing SQL:', sql);
+            console.log('With values:', updateValues);
+            
+            db.run(sql, updateValues, function(err) {
                 if (err) {
+                    console.error('SQL error:', err);
                     reject(err);
                 } else {
+                    console.log('SQL success, rows changed:', this.changes);
                     resolve({ success: true, changes: this.changes });
                 }
             });
@@ -993,23 +1076,6 @@ const dbOperations = {
         });
     },
 
-    // Обновить пользователя
-    updateUser: (id, userData) => {
-        return new Promise((resolve, reject) => {
-            const { full_name, email, role, group_name, is_active } = userData;
-            db.run(`
-                UPDATE users 
-                SET full_name = ?, email = ?, role = ?, is_active = ?
-                WHERE id = ?
-            `, [full_name, email, role, is_active, id], function(err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve({ success: true, changes: this.changes });
-                }
-            });
-        });
-    },
 
     // Удалить пользователя
     deleteUser: (id) => {
@@ -1358,6 +1424,229 @@ const dbOperations = {
                       reject(err);
                   } else {
                       resolve({ success: true, changes: this.changes });
+                  }
+              });
+          });
+      },
+
+      // === ФУНКЦИИ ДЛЯ РАБОТЫ С ЗАДАНИЯМИ ===
+
+      // Получить все задания
+      getAssignments: () => {
+          return new Promise((resolve, reject) => {
+              db.all(`
+                  SELECT a.*, u.full_name as teacher_name
+                  FROM assignments a
+                  LEFT JOIN users u ON a.teacher_id = u.id
+                  WHERE a.is_active = 1
+                  ORDER BY a.created_at DESC
+              `, (err, rows) => {
+                  if (err) {
+                      reject(err);
+                  } else {
+                      resolve(rows);
+                  }
+              });
+          });
+      },
+
+      // Получить задание по ID
+      getAssignmentById: (assignmentId) => {
+          return new Promise((resolve, reject) => {
+              db.get(`
+                  SELECT a.*, u.full_name as teacher_name
+                  FROM assignments a
+                  LEFT JOIN users u ON a.teacher_id = u.id
+                  WHERE a.id = ? AND a.is_active = 1
+              `, [assignmentId], (err, row) => {
+                  if (err) {
+                      reject(err);
+                  } else {
+                      resolve(row);
+                  }
+              });
+          });
+      },
+
+      // Создать новое задание
+      createAssignment: (assignmentData) => {
+          return new Promise((resolve, reject) => {
+              const { title, description, subject, teacher_id, file_path, file_type, deadline, max_points, is_published } = assignmentData;
+              
+              db.run(`
+                  INSERT INTO assignments (title, description, subject, teacher_id, file_path, file_type, deadline, max_points, is_published)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+              `, [title, description, subject, teacher_id, file_path, file_type, deadline, max_points, is_published], function(err) {
+                  if (err) {
+                      reject(err);
+                  } else {
+                      // Получаем созданное задание
+                      db.get(`
+                          SELECT a.*, u.full_name as teacher_name
+                          FROM assignments a
+                          LEFT JOIN users u ON a.teacher_id = u.id
+                          WHERE a.id = ?
+                      `, [this.lastID], (err, row) => {
+                          if (err) {
+                              reject(err);
+                          } else {
+                              resolve(row);
+                          }
+                      });
+                  }
+              });
+          });
+      },
+
+      // Обновить задание
+      updateAssignment: (assignmentId, updateData) => {
+          return new Promise((resolve, reject) => {
+              const fields = [];
+              const values = [];
+              
+              Object.keys(updateData).forEach(key => {
+                  fields.push(`${key} = ?`);
+                  values.push(updateData[key]);
+              });
+              
+              values.push(assignmentId);
+              
+              db.run(`
+                  UPDATE assignments 
+                  SET ${fields.join(', ')}
+                  WHERE id = ?
+              `, values, function(err) {
+                  if (err) {
+                      reject(err);
+                  } else {
+                      if (this.changes > 0) {
+                          // Получаем обновленное задание
+                          db.get(`
+                              SELECT a.*, u.full_name as teacher_name
+                              FROM assignments a
+                              LEFT JOIN users u ON a.teacher_id = u.id
+                              WHERE a.id = ?
+                          `, [assignmentId], (err, row) => {
+                              if (err) {
+                                  reject(err);
+                              } else {
+                                  resolve({ success: true, assignment: row });
+                              }
+                          });
+                      } else {
+                          resolve({ success: false, message: 'Задание не найдено' });
+                      }
+                  }
+              });
+          });
+      },
+
+      // Удалить задание
+      deleteAssignment: (assignmentId) => {
+          return new Promise((resolve, reject) => {
+              db.run('UPDATE assignments SET is_active = 0 WHERE id = ?', [assignmentId], function(err) {
+                  if (err) {
+                      reject(err);
+                  } else {
+                      resolve({ success: true, changes: this.changes });
+                  }
+              });
+          });
+      },
+
+      // Получить задания преподавателя
+      getTeacherAssignments: (teacherId) => {
+          return new Promise((resolve, reject) => {
+              db.all(`
+                  SELECT a.*, u.full_name as teacher_name
+                  FROM assignments a
+                  LEFT JOIN users u ON a.teacher_id = u.id
+                  WHERE a.teacher_id = ? AND a.is_active = 1
+                  ORDER BY a.created_at DESC
+              `, [teacherId], (err, rows) => {
+                  if (err) {
+                      reject(err);
+                  } else {
+                      resolve(rows);
+                  }
+              });
+          });
+      },
+
+      // Получить опубликованные задания
+      getPublishedAssignments: () => {
+          return new Promise((resolve, reject) => {
+              db.all(`
+                  SELECT a.*, u.full_name as teacher_name
+                  FROM assignments a
+                  LEFT JOIN users u ON a.teacher_id = u.id
+                  WHERE a.is_published = 1 AND a.is_active = 1
+                  ORDER BY a.created_at DESC
+              `, (err, rows) => {
+                  if (err) {
+                      reject(err);
+                  } else {
+                      resolve(rows);
+                  }
+              });
+          });
+      },
+
+      // ЛОГИ АКТИВНОСТИ
+
+      // Добавить лог активности
+      addActivityLog: (activityData) => {
+          return new Promise((resolve, reject) => {
+              const { user_id, action_type, action_description, entity_type, entity_id, ip_address } = activityData;
+              
+              db.run(`
+                  INSERT INTO activity_logs (user_id, action_type, action_description, entity_type, entity_id, ip_address)
+                  VALUES (?, ?, ?, ?, ?, ?)
+              `, [user_id, action_type, action_description, entity_type, entity_id, ip_address], function(err) {
+                  if (err) {
+                      reject(err);
+                  } else {
+                      resolve({ id: this.lastID });
+                  }
+              });
+          });
+      },
+
+      // Получить последние логи активности
+      getRecentActivity: (limit = 10) => {
+          return new Promise((resolve, reject) => {
+              db.all(`
+                  SELECT 
+                      al.*,
+                      u.full_name as user_name,
+                      u.role as user_role
+                  FROM activity_logs al
+                  LEFT JOIN users u ON al.user_id = u.id
+                  ORDER BY al.created_at DESC
+                  LIMIT ?
+              `, [limit], (err, rows) => {
+                  if (err) {
+                      reject(err);
+                  } else {
+                      resolve(rows);
+                  }
+              });
+          });
+      },
+
+      // Получить активность конкретного пользователя
+      getUserActivity: (userId, limit = 10) => {
+          return new Promise((resolve, reject) => {
+              db.all(`
+                  SELECT * FROM activity_logs
+                  WHERE user_id = ?
+                  ORDER BY created_at DESC
+                  LIMIT ?
+              `, [userId, limit], (err, rows) => {
+                  if (err) {
+                      reject(err);
+                  } else {
+                      resolve(rows);
                   }
               });
           });

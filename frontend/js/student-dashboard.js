@@ -276,7 +276,6 @@ attachEventListeners(document);
 
 // Function to view assignment details (placeholder)
 function viewAssignmentDetails(assignmentId) {
-    console.log(`Viewing details for assignment ${assignmentId}`);
     // This would typically open a modal or navigate to a details page
     alert(`Просмотр задания #${assignmentId}`);
 }

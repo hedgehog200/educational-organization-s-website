@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');  // ДОБАВЛЕНО: для безопасной генерации имен файлов
 const { dbOperations } = require('../database/database');
 const config = require('../config');
 
@@ -23,9 +24,17 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     try {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      const safeFilename = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(safeFilename));
+      // ИСПРАВЛЕНО: Используем crypto для безопасной генерации имени
+      const userId = req.session?.userId || 'anonymous';
+      const timestamp = Date.now();
+      const randomBytes = crypto.randomBytes(16).toString('hex');
+      const ext = path.extname(file.originalname).toLowerCase();
+      
+      // Формат: userId-timestamp-randomHash.ext
+      const filename = `${userId}-${timestamp}-${randomBytes}${ext}`;
+      
+      console.log(`[SECURITY] Generated secure filename: ${filename}`);
+      cb(null, filename);
     } catch (error) {
       console.error('Ошибка генерации имени файла:', error);
       cb(new Error('Ошибка генерации имени файла'), null);
@@ -41,12 +50,18 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     try {
       const allowedTypes = config.upload.allowedTypes;
+      const allowedMimeTypes = config.upload.allowedMimeTypes;
       const ext = path.extname(file.originalname).toLowerCase();
       
-      if (allowedTypes.includes(ext)) {
+      // ИСПРАВЛЕНО: Проверяем И расширение И MIME тип
+      const isExtensionAllowed = allowedTypes.includes(ext);
+      const isMimeTypeAllowed = allowedMimeTypes.includes(file.mimetype);
+      
+      if (isExtensionAllowed && isMimeTypeAllowed) {
         cb(null, true);
       } else {
-        cb(new Error('Неподдерживаемый тип файла. Разрешены: ' + allowedTypes.join(', ')), false);
+        console.log(`[SECURITY] Rejected file: ${file.originalname} (ext: ${ext}, MIME: ${file.mimetype})`);
+        cb(new Error(`Недопустимый тип файла. Разрешены: ${allowedTypes.join(', ')}`), false);
       }
     } catch (error) {
       console.error('Ошибка фильтрации файла:', error);
@@ -202,27 +217,51 @@ router.get('/:id/download', async (req, res) => {
   try {
     const materialId = req.params.id;
     
-    // Получаем материал через dbOperations
+    // Получаем материал через dbOperations (НЕ от пользователя!)
     const materials = await dbOperations.getMaterials();
     const material = materials.find(m => m.id == materialId);
 
     if (!material) {
+      console.log(`[SECURITY] Material not found: ${materialId}`);
       return res.status(404).json({
         success: false,
         message: 'Материал не найден'
       });
     }
 
-    const filePath = path.join(__dirname, '..', material.file_path);
+    // ИСПРАВЛЕНО: Защита от directory traversal
+    // 1. Нормализуем путь и удаляем попытки выхода из директории
+    const safePath = path.normalize(material.file_path).replace(/^(\.\.(\/|\\|$))+/, '');
+    const filePath = path.join(__dirname, '..', safePath);
     
-    if (!fs.existsSync(filePath)) {
+    // 2. Определяем разрешенную директорию
+    const allowedDir = path.join(__dirname, '../uploads');
+    const resolvedPath = path.resolve(filePath);
+    const resolvedAllowedDir = path.resolve(allowedDir);
+    
+    // 3. Проверяем, что файл находится в разрешенной директории
+    if (!resolvedPath.startsWith(resolvedAllowedDir)) {
+      console.log(`[SECURITY] Directory traversal attempt blocked: ${material.file_path}`);
+      return res.status(403).json({
+        success: false,
+        message: 'Доступ запрещен'
+      });
+    }
+    
+    // 4. Проверяем существование файла
+    if (!fs.existsSync(resolvedPath)) {
+      console.log(`[SECURITY] File not found on disk: ${resolvedPath}`);
       return res.status(404).json({
         success: false,
         message: 'Файл не найден на сервере'
       });
     }
 
-    res.download(filePath, material.title + path.extname(material.file_path));
+    // 5. Безопасное имя для скачивания (без спецсимволов)
+    const safeDownloadName = material.title.replace(/[^a-zA-Z0-9.-\s]/g, '_') + path.extname(material.file_path);
+    
+    console.log(`[SECURITY] File download authorized: ${materialId} by user ${req.session?.userId}`);
+    res.download(resolvedPath, safeDownloadName);
 
   } catch (error) {
     console.error('Ошибка скачивания файла:', error);

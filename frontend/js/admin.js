@@ -2,14 +2,52 @@
 // Modern admin panel with beautiful UI
 
 document.addEventListener('DOMContentLoaded', function() {
-    initializeAdminPanel();
+    // Небольшая задержка для загрузки данных аутентификации
+    setTimeout(() => {
+        if (!checkAuthOnLoad()) {
+            return;
+        }
+        
+        initializeAdminPanel();
+        initAdminNotifications();
+    }, 100);
 });
+
+// Проверка аутентификации при загрузке страницы
+function checkAuthOnLoad() {
+    const token = localStorage.getItem('token');
+    const userRole = localStorage.getItem('userRole');
+    const userData = localStorage.getItem('userData');
+    
+    if (!token) {
+        window.location.href = '/';
+        return false;
+    }
+    
+    // Проверяем роль из localStorage или из userData
+    let actualRole = userRole;
+    if (!actualRole && userData) {
+        try {
+            const user = JSON.parse(userData);
+            actualRole = user.role;
+            localStorage.setItem('userRole', actualRole);
+        } catch (e) {
+            console.error('Error parsing user data:', e);
+        }
+    }
+    
+    if (actualRole !== 'admin') {
+        // Не очищаем localStorage сразу, возможно это временная проблема
+        window.location.href = '/';
+        return false;
+    }
+    
+    return true;
+}
 
 // Initialize admin panel
 async function initializeAdminPanel() {
     try {
-        console.log('Initializing admin panel...');
-        
         // Check authentication
         await checkAuthentication();
         
@@ -21,8 +59,6 @@ async function initializeAdminPanel() {
         
         // Initialize event listeners
         initializeEventListeners();
-        
-        console.log('Admin panel initialized successfully');
     } catch (error) {
         console.error('Error initializing admin panel:', error);
         showNotification('Ошибка инициализации панели', 'error');
@@ -35,7 +71,6 @@ async function checkAuthentication() {
     const userData = localStorage.getItem('userData');
     
     if (!token) {
-        console.log('No token found, redirecting to login');
         window.location.href = '/';
         return;
     }
@@ -53,7 +88,6 @@ async function checkAuthentication() {
             const user = data.user;
             
             if (user.role !== 'admin') {
-                console.log('User is not admin, redirecting to lk');
                 window.location.href = '/lk.html';
                 return;
             }
@@ -63,7 +97,6 @@ async function checkAuthentication() {
             localStorage.setItem('userData', JSON.stringify(user));
             
         } else {
-            console.log('Token verification failed, redirecting to login');
             window.location.href = '/';
         }
     } catch (error) {
@@ -123,6 +156,9 @@ async function loadSectionData(sectionId) {
         case 'groups':
             await loadGroupsData();
             break;
+        case 'subjects':
+            await loadSubjects();
+            break;
         case 'attendance':
             await loadAttendanceData();
             break;
@@ -144,14 +180,23 @@ async function loadDashboardData() {
         const statsResponse = await fetch('/api/admin/stats', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+            },
+            credentials: 'include'
         });
         
         if (statsResponse.ok) {
             const statsData = await statsResponse.json();
+            
             if (statsData.success) {
                 updateStatsCards(statsData.stats);
+            } else {
+                console.error('Stats request failed:', statsData.message);
+                showNotification('Ошибка: ' + statsData.message, 'error');
             }
+        } else {
+            const errorText = await statsResponse.text();
+            console.error('Stats request failed with status:', statsResponse.status, errorText);
+            showNotification(`Ошибка загрузки статистики (${statsResponse.status})`, 'error');
         }
         
         // Load recent activity
@@ -159,7 +204,7 @@ async function loadDashboardData() {
         
     } catch (error) {
         console.error('Error loading dashboard data:', error);
-        showNotification('Ошибка загрузки данных панели', 'error');
+        showNotification('Ошибка загрузки данных панели: ' + error.message, 'error');
     } finally {
         showLoading(false);
     }
@@ -182,39 +227,123 @@ function updateStatsCards(stats) {
 
 // Load recent activity
 async function loadRecentActivity() {
-    // This would typically come from an API
-    const activities = [
-        {
-            icon: 'fas fa-user-plus',
-            text: 'Новый пользователь зарегистрирован',
-            time: '2 минуты назад'
-        },
-        {
-            icon: 'fas fa-edit',
-            text: 'Обновлена информация о группе',
-            time: '15 минут назад'
-        },
-        {
-            icon: 'fas fa-calendar-check',
-            text: 'Отмечена посещаемость',
-            time: '1 час назад'
+    try {
+        const response = await fetch('/api/admin/activity?limit=10', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            if (data.success && data.activities) {
+                displayActivities(data.activities);
+            } else {
+                console.error('Failed to load activities:', data.message);
+                // Показываем заглушку если нет данных
+                displayActivities([]);
+            }
+        } else {
+            console.error('Activity request failed with status:', response.status);
+            displayActivities([]);
         }
-    ];
-    
+    } catch (error) {
+        console.error('Error loading recent activity:', error);
+        displayActivities([]);
+    }
+}
+
+// Отображение активностей
+function displayActivities(activities) {
     const activityList = document.getElementById('recentActivity');
-    if (activityList) {
-        activityList.innerHTML = activities.map(activity => `
+    if (!activityList) return;
+    
+    if (activities.length === 0) {
+        activityList.innerHTML = `
             <div class="activity-item">
-                <div class="activity-icon">
-                    <i class="${activity.icon}"></i>
-                </div>
                 <div class="activity-content">
-                    <p>${activity.text}</p>
-                    <span class="activity-time">${activity.time}</span>
+                    <p style="color: #999; text-align: center;">Пока нет активности</p>
                 </div>
             </div>
-        `).join('');
+        `;
+        return;
     }
+    
+    activityList.innerHTML = activities.map(activity => {
+        const icon = getActivityIcon(activity.action_type);
+        const timeAgo = getTimeAgo(activity.created_at);
+        
+        return `
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="${icon}"></i>
+                </div>
+                <div class="activity-content">
+                    <p>${activity.action_description}</p>
+                    <span class="activity-time">${timeAgo}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Получить иконку для типа активности
+function getActivityIcon(actionType) {
+    const icons = {
+        'user_created': 'fas fa-user-plus',
+        'user_updated': 'fas fa-user-edit',
+        'user_deleted': 'fas fa-user-times',
+        'login': 'fas fa-sign-in-alt',
+        'logout': 'fas fa-sign-out-alt',
+        'group_created': 'fas fa-layer-group',
+        'group_updated': 'fas fa-edit',
+        'group_deleted': 'fas fa-trash',
+        'attendance_marked': 'fas fa-calendar-check',
+        'material_uploaded': 'fas fa-file-upload',
+        'assignment_created': 'fas fa-tasks',
+        'assignment_graded': 'fas fa-check-circle',
+        'password_changed': 'fas fa-key',
+        'settings_updated': 'fas fa-cog'
+    };
+    
+    return icons[actionType] || 'fas fa-info-circle';
+}
+
+// Получить относительное время (например, "2 минуты назад")
+function getTimeAgo(dateString) {
+    const now = new Date();
+    const past = new Date(dateString);
+    const diffMs = now - past;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'Только что';
+    if (diffMins < 60) return `${diffMins} ${getMinutesText(diffMins)} назад`;
+    if (diffHours < 24) return `${diffHours} ${getHoursText(diffHours)} назад`;
+    if (diffDays < 7) return `${diffDays} ${getDaysText(diffDays)} назад`;
+    
+    return past.toLocaleDateString('ru-RU');
+}
+
+function getMinutesText(n) {
+    if (n % 10 === 1 && n % 100 !== 11) return 'минуту';
+    if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'минуты';
+    return 'минут';
+}
+
+function getHoursText(n) {
+    if (n % 10 === 1 && n % 100 !== 11) return 'час';
+    if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'часа';
+    return 'часов';
+}
+
+function getDaysText(n) {
+    if (n % 10 === 1 && n % 100 !== 11) return 'день';
+    if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'дня';
+    return 'дней';
 }
 
 // Load users data
@@ -337,15 +466,118 @@ function displayGroups(groups) {
                 <p><strong>Описание:</strong> ${group.description || 'Нет описания'}</p>
             </div>
             <div class="group-actions">
+                <button class="btn-primary" onclick="showGroupStudents('${group.name}', ${group.id})">
+                    <i class="fas fa-users"></i> Студенты
+                </button>
                 <button class="btn-primary" onclick="editGroup(${group.id})">
                     <i class="fas fa-edit"></i> Редактировать
                 </button>
-                <button class="btn-secondary" onclick="deleteGroup(${group.id})">
-                    <i class="fas fa-trash"></i> Удалить
+                <button class="btn-icon btn-danger" onclick="deleteGroup(${group.id})" title="Удалить группу">
+                    <i class="fas fa-trash-alt"></i>
                 </button>
             </div>
         </div>
     `).join('');
+}
+
+// Показать студентов группы
+async function showGroupStudents(groupName, groupId) {
+    try {
+        showLoading(true);
+        
+        const response = await fetch(`/api/admin/groups/${encodeURIComponent(groupName)}/students`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            if (data.success) {
+                displayGroupStudentsModal(groupName, data.students);
+            } else {
+                showNotification('Ошибка загрузки студентов', 'error');
+            }
+        } else {
+            showNotification('Ошибка загрузки студентов', 'error');
+        }
+    } catch (error) {
+        console.error('Error loading group students:', error);
+        showNotification('Ошибка загрузки студентов', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Отобразить модальное окно со студентами группы
+function displayGroupStudentsModal(groupName, students) {
+    const modal = document.getElementById('groupStudentsModal');
+    if (!modal) {
+        console.error('Group students modal not found');
+        return;
+    }
+    
+    const modalTitle = modal.querySelector('.modal-header h3');
+    const modalBody = modal.querySelector('.modal-body');
+    
+    if (modalTitle) {
+        modalTitle.textContent = `Студенты группы ${groupName}`;
+    }
+    
+    if (modalBody) {
+        if (students.length === 0) {
+            modalBody.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-users-slash"></i>
+                    <h3>Нет студентов</h3>
+                    <p>В группе ${groupName} пока нет студентов</p>
+                </div>
+            `;
+        } else {
+            modalBody.innerHTML = `
+                <div class="students-list">
+                    <table class="students-table">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>ФИО</th>
+                                <th>Email</th>
+                                <th>Специальность</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${students.map((student, index) => `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>
+                                        <div class="student-name">
+                                            <i class="fas fa-user-graduate"></i>
+                                            ${student.full_name || 'Не указано'}
+                                        </div>
+                                    </td>
+                                    <td>${student.email || 'Не указан'}</td>
+                                    <td>${student.specialty || 'Не указано'}</td>
+                                    <td>
+                                        <button class="btn-icon" onclick="editUser(${student.id}); closeModal('groupStudentsModal');" title="Редактировать">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer-info">
+                    <p><strong>Всего студентов:</strong> ${students.length}</p>
+                </div>
+            `;
+        }
+    }
+    
+    modal.style.display = 'flex';
 }
 
 // Load attendance data
@@ -444,13 +676,11 @@ function getStatusDisplayName(status) {
 // Load reports data
 async function loadReportsData() {
     // Reports data would be loaded here
-    console.log('Loading reports data...');
 }
 
 // Load settings data
 async function loadSettingsData() {
     // Settings data would be loaded here
-    console.log('Loading settings data...');
 }
 
 // Initialize event listeners
@@ -561,7 +791,6 @@ document.addEventListener('change', function(event) {
 // Load groups for user form dropdown
 async function loadGroupsForUserForm() {
     try {
-        console.log('Loading groups for user form...');
         const response = await fetch('/api/admin/groups', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -570,16 +799,12 @@ async function loadGroupsForUserForm() {
         
         if (response.ok) {
             const data = await response.json();
-            console.log('Groups response:', data);
             if (data.success) {
                 populateGroupDropdown(data.groups, 'userGroup');
-                console.log('Groups loaded successfully:', data.groups.length);
             } else {
-                console.warn('Failed to load groups:', data.message);
                 populateGroupDropdown([], 'userGroup');
             }
         } else {
-            console.warn('Failed to load groups, status:', response.status);
             populateGroupDropdown([], 'userGroup');
         }
     } catch (error) {
@@ -591,7 +816,6 @@ async function loadGroupsForUserForm() {
 // Load groups for edit user form dropdown
 async function loadGroupsForEditForm() {
     try {
-        console.log('Loading groups for edit user form...');
         const response = await fetch('/api/admin/groups', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -600,16 +824,12 @@ async function loadGroupsForEditForm() {
         
         if (response.ok) {
             const data = await response.json();
-            console.log('Groups response for edit:', data);
             if (data.success) {
                 populateGroupDropdown(data.groups, 'editUserGroup');
-                console.log('Groups loaded successfully for edit:', data.groups.length);
             } else {
-                console.warn('Failed to load groups for edit:', data.message);
                 populateGroupDropdown([], 'editUserGroup');
             }
         } else {
-            console.warn('Failed to load groups for edit, status:', response.status);
             populateGroupDropdown([], 'editUserGroup');
         }
     } catch (error) {
@@ -631,11 +851,8 @@ function setupRoleBasedFields() {
     const groupGroup = document.getElementById('groupGroup');
     
     if (!roleSelect || !specialtyGroup || !groupGroup) {
-        console.warn('Role-based fields not found');
         return;
     }
-    
-    console.log('Setting up role-based fields');
     
     // Remove any existing event listeners
     const newRoleSelect = roleSelect.cloneNode(true);
@@ -643,23 +860,18 @@ function setupRoleBasedFields() {
     
     // Add event listener for role changes
     newRoleSelect.addEventListener('change', function() {
-        console.log('Role changed to:', this.value);
         toggleFieldsBasedOnRole(this.value, specialtyGroup, groupGroup);
     });
     
     // Set initial state
-    console.log('Initial role:', newRoleSelect.value);
     toggleFieldsBasedOnRole(newRoleSelect.value, specialtyGroup, groupGroup);
 }
 
 // Toggle fields based on selected role
 function toggleFieldsBasedOnRole(role, specialtyGroup, groupGroup) {
     if (!specialtyGroup || !groupGroup) {
-        console.warn('Specialty or group elements not found');
         return;
     }
-    
-    console.log('Toggling fields for role:', role);
     
     // Reset fields
     specialtyGroup.classList.remove('hidden');
@@ -673,7 +885,6 @@ function toggleFieldsBasedOnRole(role, specialtyGroup, groupGroup) {
     
     if (role === 'teacher') {
         // For teachers: hide group, show specialty
-        console.log('Setting up teacher fields');
         groupGroup.classList.add('hidden');
         specialtyGroup.classList.remove('hidden');
         if (groupSelect) groupSelect.value = '';
@@ -687,11 +898,9 @@ function toggleFieldsBasedOnRole(role, specialtyGroup, groupGroup) {
             specialtySelect.style.display = 'block';
             specialtySelect.style.pointerEvents = 'auto';
             specialtySelect.style.zIndex = '10';
-            console.log('Specialty select element:', specialtySelect);
         }
     } else if (role === 'admin') {
         // For admins: hide both group and specialty
-        console.log('Setting up admin fields');
         specialtyGroup.classList.add('hidden');
         groupGroup.classList.add('hidden');
         if (specialtySelect) specialtySelect.value = '';
@@ -702,7 +911,6 @@ function toggleFieldsBasedOnRole(role, specialtyGroup, groupGroup) {
         if (groupLabel) groupLabel.textContent = 'Группа';
     } else if (role === 'student') {
         // For students: show both group and specialty
-        console.log('Setting up student fields');
         specialtyGroup.classList.remove('hidden');
         groupGroup.classList.remove('hidden');
         
@@ -711,7 +919,6 @@ function toggleFieldsBasedOnRole(role, specialtyGroup, groupGroup) {
         if (groupLabel) groupLabel.textContent = 'Группа *';
     } else {
         // Default: show both
-        console.log('Setting up default fields');
         specialtyGroup.classList.remove('hidden');
         groupGroup.classList.remove('hidden');
         
@@ -814,7 +1021,7 @@ async function handleAddUser(event) {
         submitButton.disabled = true;
         submitButton.textContent = 'Создание...';
         
-        const response = await fetch('/api/admin/users', {
+        const response = await apiRequest('/api/admin/users', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -878,7 +1085,7 @@ async function handleAddGroup(event) {
     try {
         showLoading(true);
         
-        const response = await fetch('/api/admin/groups', {
+        const response = await apiRequest('/api/admin/groups', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -894,6 +1101,9 @@ async function handleAddGroup(event) {
                 closeModal('addGroupModal');
                 event.target.reset();
                 await loadGroupsData();
+                
+                // Обновляем dropdown'ы с группами во всех формах
+                await refreshAllGroupDropdowns();
             } else {
                 showNotification(data.message || 'Ошибка создания группы', 'error');
             }
@@ -926,17 +1136,26 @@ async function editUser(userId) {
             if (data.success) {
                 const user = data.user;
                 
-                // Populate form
+                // Load groups for dropdown FIRST
+                await loadGroupsForEditForm();
+                
+                // Then populate form (including group selection)
                 document.getElementById('editUserId').value = user.id;
                 document.getElementById('editUserFullName').value = user.full_name || '';
                 document.getElementById('editUserEmail').value = user.email || '';
                 document.getElementById('editUserRole').value = user.role || '';
                 document.getElementById('editUserSpecialty').value = user.specialty || '';
-                document.getElementById('editUserGroup').value = user.group_name || '';
+                
+                // Установка группы после загрузки dropdown'а
+                const groupSelect = document.getElementById('editUserGroup');
+                if (groupSelect && user.group_name) {
+                    groupSelect.value = user.group_name;
+                }
+                
                 document.getElementById('editUserActive').checked = user.is_active || false;
                 
-                // Load groups for dropdown
-                await loadGroupsForEditForm();
+                // Clear password field
+                document.getElementById('editUserPassword').value = '';
                 
                 // Setup role-based fields
                 setTimeout(() => {
@@ -966,7 +1185,7 @@ async function deleteUser(userId) {
     try {
         showLoading(true);
         
-        const response = await fetch(`/api/admin/users/${userId}`, {
+        const response = await apiRequest(`/api/admin/users/${userId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1040,7 +1259,7 @@ async function deleteGroup(groupId) {
     try {
         showLoading(true);
         
-        const response = await fetch(`/api/admin/groups/${groupId}`, {
+        const response = await apiRequest(`/api/admin/groups/${groupId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1052,6 +1271,9 @@ async function deleteGroup(groupId) {
             if (data.success) {
                 showNotification('Группа успешно удалена', 'success');
                 await loadGroupsData();
+                
+                // Обновляем dropdown'ы с группами во всех формах
+                await refreshAllGroupDropdowns();
             } else {
                 showNotification(data.message || 'Ошибка удаления группы', 'error');
             }
@@ -1116,7 +1338,7 @@ async function deleteAttendance(attendanceId) {
     try {
         showLoading(true);
         
-        const response = await fetch(`/api/admin/attendance/${attendanceId}`, {
+        const response = await apiRequest(`/api/admin/attendance/${attendanceId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1293,11 +1515,11 @@ function toggleEditFieldsBasedOnRole(role, specialtyGroup, groupGroup) {
 function populateGroupDropdown(groups, selectId) {
     const groupSelect = document.getElementById(selectId);
     if (!groupSelect) {
-        console.warn('Group select element not found:', selectId);
         return;
     }
     
-    console.log('Populating group dropdown for:', selectId, 'with groups:', groups);
+    // Сохраняем текущее выбранное значение
+    const currentValue = groupSelect.value;
     
     // Clear existing options except the first one
     groupSelect.innerHTML = '<option value="">Выберите группу</option>';
@@ -1309,7 +1531,14 @@ function populateGroupDropdown(groups, selectId) {
             option.textContent = group.name;
             groupSelect.appendChild(option);
         });
-        console.log('Added', groups.length, 'groups to dropdown');
+        
+        // Восстанавливаем выбранное значение, если оно еще существует
+        if (currentValue) {
+            const optionExists = Array.from(groupSelect.options).some(opt => opt.value === currentValue);
+            if (optionExists) {
+                groupSelect.value = currentValue;
+            }
+        }
     } else {
         // Add option if no groups available
         const option = document.createElement('option');
@@ -1317,7 +1546,41 @@ function populateGroupDropdown(groups, selectId) {
         option.textContent = 'Группы не найдены';
         option.disabled = true;
         groupSelect.appendChild(option);
-        console.log('No groups available, added disabled option');
+    }
+}
+
+// Обновить все dropdown'ы с группами во всех формах
+async function refreshAllGroupDropdowns() {
+    try {
+        // Загружаем актуальный список групп
+        const response = await fetch('/api/admin/groups', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.groups) {
+                // Обновляем все dropdown'ы
+                const dropdownIds = [
+                    'userGroup',          // Форма создания пользователя
+                    'editUserGroup',      // Форма редактирования пользователя
+                    'attendanceGroup',    // Форма посещаемости
+                    'reportGroup'         // Форма отчетов
+                ];
+                
+                dropdownIds.forEach(id => {
+                    const select = document.getElementById(id);
+                    if (select) {
+                        populateGroupDropdown(data.groups, id);
+                    }
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error refreshing group dropdowns:', error);
     }
 }
 
@@ -1391,15 +1654,22 @@ async function handleEditUser(event) {
         is_active: formData.get('isActive') === 'on'
     };
     
-    // Remove empty password
-    if (!userData.password) {
+    // Валидация пароля если он предоставлен
+    if (userData.password && userData.password.trim() !== '') {
+        if (userData.password.length < 6) {
+            showNotification('Пароль должен содержать минимум 6 символов', 'error');
+            showLoading(false);
+            return;
+        }
+    } else {
+        // Remove empty password
         delete userData.password;
     }
     
     try {
         showLoading(true);
         
-        const response = await fetch(`/api/admin/users/${userId}`, {
+        const response = await apiRequest(`/api/admin/users/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1411,7 +1681,8 @@ async function handleEditUser(event) {
         if (response.ok) {
             const data = await response.json();
             if (data.success) {
-                showNotification('Пользователь успешно обновлен', 'success');
+                const passwordChanged = userData.password ? ' (пароль изменен)' : '';
+                showNotification(`Пользователь успешно обновлен${passwordChanged}`, 'success');
                 closeModal('editUserModal');
                 await loadUsersData();
             } else {
@@ -1444,7 +1715,7 @@ async function handleEditGroup(event) {
     try {
         showLoading(true);
         
-        const response = await fetch(`/api/admin/groups/${groupId}`, {
+        const response = await apiRequest(`/api/admin/groups/${groupId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1459,6 +1730,9 @@ async function handleEditGroup(event) {
                 showNotification('Группа успешно обновлена', 'success');
                 closeModal('editGroupModal');
                 await loadGroupsData();
+                
+                // Обновляем dropdown'ы с группами во всех формах
+                await refreshAllGroupDropdowns();
             } else {
                 showNotification(data.message || 'Ошибка обновления группы', 'error');
             }
@@ -1501,7 +1775,7 @@ async function handleAttendance(event) {
     try {
         showLoading(true);
         
-        const response = await fetch('/api/admin/attendance', {
+        const response = await apiRequest('/api/admin/attendance', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1545,7 +1819,7 @@ async function handleEditAttendance(event) {
     try {
         showLoading(true);
         
-        const response = await fetch(`/api/admin/attendance/${attendanceId}`, {
+        const response = await apiRequest(`/api/admin/attendance/${attendanceId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1590,7 +1864,7 @@ async function handleReports(event) {
     try {
         showLoading(true);
         
-        const response = await fetch('/api/admin/reports', {
+        const response = await apiRequest('/api/admin/reports', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1642,7 +1916,7 @@ async function handleSettings(event) {
     try {
         showLoading(true);
         
-        const response = await fetch('/api/admin/settings', {
+        const response = await apiRequest('/api/admin/settings', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1705,3 +1979,487 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Инициализация уведомлений для админ-панели
+function initAdminNotifications() {
+    if (!window.notificationSystem) {
+        return;
+    }
+
+    // Добавляем демо-уведомления
+    setTimeout(() => {
+        notificationSystem.info('Добро пожаловать', 'Панель администратора загружена');
+    }, 1000);
+
+    // Уведомления о действиях пользователей
+    setupUserActionNotifications();
+    
+    // Уведомления о системных событиях
+    setupSystemNotifications();
+}
+
+// Настройка уведомлений о действиях пользователей
+function setupUserActionNotifications() {
+    // Перехватываем создание пользователей
+    const originalShowAddUserModal = window.showAddUserModal;
+    if (originalShowAddUserModal) {
+        window.showAddUserModal = function() {
+            notificationSystem.info('Создание пользователя', 'Открыта форма создания нового пользователя');
+            return originalShowAddUserModal();
+        };
+    }
+
+    // Перехватываем редактирование пользователей
+    const originalEditUser = window.editUser;
+    if (originalEditUser) {
+        window.editUser = function(userId) {
+            notificationSystem.info('Редактирование пользователя', `Открыта форма редактирования пользователя ID: ${userId}`);
+            return originalEditUser(userId);
+        };
+    }
+}
+
+// Настройка системных уведомлений
+function setupSystemNotifications() {
+    // Симулируем системные события
+    setInterval(() => {
+        const events = [
+            {
+                type: 'info',
+                title: 'Новый пользователь',
+                message: 'Зарегистрирован новый студент в системе'
+            },
+            {
+                type: 'warning',
+                title: 'Низкая посещаемость',
+                message: 'В группе ИБАСкд-232 низкая посещаемость'
+            },
+            {
+                type: 'success',
+                title: 'Задача выполнена',
+                message: 'Автоматическое резервное копирование завершено'
+            }
+        ];
+
+        const event = events[Math.floor(Math.random() * events.length)];
+        notificationSystem[event.type](event.title, event.message);
+    }, 30000); // Каждые 30 секунд
+}
+
+// Функции для уведомлений о конкретных действиях
+function notifyUserCreated(userData) {
+    notificationSystem.success('Пользователь создан', `Создан пользователь: ${userData.full_name}`);
+}
+
+function notifyUserUpdated(userData) {
+    notificationSystem.info('Пользователь обновлен', `Обновлен пользователь: ${userData.full_name}`);
+}
+
+function notifyUserDeleted(userId) {
+    notificationSystem.warning('Пользователь удален', `Удален пользователь с ID: ${userId}`);
+}
+
+function notifyGroupCreated(groupData) {
+    notificationSystem.success('Группа создана', `Создана группа: ${groupData.name}`);
+}
+
+function notifyAttendanceMarked(studentName, status) {
+    const statusText = status === 'present' ? 'присутствует' : 'отсутствует';
+    notificationSystem.info('Посещаемость отмечена', `${studentName} - ${statusText}`);
+}
+
+function notifyReportGenerated(reportType) {
+    notificationSystem.success('Отчет сгенерирован', `Создан отчет: ${reportType}`);
+}
+
+function notifySystemError(error) {
+    notificationSystem.error('Системная ошибка', error.message || 'Произошла неизвестная ошибка');
+}
+
+// =========================================
+// УПРАВЛЕНИЕ ДИСЦИПЛИНАМИ
+// =========================================
+
+// Загрузить дисциплины
+async function loadSubjects() {
+    try {
+        showLoading(true);
+        
+        const response = await fetch('/api/admin/subjects-detailed', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            if (data.success) {
+                displaySubjects(data.subjects);
+            } else {
+                showNotification('Ошибка: ' + data.message, 'error');
+            }
+        } else {
+            showNotification(`Ошибка загрузки дисциплин (${response.status})`, 'error');
+        }
+    } catch (error) {
+        console.error('Error loading subjects:', error);
+        showNotification('Ошибка загрузки дисциплин: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Отобразить дисциплины в таблице
+function displaySubjects(subjects) {
+    const tbody = document.getElementById('subjectsTableBody');
+    
+    if (!tbody) return;
+
+    if (subjects.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="empty-state">
+                    <i class="fas fa-book"></i>
+                    <h3>Нет дисциплин</h3>
+                    <p>Создайте первую дисциплину, нажав на кнопку выше</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = subjects.map(subject => {
+        // Форматирование преподавателей с бейджами
+        let teachersHTML = '';
+        if (subject.teachers) {
+            const teacherNames = subject.teachers.split(', ');
+            teachersHTML = `
+                <div class="teachers-list">
+                    ${teacherNames.map(name => `
+                        <span class="teacher-badge">
+                            <i class="fas fa-user"></i> ${name}
+                        </span>
+                    `).join('')}
+                </div>
+            `;
+        } else {
+            teachersHTML = '<span class="no-teachers"><i class="fas fa-user-slash"></i> Не назначено</span>';
+        }
+
+        return `
+            <tr>
+                <td>${subject.id}</td>
+                <td><strong>${subject.name}</strong></td>
+                <td>${subject.description || '<span style="color: #999;">—</span>'}</td>
+                <td><span class="credits-badge"><i class="fas fa-clock"></i> ${subject.credits || 0} ч</span></td>
+                <td>${teachersHTML}</td>
+                <td style="white-space: nowrap;">
+                    <button class="btn-icon" onclick="showAssignTeacherModal(${subject.id}, '${subject.name.replace(/'/g, "\\'")}');" title="Назначить преподавателя">
+                        <i class="fas fa-user-plus"></i>
+                    </button>
+                    <button class="btn-icon" onclick="editSubject(${subject.id});" title="Редактировать">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-icon" onclick="deleteSubject(${subject.id}, '${subject.name.replace(/'/g, "\\'")}');" title="Удалить">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Показать модальное окно создания дисциплины
+function showAddSubjectModal() {
+    const modal = document.getElementById('addSubjectModal');
+    if (modal) {
+        // Очищаем форму
+        document.getElementById('addSubjectForm').reset();
+        modal.style.display = 'flex';
+    }
+}
+
+// Обработка создания дисциплины
+async function handleAddSubject(event) {
+    event.preventDefault();
+    
+    const name = document.getElementById('subjectName').value;
+    const description = document.getElementById('subjectDescription').value;
+    const credits = document.getElementById('subjectCredits').value;
+
+    try {
+        showLoading(true);
+        
+        const response = await apiRequest('/api/admin/subjects', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                name,
+                description,
+                credits: parseInt(credits) || 0
+            })
+        });
+
+        if (response.success) {
+            showNotification('Дисциплина успешно создана', 'success');
+            closeModal('addSubjectModal');
+            loadSubjects(); // Перезагружаем список
+        } else {
+            showNotification('Ошибка: ' + response.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error creating subject:', error);
+        showNotification('Ошибка создания дисциплины', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Редактировать дисциплину
+async function editSubject(subjectId) {
+    try {
+        // Получаем данные дисциплины
+        const response = await fetch('/api/admin/subjects', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const subject = data.subjects.find(s => s.id === subjectId);
+            
+            if (subject) {
+                // Заполняем форму
+                document.getElementById('editSubjectId').value = subject.id;
+                document.getElementById('editSubjectName').value = subject.name;
+                document.getElementById('editSubjectDescription').value = subject.description || '';
+                document.getElementById('editSubjectCredits').value = subject.credits || 0;
+                document.getElementById('editSubjectActive').checked = subject.is_active === 1;
+                
+                // Показываем модальное окно
+                const modal = document.getElementById('editSubjectModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error loading subject for edit:', error);
+        showNotification('Ошибка загрузки данных дисциплины', 'error');
+    }
+}
+
+// Обработка редактирования дисциплины
+async function handleEditSubject(event) {
+    event.preventDefault();
+    
+    const id = document.getElementById('editSubjectId').value;
+    const name = document.getElementById('editSubjectName').value;
+    const description = document.getElementById('editSubjectDescription').value;
+    const credits = document.getElementById('editSubjectCredits').value;
+    const is_active = document.getElementById('editSubjectActive').checked ? 1 : 0;
+
+    try {
+        showLoading(true);
+        
+        const response = await apiRequest(`/api/admin/subjects/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                name,
+                description,
+                credits: parseInt(credits) || 0,
+                is_active
+            })
+        });
+
+        if (response.success) {
+            showNotification('Дисциплина успешно обновлена', 'success');
+            closeModal('editSubjectModal');
+            loadSubjects(); // Перезагружаем список
+        } else {
+            showNotification('Ошибка: ' + response.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error updating subject:', error);
+        showNotification('Ошибка обновления дисциплины', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Удалить дисциплину
+async function deleteSubject(subjectId, subjectName) {
+    if (!confirm(`Вы уверены, что хотите удалить дисциплину "${subjectName}"?\n\nДисциплина будет деактивирована, но данные сохранятся.`)) {
+        return;
+    }
+
+    try {
+        showLoading(true);
+        
+        const response = await apiRequest(`/api/admin/subjects/${subjectId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (response.success) {
+            showNotification('Дисциплина успешно удалена', 'success');
+            loadSubjects(); // Перезагружаем список
+        } else {
+            showNotification('Ошибка: ' + response.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting subject:', error);
+        showNotification('Ошибка удаления дисциплины', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Показать модальное окно назначения преподавателя
+async function showAssignTeacherModal(subjectId, subjectName) {
+    try {
+        // Загружаем список всех преподавателей
+        const response = await fetch('/api/admin/users', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Фильтруем только преподавателей и админов
+            const teachers = data.users.filter(u => u.role === 'teacher' || u.role === 'admin');
+            
+            // Заполняем select
+            const select = document.getElementById('assignTeacherId');
+            select.innerHTML = '<option value="">Выберите преподавателя</option>';
+            teachers.forEach(teacher => {
+                const option = document.createElement('option');
+                option.value = teacher.id;
+                option.textContent = `${teacher.full_name} (${teacher.email})`;
+                select.appendChild(option);
+            });
+            
+            // Заполняем форму
+            document.getElementById('assignSubjectId').value = subjectId;
+            document.getElementById('assignSubjectName').value = subjectName;
+            
+            // Показываем модальное окно
+            const modal = document.getElementById('assignTeacherModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+    } catch (error) {
+        console.error('Error loading teachers:', error);
+        showNotification('Ошибка загрузки списка преподавателей', 'error');
+    }
+}
+
+// Обработка назначения преподавателя
+async function handleAssignTeacher(event) {
+    event.preventDefault();
+    
+    const subjectId = document.getElementById('assignSubjectId').value;
+    const teacherId = document.getElementById('assignTeacherId').value;
+
+    if (!teacherId) {
+        showNotification('Выберите преподавателя', 'warning');
+        return;
+    }
+
+    try {
+        showLoading(true);
+        
+        const response = await apiRequest(`/api/admin/subjects/${subjectId}/assign`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                teacher_id: parseInt(teacherId)
+            })
+        });
+
+        if (response.success) {
+            showNotification('Преподаватель успешно назначен', 'success');
+            closeModal('assignTeacherModal');
+            loadSubjects(); // Перезагружаем список
+        } else {
+            showNotification('Ошибка: ' + response.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error assigning teacher:', error);
+        showNotification('Ошибка назначения преподавателя', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Функция выхода из системы
+function logout() {
+    try {
+        // Очищаем токен аутентификации
+        localStorage.removeItem('token');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('userId');
+        
+        // Перенаправляем на главную страницу
+        window.location.href = '/';
+        
+    } catch (error) {
+        console.error('Error during logout:', error);
+        // В случае ошибки все равно перенаправляем на главную
+        window.location.href = '/';
+    }
+}
+
+// Защита от кнопки "Назад" браузера
+window.addEventListener('beforeunload', function(e) {
+    // Если пользователь пытается покинуть админ панель через кнопку "Назад"
+    if (window.location.pathname.includes('admin.html')) {
+        // Очищаем данные аутентификации
+        localStorage.removeItem('token');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('userId');
+    }
+});
+
+// Обработка кнопки "Назад" браузера
+window.addEventListener('popstate', function(e) {
+    // Если пользователь нажал кнопку "Назад" в админ панели
+    if (window.location.pathname.includes('admin.html')) {
+        // Выполняем logout
+        logout();
+    }
+});
+
+// Добавляем запись в историю браузера для предотвращения навигации
+window.addEventListener('load', function() {
+    // Добавляем запись в историю, чтобы кнопка "Назад" не работала
+    history.pushState(null, null, location.href);
+    
+    // Обрабатываем попытки навигации
+    window.onpopstate = function(event) {
+        // Возвращаем пользователя на текущую страницу
+        history.pushState(null, null, location.href);
+        // И выполняем logout
+        logout();
+    };
+});

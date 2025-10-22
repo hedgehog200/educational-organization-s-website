@@ -551,5 +551,14 @@
         });
         
     </script>   
+    
+    <!-- Проверка аутентификации -->
+    <script src="../js/auth-check.js"></script>
+    <script>
+        // Проверяем аутентификацию при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication();
+        });
+    </script>
 </body>
 </html>

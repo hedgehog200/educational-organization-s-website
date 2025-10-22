@@ -52,20 +52,13 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         showMessage('Регистрация...', 'info');
         
-        const response = await fetch('/api/auth/register', {
+        const result = await apiRequest('/api/auth/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(userData),
-          credentials: 'include' // Важно для сессий
+          body: JSON.stringify(userData)
         });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
         
         if (result.success) {
           showMessage('Регистрация успешно завершена!', 'success');
@@ -78,10 +71,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       } catch (error) {
         console.error('Ошибка регистрации:', error);
-        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        if (error.message && error.message.includes('HTTP error')) {
+          showMessage('Ошибка регистрации. Проверьте введенные данные', 'error');
+        } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
           showMessage('Сервер недоступен. Убедитесь, что бэкенд запущен на порту 3000', 'error');
         } else {
-          showMessage('Ошибка соединения с сервером', 'error');
+          showMessage(error.message || 'Ошибка соединения с сервером', 'error');
         }
       }
     });
@@ -104,28 +99,13 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         showMessage('Вход...', 'info');
         
-        console.log('Attempting login with:', { email, password: '***' });
-        
-        const response = await fetch('/api/auth/login', {
+        const result = await apiRequest('/api/auth/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, password }),
-          credentials: 'include' // Важно для сессий
+          body: JSON.stringify({ email, password })
         });
-        
-        console.log('Login response status:', response.status);
-        console.log('Login response headers:', response.headers);
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Login error response:', errorText);
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log('Login result:', result);
         
         if (result.success) {
           showMessage('Вход выполнен успешно!', 'success');
@@ -138,25 +118,32 @@ document.addEventListener('DOMContentLoaded', function() {
           // Сохраняем информацию о пользователе
           if (result.user) {
             localStorage.setItem('user', JSON.stringify(result.user));
+            localStorage.setItem('userData', JSON.stringify(result.user));
+            localStorage.setItem('userRole', result.user.role);
+            localStorage.setItem('userId', result.user.id);
           }
           
-          // Переходим в соответствующий кабинет в зависимости от роли
-          setTimeout(() => {
-            if (result.user && result.user.role === 'admin') {
-              window.location.href = 'admin.html';
-            } else {
-              window.location.href = 'lk.html';
-            }
-          }, 1000);
+               // Переходим в соответствующий кабинет в зависимости от роли
+               setTimeout(() => {
+                 if (result.user && result.user.role === 'admin') {
+                   window.location.href = 'admin.html';
+                 } else if (result.user && result.user.role === 'teacher') {
+                   window.location.href = 'teacher.html';
+                 } else {
+                   window.location.href = 'lk.html';
+                 }
+               }, 1000);
         } else {
           showMessage(result.message || 'Ошибка входа', 'error');
         }
       } catch (error) {
         console.error('Ошибка входа:', error);
-        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        if (error.message && error.message.includes('HTTP error')) {
+          showMessage('Неверный email или пароль', 'error');
+        } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
           showMessage('Сервер недоступен. Убедитесь, что бэкенд запущен на порту 3000', 'error');
         } else {
-          showMessage('Ошибка соединения с сервером', 'error');
+          showMessage(error.message || 'Ошибка соединения с сервером', 'error');
         }
       }
     });
@@ -207,7 +194,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Функция проверки статуса сервера
   async function checkServerStatus() {
     try {
-      console.log('Checking server status...');
       const response = await fetch('/api/auth/status', {
         method: 'GET',
         credentials: 'include'
@@ -215,9 +201,6 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (response.ok) {
         const result = await response.json();
-        console.log('Server is running, status:', result);
-      } else {
-        console.warn('Server responded with status:', response.status);
       }
     } catch (error) {
       console.error('Server is not running or not accessible:', error);

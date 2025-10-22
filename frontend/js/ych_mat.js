@@ -196,7 +196,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function filterMaterials() {
         // Implement filtering logic here
-        console.log('Filtering materials...');
     }
 });
 // Add this to your existing JavaScript file, after the form submission handler

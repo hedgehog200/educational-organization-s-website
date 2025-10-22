@@ -29,9 +29,18 @@ class MaterialsAPI {
   // Загрузка нового материала
   async uploadMaterial(formData) {
     try {
+      // Получаем CSRF токен
+      const csrfToken = await getCsrfToken();
+      const headers = {};
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken;
+      }
+
       const response = await fetch(this.baseURL, {
         method: 'POST',
-        body: formData
+        headers: headers,
+        body: formData,
+        credentials: 'include'
       });
       
       const result = await response.json();
@@ -74,8 +83,19 @@ class MaterialsAPI {
   // Удаление материала
   async deleteMaterial(materialId) {
     try {
+      // Получаем CSRF токен
+      const csrfToken = await getCsrfToken();
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken;
+      }
+
       const response = await fetch(`${this.baseURL}/${materialId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: headers,
+        credentials: 'include'
       });
       
       const result = await response.json();
@@ -280,7 +300,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Глобальные функции для кнопок
   window.viewMaterial = function(materialId) {
-    console.log('Просмотр материала:', materialId);
     // Здесь можно добавить логику просмотра
   };
   

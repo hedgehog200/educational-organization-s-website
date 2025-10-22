@@ -113,6 +113,22 @@ logs
 *.sqlite
 *.sqlite3
 
+# ВАЖНО: Защита базы данных от случайного коммита
+backend/database/*.db
+database/*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Uploads и пользовательские файлы
+uploads/
+backend/uploads/
+
+# Backup files
+backups/
+*.backup
+*.dump
+
 # Temporary files
 tmp/
 temp/

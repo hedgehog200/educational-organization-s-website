@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Личный кабинет преподавателя - Колледж ВолГУ</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/buttons.css">
+    <link rel="stylesheet" href="../css/forms.css">
+    <link rel="stylesheet" href="../css/modal.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/teacher.css">
+    <link rel="stylesheet" href="../css/subjects.css">
+    <link rel="stylesheet" href="../css/notifications.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="admin-page">
+    <div class="container admin-container">
+        <!-- Header -->
+        <header>
+                <div class="logo">
+                    <a href="#" onclick="logout(); return false;">
+                        <img src="../images/logo.jpg" alt="Университетский Колледж ВолГУ" class="logo-image">
+                    </a>
+                </div>
+            <div class="user-panel">
+                <div class="notification-bell desktop-only" onclick="notificationSystem.toggleNotificationPanel()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" style="display: none;">0</span>
+                </div>
+                <div class="user-info">
+                    <img src="../images/avatar.png" alt="Фото профиля" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                    <span id="teacherName" class="desktop-only">Преподаватель</span>
+                    <i class="fas fa-chevron-down desktop-only"></i>
+                    <div class="user-dropdown">
+                        <ul>
+                            <li><a href="#"><i class="fas fa-user"></i> Профиль</a></li>
+                            <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выход</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-header">
+                <div class="mobile-menu-logo">
+                    <h3>Панель преподавателя</h3>
+                    </div>
+                <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Закрыть меню">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mobile-menu-user">
+                <div class="user-info-mobile">
+                    <img src="../images/avatar.png" alt="Фото профиля" class="user-avatar-mobile">
+                    <div class="user-details">
+                        <span class="user-name" id="teacherNameMobile">Преподаватель</span>
+                        <span class="user-role">Преподаватель</span>
+                    </div>
+                        </div>
+                    </div>
+            
+            <div class="mobile-menu-nav">
+                <div class="menu-section">
+                    <h4>Основное</h4>
+                    <ul>
+                        <li><a href="#dashboard" onclick="toggleMobileMenu()"><i class="fas fa-tachometer-alt"></i> Панель управления</a></li>
+                        <li><a href="#assignments" onclick="toggleMobileMenu()"><i class="fas fa-tasks"></i> Задания</a></li>
+                        <li><a href="#materials" onclick="toggleMobileMenu()"><i class="fas fa-book"></i> Материалы</a></li>
+                        <li><a href="#students" onclick="toggleMobileMenu()"><i class="fas fa-user-graduate"></i> Студенты</a></li>
+                        <li><a href="#grades" onclick="toggleMobileMenu()"><i class="fas fa-chart-line"></i> Оценки</a></li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <h4>Дополнительно</h4>
+                    <ul>
+                        <li><a href="#attendance" onclick="toggleMobileMenu()"><i class="fas fa-calendar-check"></i> Посещаемость</a></li>
+                        <li><a href="#schedule" onclick="toggleMobileMenu()"><i class="fas fa-calendar"></i> Расписание</a></li>
+                        <li><a href="#reports" onclick="toggleMobileMenu()"><i class="fas fa-file-alt"></i> Отчеты</a></li>
+                        <li><a href="#" onclick="logout(); toggleMobileMenu()"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+                    </ul>
+            </div>
+            </div>
+            
+            <div class="mobile-menu-footer">
+                <div class="notifications-mobile">
+                    <a href="#" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bell"></i>
+                        <span>Уведомления</span>
+                        <span class="badge" id="notificationCountMobile">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar desktop-only">
+                <nav>
+                    <ul>
+                        <li class="active"><a href="#dashboard"><i class="fas fa-tachometer-alt"></i> Панель управления</a></li>
+                        <li><a href="#assignments"><i class="fas fa-tasks"></i> Задания</a></li>
+                        <li><a href="#materials"><i class="fas fa-book"></i> Материалы</a></li>
+                        <li><a href="#students"><i class="fas fa-user-graduate"></i> Студенты</a></li>
+                        <li><a href="#grades"><i class="fas fa-chart-line"></i> Оценки</a></li>
+                        <li><a href="#attendance"><i class="fas fa-calendar-check"></i> Посещаемость</a></li>
+                        <li><a href="#schedule"><i class="fas fa-calendar-alt"></i> Расписание</a></li>
+                        <li><a href="#reports"><i class="fas fa-chart-bar"></i> Отчеты</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main>
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="admin-section active">
+                    <div class="section-header">
+                        <h2>Панель управления</h2>
+                        <p>Обзор вашей преподавательской деятельности</p>
+                    </div>
+                    
+                    <!-- Statistics Cards -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-tasks"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h3 id="totalAssignments">0</h3>
+                                <p>Активных заданий</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h3 id="totalStudents">0</h3>
+                                    <p>Студентов</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h3 id="totalMaterials">0</h3>
+                                    <p>Материалов</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h3 id="averageGrade">0</h3>
+                                    <p>Средняя оценка</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    <!-- Dashboard Grid -->
+                    <div class="dashboard-grid">
+                        <!-- Recent Activity -->
+                        <div class="activity-card">
+                            <div class="card-header">
+                                <h3>Последняя активность</h3>
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="activity-list" id="recentActivity">
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-tasks"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p>Новое задание создано</p>
+                                        <span class="activity-time">2 минуты назад</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="quick-actions-card">
+                            <div class="card-header">
+                                <h3>Быстрые действия</h3>
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="quick-actions">
+                                <button class="action-btn" onclick="showModal('addAssignmentModal')">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Создать задание</span>
+                                </button>
+                                <button class="action-btn" onclick="showModal('addMaterialModal')">
+                                    <i class="fas fa-upload"></i>
+                                    <span>Добавить материал</span>
+                                </button>
+                                <button class="action-btn" onclick="showModal('markAttendanceModal')">
+                                    <i class="fas fa-check"></i>
+                                    <span>Отметить посещаемость</span>
+                                </button>
+                                <button class="action-btn" onclick="showSection('reports')">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>Создать отчет</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Assignments Section -->
+                <section id="assignments" class="admin-section">
+                    <div class="section-header">
+                        <h2>Управление заданиями</h2>
+                        <button class="btn-primary" onclick="showModal('addAssignmentModal')">
+                            <i class="fas fa-plus"></i> Создать задание
+                            </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <div class="table-header">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                            <input type="text" id="assignmentSearch" placeholder="Поиск заданий...">
+                        </div>
+                            <div class="table-actions">
+                                <button class="btn-secondary" onclick="exportAssignments()">
+                                    <i class="fas fa-download"></i> Экспорт
+                                </button>
+                    </div>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Название</th>
+                                    <th>Предмет</th>
+                                    <th>Группа</th>
+                                    <th>Срок сдачи</th>
+                                    <th>Статус</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assignmentsTableBody">
+                                <tr>
+                                    <td colspan="7" class="loading">Загрузка заданий...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Materials Section -->
+                <section id="materials" class="admin-section">
+                    <div class="section-header">
+                        <h2>Учебные материалы</h2>
+                        <button class="btn-primary" onclick="showModal('addMaterialModal')">
+                            <i class="fas fa-plus"></i> Добавить материал
+                            </button>
+                    </div>
+                    
+                    <div class="groups-grid" id="materialsGrid">
+                        <div class="loading">Загрузка материалов...</div>
+                    </div>
+                </section>
+
+                <!-- Students Section -->
+                <section id="students" class="admin-section">
+                    <div class="section-header">
+                        <h2>Мои студенты</h2>
+                    </div>
+                    
+                    <div class="table-container">
+                        <div class="table-header">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                            <input type="text" id="studentSearch" placeholder="Поиск студентов...">
+                        </div>
+                            <div class="table-actions">
+                                <button class="btn-secondary" onclick="exportStudents()">
+                                    <i class="fas fa-download"></i> Экспорт
+                                </button>
+                    </div>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>ФИО</th>
+                                    <th>Группа</th>
+                                    <th>Email</th>
+                                    <th>Средняя оценка</th>
+                                    <th>Посещаемость</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <tr>
+                                    <td colspan="7" class="loading">Загрузка студентов...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Grades Section -->
+                <section id="grades" class="admin-section">
+                    <div class="section-header">
+                        <h2>Оценки студентов</h2>
+                        <button class="btn-primary" onclick="showModal('addGradeModal')">
+                            <i class="fas fa-plus"></i> Выставить оценки
+                            </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Студент</th>
+                                    <th>Группа</th>
+                                    <th>Задание</th>
+                                    <th>Оценка</th>
+                                    <th>Дата</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gradesTableBody">
+                                <tr>
+                                    <td colspan="6" class="loading">Загрузка оценок...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Attendance Section -->
+                <section id="attendance" class="admin-section">
+                    <div class="section-header">
+                        <h2>Посещаемость</h2>
+                        <button class="btn-primary" onclick="showModal('markAttendanceModal')">
+                            <i class="fas fa-check"></i> Отметить посещаемость
+                            </button>
+                    </div>
+
+                    <div class="attendance-stats">
+                        <div class="stat-card">
+                            <h3>Общая посещаемость</h3>
+                            <div class="progress-circle">
+                                <div class="progress-value" id="overallAttendance">0%</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Студентов сегодня</h3>
+                            <div class="big-number" id="studentsToday">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Пропусков за неделю</h3>
+                            <div class="big-number" id="absencesThisWeek">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Студент</th>
+                                    <th>Группа</th>
+                                    <th>Дата</th>
+                                    <th>Статус</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceTableBody">
+                                <tr>
+                                    <td colspan="5" class="loading">Загрузка данных посещаемости...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Schedule Section -->
+                <section id="schedule" class="admin-section">
+                    <div class="section-header">
+                        <h2>Расписание занятий</h2>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-content">
+                            <div id="scheduleContent">
+                        <!-- Расписание будет загружено динамически -->
+                                <p class="no-data">Расписание загружается...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reports Section -->
+                <section id="reports" class="admin-section">
+                    <div class="section-header">
+                        <h2>Отчеты</h2>
+                    </div>
+                    
+                    <div class="reports-grid">
+                        <div class="report-card" onclick="generateReport('performance')">
+                            <h3>Отчет по успеваемости</h3>
+                            <p>Детальный анализ успеваемости студентов</p>
+                            <button class="btn-primary">
+                                <i class="fas fa-chart-line"></i> Создать отчет
+                            </button>
+                        </div>
+                        <div class="report-card" onclick="generateReport('attendance')">
+                            <h3>Отчет по посещаемости</h3>
+                            <p>Статистика посещаемости занятий</p>
+                            <button class="btn-primary">
+                                <i class="fas fa-calendar-check"></i> Создать отчет
+                            </button>
+                        </div>
+                        <div class="report-card" onclick="generateReport('assignments')">
+                            <h3>Отчет по заданиям</h3>
+                            <p>Статистика выполнения заданий</p>
+                            <button class="btn-primary">
+                                <i class="fas fa-tasks"></i> Создать отчет
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Assignment Modal -->
+    <div id="addAssignmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-tasks"></i>
+        </div>
+                    <h3>Создать задание</h3>
+                </div>
+                <button class="close-btn" onclick="closeModal('addAssignmentModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addAssignmentForm" class="modal-form">
+                <div class="form-group">
+                        <label for="assignmentTitle">
+                            <i class="fas fa-heading"></i> Название задания *
+                        </label>
+                        <input type="text" id="assignmentTitle" name="title" placeholder="Введите название задания" required>
+                </div>
+                <div class="form-group">
+                        <label for="assignmentSubject">
+                            <i class="fas fa-book"></i> Предмет *
+                        </label>
+                    <select id="assignmentSubject" name="subject" required>
+                        <option value="">Выберите предмет</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                        <label for="assignmentGroup">
+                            <i class="fas fa-users"></i> Группа *
+                        </label>
+                        <select id="assignmentGroup" name="group" required>
+                            <option value="">Выберите группу</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                        <label for="assignmentDescription">
+                            <i class="fas fa-align-left"></i> Описание
+                        </label>
+                        <textarea id="assignmentDescription" name="description" rows="4" placeholder="Введите описание задания"></textarea>
+                </div>
+                <div class="form-group">
+                        <label for="assignmentDeadline">
+                            <i class="fas fa-calendar-alt"></i> Срок сдачи *
+                    </label>
+                        <input type="datetime-local" id="assignmentDeadline" name="deadline" required>
+                </div>
+                <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('addAssignmentModal')">
+                            <i class="fas fa-times"></i> Отмена
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i> Создать задание
+                        </button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Material Modal -->
+    <div id="addMaterialModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-book"></i>
+        </div>
+                    <h3>Добавить материал</h3>
+                </div>
+                <button class="close-btn" onclick="closeModal('addMaterialModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addMaterialForm" class="modal-form">
+                <div class="form-group">
+                        <label for="materialTitle">
+                            <i class="fas fa-heading"></i> Название материала *
+                        </label>
+                        <input type="text" id="materialTitle" name="title" placeholder="Введите название материала" required>
+                </div>
+                <div class="form-group">
+                        <label for="materialSubject">
+                            <i class="fas fa-book-open"></i> Предмет *
+                        </label>
+                    <select id="materialSubject" name="subject" required>
+                        <option value="">Выберите предмет</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                        <label for="materialDescription">
+                            <i class="fas fa-align-left"></i> Описание
+                        </label>
+                        <textarea id="materialDescription" name="description" rows="3" placeholder="Введите описание материала"></textarea>
+                </div>
+                <div class="form-group">
+                        <label for="materialFile">
+                            <i class="fas fa-file-upload"></i> Файл
+                    </label>
+                        <input type="file" id="materialFile" name="file">
+                </div>
+                <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('addMaterialModal')">
+                            <i class="fas fa-times"></i> Отмена
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i> Добавить материал
+                        </button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Grade Modal -->
+    <div id="addGradeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-star"></i>
+        </div>
+                    <h3>Выставить оценку</h3>
+                    </div>
+                <button class="close-btn" onclick="closeModal('addGradeModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+                </div>
+            <div class="modal-body">
+                <form id="addGradeForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="gradeStudent">
+                            <i class="fas fa-user-graduate"></i> Студент *
+                        </label>
+                        <select id="gradeStudent" name="student" required>
+                            <option value="">Выберите студента</option>
+                        </select>
+            </div>
+                    <div class="form-group">
+                        <label for="gradeAssignment">
+                            <i class="fas fa-tasks"></i> Задание *
+                        </label>
+                        <select id="gradeAssignment" name="assignment" required>
+                            <option value="">Выберите задание</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gradeValue">
+                            <i class="fas fa-star"></i> Оценка *
+                        </label>
+                        <select id="gradeValue" name="grade" required>
+                            <option value="">Выберите оценку</option>
+                            <option value="5">5 (Отлично)</option>
+                            <option value="4">4 (Хорошо)</option>
+                            <option value="3">3 (Удовлетворительно)</option>
+                            <option value="2">2 (Неудовлетворительно)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gradeComment">
+                            <i class="fas fa-comment"></i> Комментарий
+                        </label>
+                        <textarea id="gradeComment" name="comment" rows="3" placeholder="Введите комментарий к оценке"></textarea>
+            </div>
+            <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('addGradeModal')">
+                            <i class="fas fa-times"></i> Отмена
+                </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-check"></i> Выставить оценку
+                </button>
+            </div>
+                </form>
+                    </div>
+                </div>
+            </div>
+            
+    <!-- Mark Attendance Modal -->
+    <div id="markAttendanceModal" class="modal large-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-calendar-check"></i>
+                        </div>
+                    <h3>Отметить посещаемость</h3>
+                        </div>
+                <button class="close-btn" onclick="closeModal('markAttendanceModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="markAttendanceForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="attendanceGroup">
+                            <i class="fas fa-users"></i> Группа *
+                        </label>
+                        <select id="attendanceGroup" name="group" required>
+                            <option value="">Выберите группу</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="attendanceDate">
+                            <i class="fas fa-calendar"></i> Дата *
+                        </label>
+                        <input type="date" id="attendanceDate" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-list"></i> Студенты
+                        </label>
+                        <div id="studentAttendanceList" class="students-attendance-list">
+                            <!-- Список студентов будет загружен динамически -->
+                            <p style="text-align: center; color: var(--light-text); padding: 20px;">
+                                Выберите группу для загрузки списка студентов
+                            </p>
+                    </div>
+                </div>
+                <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('markAttendanceModal')">
+                            <i class="fas fa-times"></i> Отмена
+                    </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Сохранить посещаемость
+                    </button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Загрузка...</p>
+        </div>
+    </div>
+
+    <!-- Панель уведомлений -->
+    <div id="notificationPanel" class="notification-panel">
+        <div class="notification-panel-header">
+            <h3 class="notification-panel-title">Уведомления</h3>
+            <button class="notification-panel-close" onclick="notificationSystem.toggleNotificationPanel()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-panel-body" id="notificationPanelBody">
+            <!-- Уведомления будут добавлены динамически -->
+        </div>
+        <div class="notification-panel-footer">
+            <button class="notification-panel-clear" onclick="notificationSystem.clearAllNotifications()">
+                Очистить все
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/jquery-migrate-3.0.1.min.js"></script>
+    <script src="../js/jquery-ui.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/owl.carousel.min.js"></script>
+    <script src="../js/jquery.stellar.min.js"></script>
+    <script src="../js/jquery.countdown.min.js"></script>
+    <script src="../js/jquery.magnific-popup.min.js"></script>
+    <script src="../js/bootstrap-datepicker.min.js"></script>
+    <script src="../js/aos-modern.js"></script>
+    <script src="../js/modern-sticky.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/modal-manager.js"></script>
+    <script src="../js/mobile-responsive.js"></script>
+    <script src="../js/teacher.js"></script>
+    <script>
+        // Disable caching
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+        
+        // Clear cache
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                for (let name of names) {
+                    caches.delete(name);
+                }
+            });
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                console.log('Starting logout process...');
+                
+                localStorage.removeItem('token');
+                localStorage.removeItem('userData');
+                localStorage.removeItem('userRole');
+                
+                try {
+                    const response = await fetch('/api/auth/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        console.log('Server logout successful');
+                    }
+                } catch (error) {
+                    console.log('Server logout failed, but continuing with client logout:', error);
+                }
+                
+                console.log('Redirecting to main page...');
+                window.location.replace('/');
+                
+            } catch (error) {
+                console.error('Logout error:', error);
+                localStorage.clear();
+                window.location.replace('/');
+            }
+        }
+
+        // Show section function
+        function showSection(sectionId) {
+            // Скрываем все секции
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Показываем нужную секцию
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.classList.add('active');
+            }
+            
+            // Обновляем активный пункт в sidebar
+            document.querySelectorAll('.sidebar nav ul li').forEach(li => {
+                li.classList.remove('active');
+            });
+            
+            const activeLink = document.querySelector(`.sidebar nav ul li a[href="#${sectionId}"]`);
+            if (activeLink) {
+                activeLink.parentElement.classList.add('active');
+            }
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Click handlers for navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.sidebar nav ul li a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('href').substring(1);
+                    showSection(sectionId);
+                });
+            });
+        });
+
+        // Stub functions
+        function exportAssignments() {
+            notificationSystem.info('Экспорт', 'Функция экспорта заданий в разработке');
+        }
+
+        function exportStudents() {
+            notificationSystem.info('Экспорт', 'Функция экспорта студентов в разработке');
+        }
+
+        function generateReport(type) {
+            notificationSystem.info('Отчет', `Создание отчета типа "${type}" в разработке`);
+        }
+    </script>
+</body>
+</html>

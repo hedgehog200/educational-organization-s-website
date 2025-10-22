@@ -5,8 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет студента - Колледж ВолГУ</title>
     <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/buttons.css">
+    <link rel="stylesheet" href="../css/forms.css">
+    <link rel="stylesheet" href="../css/modal.css">
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/lk.css">
+    <link rel="stylesheet" href="../css/notifications.css">
     <link rel="stylesheet" href="../css/mobile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -14,37 +18,12 @@
     <div class="container dashboard-container">
         <header>
             <div class="logo">
-                <a href="/index.html"><h1>Университетский Колледж<span> ВолГУ </span></h1></a>
-                <style>a {text-decoration: none;}</style>
+                <img src="../images/logo.jpg" alt="Университетский Колледж ВолГУ" class="logo-image">
             </div>
             <div class="user-panel">
-                <div class="notifications desktop-only">
+                <div class="notification-bell desktop-only" onclick="notificationSystem.toggleNotificationPanel()">
                     <i class="fas fa-bell"></i>
-                    <span class="badge" id="notificationCount">3</span>
-                    <div class="notifications-dropdown">
-                        <div class="notification-item unread">
-                            <div class="notification-icon"><i class="fas fa-book"></i></div>
-                            <div class="notification-content">
-                                <p>Новый материал по дисциплине "Программирование"</p>
-                                <span class="notification-time">2 часа назад</span>
-                            </div>
-                        </div>
-                        <div class="notification-item unread">
-                            <div class="notification-icon"><i class="fas fa-tasks"></i></div>
-                            <div class="notification-content">
-                                <p>Новое задание по дисциплине "Базы данных"</p>
-                                <span class="notification-time">Вчера</span>
-                            </div>
-                        </div>
-                        <div class="notification-item unread">
-                            <div class="notification-icon"><i class="fas fa-calendar-alt"></i></div>
-                            <div class="notification-content">
-                                <p>Изменения в расписании на следующую неделю</p>
-                                <span class="notification-time">2 дня назад</span>
-                            </div>
-                        </div>
-                        <a href="#" class="all-notifications">Все уведомления</a>
-                    </div>
+                    <span class="notification-badge" style="display: none;">0</span>
                 </div>
                 <div class="user-info">
                     <img src="../images/avatar.png" alt="Фото профиля" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
@@ -52,6 +31,7 @@
                     <i class="fas fa-chevron-down desktop-only"></i>
                     <div class="user-dropdown">
                         <ul>
+                            <li><a href="#" onclick="showProfileModal()"><i class="fas fa-user"></i> Мой профиль</a></li>
                             <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Выход</a></li>
                         </ul>
                     </div>
@@ -104,8 +84,9 @@
                 </div>
                 
                 <div class="menu-section">
-                    <h4>Настройки</h4>
+                    <h4>Профиль</h4>
                     <ul>
+                        <li><a href="#profile" onclick="showProfileModal(); toggleMobileMenu()"><i class="fas fa-user"></i> Мой профиль</a></li>
                         <li><a href="#settings" onclick="toggleMobileMenu()"><i class="fas fa-cog"></i> Настройки</a></li>
                         <li id="adminNavItemMobile" style="display: none;"><a href="admin.html" onclick="toggleMobileMenu()"><i class="fas fa-cogs"></i> Администрирование</a></li>
                         <li><a href="#" onclick="logout(); toggleMobileMenu()"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
@@ -562,7 +543,108 @@
         </div>
     </div>
 
-
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content profile-modal">
+            <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h3>Мой профиль</h3>
+                </div>
+                <button class="close-btn" onclick="closeModal('profileModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="profile-content">
+                <div class="profile-avatar-section">
+                    <div class="avatar-container">
+                        <img src="../images/avatar.png" alt="Фото профиля" class="profile-avatar-img">
+                        <div class="avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <button class="change-photo-btn">
+                        <i class="fas fa-camera"></i>
+                        Изменить фото
+                    </button>
+                </div>
+                
+                <div class="profile-info-grid">
+                    <div class="info-card">
+                        <div class="info-icon user-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="info-content">
+                            <label><i class="fas fa-id-card"></i> Полное имя</label>
+                            <input type="text" value="Иванов Иван Иванович" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-icon email-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <label><i class="fas fa-at"></i> Email</label>
+                            <input type="email" value="ivan.ivanov@student.volgau.ru" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-icon group-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="info-content">
+                            <label><i class="fas fa-layer-group"></i> Группа</label>
+                            <input type="text" value="ИБАСкд-232" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-icon specialty-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="info-content">
+                            <label><i class="fas fa-book"></i> Специальность</label>
+                            <input type="text" value="Информационная безопасность автоматизированных систем" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-icon course-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <label><i class="fas fa-calendar"></i> Курс</label>
+                            <input type="text" value="2 курс" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-icon status-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="info-content">
+                            <label><i class="fas fa-user-check"></i> Статус</label>
+                            <input type="text" value="Активный студент" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn-secondary" onclick="closeModal('profileModal')">
+                    <i class="fas fa-times"></i>
+                    Закрыть
+                </button>
+                <button class="btn-primary" onclick="editProfile()">
+                    <i class="fas fa-edit"></i>
+                    Редактировать
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="../js/jquery-3.3.1.min.js"></script>
@@ -583,14 +665,29 @@
     <script src="../js/assignment-submission.js"></script>
     <script src="../js/lk.js"></script>
     <script src="../js/mobile-responsive.js"></script>
-    <script>
+    
+    <!-- Панель уведомлений -->
+    <div id="notificationPanel" class="notification-panel">
+        <div class="notification-panel-header">
+            <h3 class="notification-panel-title">Уведомления</h3>
+            <button class="notification-panel-close" onclick="notificationSystem.toggleNotificationPanel()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-panel-body" id="notificationPanelBody">
+            <!-- Уведомления будут добавлены динамически -->
+        </div>
+        <div class="notification-panel-footer">
+            <button class="notification-panel-clear" onclick="notificationSystem.clearAllNotifications()">
+                Очистить все
+            </button>
+        </div>
+    </div>
 
-        // Logout function
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('userData');
-            window.location.href = '/index.html';
-        }
+    <script src="../js/notifications.js"></script>
+    <script src="../js/assignments-api.js"></script>
+    <script>
+        // Logout function is defined in lk.js
     </script>
 </body>
 </html>
