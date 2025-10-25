@@ -217,17 +217,24 @@ async function apiRequest(url, options = {}) {
         // Выполняем запрос
         const response = await fetch(url, options);
         
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        // Если ответ JSON, парсим
+        // Пытаемся получить JSON независимо от статуса
         const contentType = response.headers.get('content-type');
+        let data = null;
+        
         if (contentType && contentType.includes('application/json')) {
-            return await response.json();
+            data = await response.json();
         }
         
-        return response;
+        if (!response.ok) {
+            // Если есть данные с сервера, используем их сообщение
+            const errorMessage = data?.message || data?.errors?.[0]?.msg || `HTTP error! status: ${response.status}`;
+            const error = new Error(errorMessage);
+            error.status = response.status;
+            error.details = data;
+            throw error;
+        }
+        
+        return data || response;
     } catch (error) {
         console.error('API request error:', error);
         throw error;

@@ -25,7 +25,7 @@ const registerValidation = [
   
   body('password')
     .isLength({ min: 12 }).withMessage('Пароль должен содержать минимум 12 символов')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
     .withMessage('Пароль должен содержать: заглавные и строчные буквы, цифры и спецсимволы (@$!%*?&)'),
   
   body('specialty')
@@ -415,7 +415,7 @@ router.post('/change-password',
     body('currentPassword').notEmpty().withMessage('Текущий пароль обязателен'),
     body('newPassword')
       .isLength({ min: 12 }).withMessage('Новый пароль должен содержать минимум 12 символов')
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
       .withMessage('Пароль должен содержать: заглавные и строчные буквы, цифры и спецсимволы')
   ], 
   async (req, res) => {

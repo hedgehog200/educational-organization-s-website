@@ -78,12 +78,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       } catch (error) {
         console.error('Ошибка регистрации:', error);
-        if (error.message && error.message.includes('HTTP error')) {
-          showMessage('Ошибка регистрации. Проверьте введенные данные', 'error');
-        } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        
+        // Показываем реальное сообщение об ошибке с сервера
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
           showMessage('Сервер недоступен. Убедитесь, что бэкенд запущен на порту 3000', 'error');
         } else {
-          showMessage(error.message || 'Ошибка соединения с сервером', 'error');
+          // Показываем сообщение с сервера (теперь apiRequest возвращает детальные ошибки)
+          showMessage(error.message || 'Ошибка регистрации', 'error');
         }
       }
     });
