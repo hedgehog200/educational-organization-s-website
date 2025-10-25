@@ -37,8 +37,15 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
-      if (password.length < 6) {
-        showMessage('Пароль должен содержать минимум 6 символов!', 'error');
+      // Проверка требований к паролю (соответствует backend)
+      if (password.length < 12) {
+        showMessage('Пароль должен содержать минимум 12 символов!', 'error');
+        return;
+      }
+      
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+      if (!passwordRegex.test(password)) {
+        showMessage('Пароль должен содержать: заглавные и строчные буквы, цифры и спецсимволы (@$!%*?&)', 'error');
         return;
       }
       
