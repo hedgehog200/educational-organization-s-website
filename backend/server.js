@@ -19,6 +19,9 @@ const adminRoutes = require('./routes/admin');
 const assignmentsRoutes = require('./routes/assignments');
 const teacherRoutes = require('./routes/teacher');
 
+// Импорт монитора базы данных
+const DatabaseMonitor = require('./utils/database-monitor');
+
 const {
   securityHeaders,
   authLimiter,
@@ -68,11 +71,19 @@ app.use(session({
 }));
 
 // CSRF Protection только для изменяющих методов (POST, PUT, DELETE, PATCH)
+// НО: если запрос содержит JWT токен в заголовке Authorization, CSRF не требуется
 app.use('/api', (req, res, next) => {
   // GET и HEAD не требуют CSRF защиты
   if (req.method === 'GET' || req.method === 'HEAD') {
     return next();
   }
+  
+  // Если есть JWT токен в Authorization header, пропускаем CSRF проверку
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return next();
+  }
+  
   // Для остальных методов применяем CSRF
   csrfProtection(req, res, next);
 });
@@ -341,6 +352,60 @@ app.use((err, req, res, next) => {
   }
 });
 
+// API endpoint для проверки статуса мониторинга БД (только для админов)
+app.get('/api/admin/db-monitor/status', (req, res) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
+    if (!token) {
+      return res.status(401).json({ success: false, message: 'Требуется аутентификация' });
+    }
+    
+    jwt.verify(token, config.jwt.secret, (err, user) => {
+      if (err || user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Доступ запрещен' });
+      }
+      
+      if (req.app.locals.dbMonitor) {
+        const status = req.app.locals.dbMonitor.getStatus();
+        res.json({ success: true, status });
+      } else {
+        res.json({ success: false, message: 'Мониторинг не запущен' });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Ошибка получения статуса' });
+  }
+});
+
+// API endpoint для ручного запуска проверки БД (только для админов)
+app.post('/api/admin/db-monitor/check-now', async (req, res) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
+    if (!token) {
+      return res.status(401).json({ success: false, message: 'Требуется аутентификация' });
+    }
+    
+    jwt.verify(token, config.jwt.secret, async (err, user) => {
+      if (err || user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Доступ запрещен' });
+      }
+      
+      if (req.app.locals.dbMonitor) {
+        const result = await req.app.locals.dbMonitor.checkNow();
+        res.json({ success: true, result });
+      } else {
+        res.json({ success: false, message: 'Мониторинг не запущен' });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Ошибка запуска проверки' });
+  }
+});
+
 // 404 обработчик
 app.use((req, res) => {
   res.status(404).json({ message: 'Страница не найдена' });
@@ -349,4 +414,16 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порту ${PORT}`);
   console.log(`Откройте http://localhost:${PORT} в браузере`);
+  
+  // Запуск мониторинга безопасности базы данных
+  const dbMonitor = new DatabaseMonitor({
+    intervalMinutes: process.env.DB_MONITOR_INTERVAL || 30, // Проверка каждые 30 минут
+    enabled: process.env.DB_MONITOR_ENABLED !== 'false', // Включен по умолчанию
+    logger: console
+  });
+  
+  dbMonitor.start();
+  
+  // Сохраняем экземпляр для доступа из других модулей
+  app.locals.dbMonitor = dbMonitor;
 });

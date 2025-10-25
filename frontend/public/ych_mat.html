@@ -87,16 +87,30 @@
                 </section>
                 <div id="uploadModal" class="modal">
                     <div class="modal-content">
-                        <span class="close-modal">&times;</span>
-                        <h3>Загрузка учебного материала</h3>
-                        <form id="uploadMaterialForm" enctype="multipart/form-data">
+                        <div class="modal-header">
+                            <div class="header-content">
+                                <div class="profile-icon">
+                                    <i class="fas fa-upload"></i>
+                                </div>
+                                <h3>Загрузка учебного материала</h3>
+                            </div>
+                            <button class="close-btn" onclick="closeModal('uploadModal')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                        <form id="uploadMaterialForm" class="modal-form" enctype="multipart/form-data">
                             <div class="form-group">
-                                <label for="materialTitle">Название материала:</label>
-                                <input type="text" id="materialTitle" name="materialTitle" required>
+                                <label for="materialTitle">
+                                    <i class="fas fa-heading"></i> Название материала *
+                                </label>
+                                <input type="text" id="materialTitle" name="materialTitle" placeholder="Введите название материала" required>
                             </div>
                             
                             <div class="form-group">
-                                <label for="materialSubject">Дисциплина:</label>
+                                <label for="materialSubject">
+                                    <i class="fas fa-book"></i> Дисциплина *
+                                </label>
                                 <select id="materialSubject" name="materialSubject" required>
                                     <option value="">Выберите дисциплину</option>
                                     <option value="programming">Программирование</option>
@@ -108,7 +122,9 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="materialType">Тип материала:</label>
+                                <label for="materialType">
+                                    <i class="fas fa-file-alt"></i> Тип материала *
+                                </label>
                                 <select id="materialType" name="materialType" required>
                                     <option value="">Выберите тип</option>
                                     <option value="lecture">Лекция</option>
@@ -121,7 +137,9 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="materialSemester">Семестр:</label>
+                                <label for="materialSemester">
+                                    <i class="fas fa-calendar"></i> Семестр *
+                                </label>
                                 <select id="materialSemester" name="materialSemester" required>
                                     <option value="">Выберите семестр</option>
                                     <option value="1">Семестр 1</option>
@@ -132,21 +150,32 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="materialDescription">Описание:</label>
-                                <textarea id="materialDescription" name="materialDescription" rows="3" required></textarea>
+                                <label for="materialDescription">
+                                    <i class="fas fa-align-left"></i> Описание *
+                                </label>
+                                <textarea id="materialDescription" name="materialDescription" rows="3" placeholder="Введите описание материала" required></textarea>
                             </div>
                             
                             <div class="form-group">
-                                <label for="materialFile">Файл материала:</label>
+                                <label for="materialFile">
+                                    <i class="fas fa-file-upload"></i> Файл материала *
+                                </label>
                                 <input type="file" id="materialFile" name="materialFile" required>
-                                <p class="file-info">Максимальный размер файла: 50MB</p>
+                                <small style="color: var(--light-text); display: block; margin-top: 5px;">
+                                    Максимальный размер файла: 50MB
+                                </small>
                             </div>
                             
                             <div class="form-actions">
-                                <button type="button" class="cancel-btn">Отмена</button>
-                                <button type="submit" class="submit-btn">Загрузить</button>
+                                <button type="button" class="btn-secondary" onclick="closeModal('uploadModal')">
+                                    <i class="fas fa-times"></i> Отмена
+                                </button>
+                                <button type="submit" class="btn-primary">
+                                    <i class="fas fa-upload"></i> Загрузить
+                                </button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
 

@@ -485,8 +485,15 @@
     <div id="supportModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Техническая поддержка</h2>
-                <span class="close-modal">&times;</span>
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Техническая поддержка</h3>
+                </div>
+                <button class="close-btn" onclick="closeModal('supportModal')">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="chat-container">

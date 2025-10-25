@@ -421,9 +421,19 @@
 
     <!-- Support Chat Modal -->
     <div id="supportModal" class="modal">
-        <div class="modal-content support-chat">
-            <span class="close-modal">&times;</span>
-            <h2>Техническая поддержка</h2>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Техническая поддержка</h3>
+                </div>
+                <button class="close-btn" onclick="closeModal('supportModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
             
             <div class="chat-container">
                 <div class="chat-messages" id="chatMessages">
@@ -440,43 +450,72 @@
                     <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
+            </div>
         </div>
     </div>
 
     <!-- Appointment Modal -->
     <div id="appointmentModal" class="modal">
         <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Запись на консультацию</h2>
-            <form id="appointmentForm">
+            <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Запись на консультацию</h3>
+                </div>
+                <button class="close-btn" onclick="closeModal('appointmentModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+            <form id="appointmentForm" class="modal-form">
                 <div class="form-group">
-                    <label for="teacher">Преподаватель:</label>
+                    <label for="teacher">
+                        <i class="fas fa-chalkboard-teacher"></i> Преподаватель
+                    </label>
                     <input type="text" id="teacher" name="teacher" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="subject">Предмет:</label>
+                    <label for="subject">
+                        <i class="fas fa-book"></i> Предмет
+                    </label>
                     <input type="text" id="subject" name="subject" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="appointment_date">Дата консультации:</label>
+                    <label for="appointment_date">
+                        <i class="fas fa-calendar-alt"></i> Дата консультации *
+                    </label>
                     <select id="appointment_date" name="appointment_date" required>
                         <option value="">Выберите дату</option>
                         <!-- Даты будут добавлены динамически -->
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="appointment_time">Время консультации:</label>
+                    <label for="appointment_time">
+                        <i class="fas fa-clock"></i> Время консультации *
+                    </label>
                     <select id="appointment_time" name="appointment_time" required>
                         <option value="">Выберите время</option>
                         <!-- Время будет добавлено динамически -->
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="appointment_reason">Тема консультации:</label>
-                    <textarea id="appointment_reason" name="appointment_reason" rows="3" required></textarea>
+                    <label for="appointment_reason">
+                        <i class="fas fa-comment"></i> Тема консультации *
+                    </label>
+                    <textarea id="appointment_reason" name="appointment_reason" rows="3" placeholder="Опишите вопросы для консультации" required></textarea>
                 </div>
-                <button type="submit" class="submit-btn">Записаться</button>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('appointmentModal')">
+                        <i class="fas fa-times"></i> Отмена
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-check"></i> Записаться
+                    </button>
+                </div>
             </form>
+            </div>
         </div>
     </div>
 

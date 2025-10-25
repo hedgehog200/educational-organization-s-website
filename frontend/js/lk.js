@@ -1,6 +1,19 @@
 // Student Dashboard JavaScript
 // Modern student dashboard with beautiful UI
 
+// Глобальный state для синхронизации данных между вкладками
+const studentState = {
+    profile: null,
+    stats: null,
+    schedule: null,
+    materials: [],
+    assignments: [],
+    performance: null,
+    attendance: null,
+    grades: [],
+    lastUpdate: {}
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     initializeStudentDashboard();
 });
@@ -78,22 +91,74 @@ async function checkAuthentication() {
 
 // Initialize navigation
 function initializeNavigation() {
-    const navLinks = document.querySelectorAll('.sidebar nav ul li a');
+    const navLinks = document.querySelectorAll('.sidebar nav ul li a, .mobile-menu-nav a');
     
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href && href.startsWith('#')) {
             e.preventDefault();
             
-            const href = this.getAttribute('href');
-            if (href.startsWith('#')) {
                 const sectionId = href.substring(1);
                 showSection(sectionId);
+                
+                // Update URL hash
+                window.location.hash = sectionId;
                 
                 // Update active state
                 navLinks.forEach(l => l.parentElement.classList.remove('active'));
                 this.parentElement.classList.add('active');
             }
         });
+    });
+    
+    // Handle browser back/forward buttons
+    window.addEventListener('hashchange', () => {
+        // Проверяем аутентификацию перед переключением секции
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/index.html';
+            return;
+        }
+        
+        const hash = window.location.hash.replace('#', '');
+        if (hash) {
+            showSection(hash);
+            updateActiveNavigation(hash);
+        } else {
+            showSection('dashboard');
+            updateActiveNavigation('dashboard');
+        }
+    });
+    
+    // Проверка аутентификации при возврате на вкладку
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/index.html';
+            }
+        }
+    });
+    
+    // Load section from URL hash on page load
+    const hash = window.location.hash.replace('#', '');
+    if (hash && hash !== 'dashboard') {
+        showSection(hash);
+        updateActiveNavigation(hash);
+    }
+}
+
+// Update active navigation item
+function updateActiveNavigation(sectionId) {
+    const navLinks = document.querySelectorAll('.sidebar nav ul li a, .mobile-menu-nav a');
+    navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === `#${sectionId}`) {
+            link.parentElement.classList.add('active');
+        } else {
+            link.parentElement.classList.remove('active');
+        }
     });
 }
 
@@ -293,36 +358,26 @@ async function loadRecentAssignments() {
         const response = await fetch('/api/user/assignments?limit=3', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+            },
+            credentials: 'include'
         });
         
         if (response.ok) {
             const data = await response.json();
-            if (data.success) {
+            if (data.success && data.assignments) {
+                console.log('Loaded recent assignments:', data.assignments);
                 displayRecentAssignments(data.assignments);
+            } else {
+                console.log('No assignments in response');
+                displayRecentAssignments([]);
             }
+        } else {
+            console.error('Recent assignments response not OK:', response.status);
+            displayRecentAssignments([]);
         }
     } catch (error) {
         console.error('Error loading recent assignments:', error);
-        // Use default assignments if API fails
-        displayRecentAssignments([
-            {
-                id: 1,
-                title: 'Курсовая работа',
-                subject: 'Базы данных',
-                deadline: '25 сентября',
-                progress: 60,
-                status: 'pending'
-            },
-            {
-                id: 2,
-                title: 'Лабораторная работа №5',
-                subject: 'Программирование',
-                deadline: '17 сентября',
-                progress: 30,
-                status: 'urgent'
-            }
-        ]);
+        displayRecentAssignments([]);
     }
 }
 
@@ -331,24 +386,40 @@ function displayRecentAssignments(assignments) {
     const assignmentsGrid = document.getElementById('recentAssignments');
     if (!assignmentsGrid) return;
     
-    assignmentsGrid.innerHTML = assignments.map(assignment => `
+    if (!assignments || assignments.length === 0) {
+        assignmentsGrid.innerHTML = '<div class="loading" style="text-align:center; padding:40px; grid-column: 1 / -1;">Нет текущих заданий</div>';
+        return;
+    }
+    
+    assignmentsGrid.innerHTML = assignments.map(assignment => {
+        const subject = assignment.subject_name || assignment.subject || 'Предмет не указан';
+        const deadline = assignment.deadline ? 
+            (typeof assignment.deadline === 'string' && assignment.deadline.includes('-') ? 
+                new Date(assignment.deadline).toLocaleDateString('ru-RU') : 
+                assignment.deadline) : 
+            'Не указан';
+        const progress = assignment.progress || 0;
+        const status = assignment.status || 'pending';
+        
+        return `
         <div class="assignment-card">
             <div class="assignment-header">
                 <h3>${assignment.title}</h3>
-                <span class="assignment-status ${assignment.status}">${getStatusText(assignment.status)}</span>
+                    <span class="assignment-status ${status}">${getStatusText(status)}</span>
             </div>
             <div class="assignment-info">
-                <p><i class="fas fa-book"></i> ${assignment.subject}</p>
-                <p><i class="fas fa-calendar"></i> Срок сдачи: ${assignment.deadline}</p>
+                    <p><i class="fas fa-book"></i> ${subject}</p>
+                    <p><i class="fas fa-calendar"></i> Срок сдачи: ${deadline}</p>
             </div>
             <div class="progress-section">
                 <div class="progress-bar">
-                    <div class="progress" style="width: ${assignment.progress}%;"></div>
+                        <div class="progress" style="width: ${progress}%;"></div>
                 </div>
-                <span class="progress-text">Выполнено: ${assignment.progress}%</span>
+                    <span class="progress-text">Выполнено: ${progress}%</span>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // Get status text
@@ -367,45 +438,42 @@ async function loadScheduleData() {
     try {
         showLoading(true);
         
-        // This would typically come from an API
-        const scheduleData = generateSampleSchedule();
-        displaySchedule(scheduleData);
+        // Проверяем кеш
+        const cacheTimeout = 10 * 60 * 1000; // 10 минут
+        if (studentState.schedule && 
+            studentState.lastUpdate.schedule && 
+            (Date.now() - studentState.lastUpdate.schedule) < cacheTimeout) {
+            displaySchedule(studentState.schedule);
+            return;
+        }
         
+        const response = await fetch('/api/user/schedule', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.schedule) {
+                studentState.schedule = data.schedule;
+                studentState.lastUpdate.schedule = Date.now();
+                displaySchedule(data.schedule);
+            } else {
+                displaySchedule([]);
+            }
+        } else {
+            console.error('Schedule response not OK:', response.status);
+            displaySchedule([]);
+        }
     } catch (error) {
         console.error('Error loading schedule data:', error);
         showNotification('Ошибка загрузки расписания', 'error');
+        displaySchedule([]);
     } finally {
         showLoading(false);
     }
-}
-
-// Generate sample schedule data
-function generateSampleSchedule() {
-    const timeSlots = ['8:30-10:00', '10:15-11:45', '12:30-14:00', '14:15-15:45'];
-    const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-    const classes = [
-        { name: 'Математика', teacher: 'Фатина Т.П.', room: '305' },
-        { name: 'Программирование', teacher: 'Сидоров С.С.', room: '412' },
-        { name: 'Базы данных', teacher: 'Слепова О.С.', room: '401' },
-        { name: 'Информационная безопасность', teacher: 'Кузнецов К.К.', room: '308' }
-    ];
-    
-    const schedule = [];
-    
-    timeSlots.forEach((time, timeIndex) => {
-        days.forEach((day, dayIndex) => {
-            if (dayIndex < 5) { // Only weekdays
-                const classIndex = (timeIndex + dayIndex) % classes.length;
-                schedule.push({
-                    time: time,
-                    day: dayIndex,
-                    class: classes[classIndex]
-                });
-            }
-        });
-    });
-    
-    return schedule;
 }
 
 // Display schedule
@@ -413,14 +481,22 @@ function displaySchedule(scheduleData) {
     const scheduleBody = document.getElementById('scheduleBody');
     if (!scheduleBody) return;
     
+    if (!scheduleData || scheduleData.length === 0) {
+        scheduleBody.innerHTML = '<div class="loading" style="text-align:center; padding:40px; grid-column: 1 / -1;">Расписание пока не составлено</div>';
+        return;
+    }
+    
     const timeSlots = ['8:30-10:00', '10:15-11:45', '12:30-14:00', '14:15-15:45'];
     
     scheduleBody.innerHTML = timeSlots.map(time => {
         const daySlots = Array(6).fill(null);
         
         scheduleData.forEach(item => {
-            if (item.time === time) {
-                daySlots[item.day] = item;
+            const itemTime = item.time || item.start_time;
+            const itemDay = parseInt(item.day || item.day_of_week || 0);
+            
+            if (itemTime && itemTime.includes(time.split('-')[0])) {
+                daySlots[itemDay] = item;
             }
         });
         
@@ -430,9 +506,9 @@ function displaySchedule(scheduleData) {
                 <div class="schedule-slot ${slot ? 'has-class' : ''}">
                     ${slot ? `
                         <div class="schedule-class">
-                            <div class="class-name">${slot.class.name}</div>
-                            <div class="class-info">${slot.class.teacher}</div>
-                            <div class="class-time">Ауд. ${slot.class.room}</div>
+                            <div class="class-name">${slot.subject_name || slot.class?.name || slot.subject || 'Занятие'}</div>
+                            <div class="class-info">${slot.teacher_name || slot.class?.teacher || slot.teacher || 'Преподаватель'}</div>
+                            <div class="class-time">Ауд. ${slot.room || slot.class?.room || '—'}</div>
                         </div>
                     ` : ''}
                 </div>
@@ -446,39 +522,40 @@ async function loadMaterialsData() {
     try {
         showLoading(true);
         
+        // Проверяем кеш (если данные свежие, не перезагружаем)
+        const cacheTimeout = 5 * 60 * 1000; // 5 минут
+        if (studentState.materials.length > 0 && 
+            studentState.lastUpdate.materials && 
+            (Date.now() - studentState.lastUpdate.materials) < cacheTimeout) {
+            displayMaterials(studentState.materials);
+            return;
+        }
+        
         const response = await fetch('/api/user/materials', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+            },
+            credentials: 'include'
         });
         
         if (response.ok) {
             const data = await response.json();
-            if (data.success) {
+            if (data.success && data.materials) {
+                // Сохраняем в state
+                studentState.materials = data.materials;
+                studentState.lastUpdate.materials = Date.now();
                 displayMaterials(data.materials);
+            } else {
+                displayMaterials([]);
             }
+        } else {
+            console.error('Materials response not OK:', response.status);
+            displayMaterials([]);
         }
     } catch (error) {
         console.error('Error loading materials:', error);
-        // Use default materials if API fails
-        displayMaterials([
-            {
-                id: 1,
-                title: 'Лекция №5 по программированию',
-                subject: 'Программирование',
-                type: 'pdf',
-                size: '2.3 MB',
-                date: '10 сентября'
-            },
-            {
-                id: 2,
-                title: 'Видеолекция по базам данных',
-                subject: 'Базы данных',
-                type: 'video',
-                size: '45 мин',
-                date: '8 сентября'
-            }
-        ]);
+        showNotification('Ошибка загрузки материалов', 'error');
+        displayMaterials([]);
     } finally {
         showLoading(false);
     }
@@ -489,27 +566,51 @@ function displayMaterials(materials) {
     const materialsGrid = document.getElementById('materialsGrid');
     if (!materialsGrid) return;
     
-    materialsGrid.innerHTML = materials.map(material => `
+    if (materials.length === 0) {
+        materialsGrid.innerHTML = '<div class="loading" style="text-align:center; padding:40px;">Материалы пока не добавлены</div>';
+        return;
+    }
+    
+    materialsGrid.innerHTML = materials.map(material => {
+        // Определяем тип файла
+        const fileType = material.file_type || material.type || 'pdf';
+        let icon = 'file-pdf';
+        let actionText = 'Скачать';
+        let actionIcon = 'download';
+        
+        if (fileType.includes('video') || fileType === 'video') {
+            icon = 'file-video';
+            actionText = 'Смотреть';
+            actionIcon = 'play';
+        } else if (fileType.includes('word') || fileType.includes('doc')) {
+            icon = 'file-word';
+        } else if (fileType.includes('excel') || fileType.includes('xls')) {
+            icon = 'file-excel';
+        }
+        
+        const date = material.created_at ? new Date(material.created_at).toLocaleDateString('ru-RU') : (material.date || '');
+        
+        return `
         <div class="material-card">
             <div class="material-icon">
-                <i class="fas fa-${material.type === 'pdf' ? 'file-pdf' : 'file-video'}"></i>
+                    <i class="fas fa-${icon}"></i>
             </div>
             <div class="material-content">
                 <h3>${material.title}</h3>
-                <p>Добавлено: ${material.date}</p>
+                    <p>Добавлено: ${date}</p>
                 <div class="material-meta">
-                    <span class="subject-tag">${material.subject}</span>
-                    <span class="file-size">${material.size}</span>
+                        <span class="subject-tag">${material.subject_name || material.subject || 'Материал'}</span>
+                        <span class="file-size">${material.size || ''}</span>
                 </div>
             </div>
             <div class="material-actions">
-                <button class="btn-primary" onclick="${material.type === 'pdf' ? 'downloadMaterial' : 'watchVideo'}(${material.id})">
-                    <i class="fas fa-${material.type === 'pdf' ? 'download' : 'play'}"></i> 
-                    ${material.type === 'pdf' ? 'Скачать' : 'Смотреть'}
+                    <button class="btn-primary" onclick="downloadMaterial(${material.id})">
+                        <i class="fas fa-${actionIcon}"></i> ${actionText}
                 </button>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // Load assignments data
@@ -517,21 +618,40 @@ async function loadAssignmentsData() {
     try {
         showLoading(true);
         
+        // Проверяем кеш (если данные свежие, не перезагружаем)
+        const cacheTimeout = 5 * 60 * 1000; // 5 минут
+        if (studentState.assignments.length > 0 && 
+            studentState.lastUpdate.assignments && 
+            (Date.now() - studentState.lastUpdate.assignments) < cacheTimeout) {
+            displayAssignments(studentState.assignments);
+            return;
+        }
+        
         const response = await fetch('/api/user/assignments', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+            },
+            credentials: 'include'
         });
         
         if (response.ok) {
             const data = await response.json();
-            if (data.success) {
+            if (data.success && data.assignments) {
+                // Сохраняем в state
+                studentState.assignments = data.assignments;
+                studentState.lastUpdate.assignments = Date.now();
                 displayAssignments(data.assignments);
+            } else {
+                displayAssignments([]);
             }
+        } else {
+            console.error('Assignments response not OK:', response.status);
+            displayAssignments([]);
         }
     } catch (error) {
         console.error('Error loading assignments:', error);
         showNotification('Ошибка загрузки заданий', 'error');
+        displayAssignments([]);
     } finally {
         showLoading(false);
     }
@@ -543,37 +663,53 @@ function displayAssignments(assignments) {
     if (!assignmentsList) return;
     
     if (assignments.length === 0) {
-        assignmentsList.innerHTML = '<div class="loading">Задания не найдены</div>';
+        assignmentsList.innerHTML = '<div class="loading" style="text-align:center; padding:40px;">Задания пока не назначены</div>';
         return;
     }
     
-    assignmentsList.innerHTML = assignments.map(assignment => `
-        <div class="assignment-item">
+    assignmentsList.innerHTML = assignments.map(assignment => {
+        // Определяем статус и прогресс
+        const status = assignment.status || 'pending';
+        const progress = assignment.progress || 0;
+        const deadline = assignment.deadline ? new Date(assignment.deadline).toLocaleDateString('ru-RU') : '';
+        const subject = assignment.subject_name || assignment.subject || 'Предмет';
+        const teacher = assignment.teacher_name || assignment.teacher || 'Преподаватель';
+        
+        // Проверяем просрочено ли задание
+        const isOverdue = assignment.deadline && new Date(assignment.deadline) < new Date() && status !== 'completed';
+        
+        return `
+            <div class="assignment-item ${isOverdue ? 'overdue' : ''}">
             <div class="assignment-header">
                 <h3>${assignment.title}</h3>
-                <span class="assignment-status ${assignment.status}">${getStatusText(assignment.status)}</span>
+                    <span class="assignment-status ${status}">${getStatusText(status)}</span>
             </div>
             <div class="assignment-details">
-                <p><i class="fas fa-book"></i> ${assignment.subject}</p>
-                <p><i class="fas fa-calendar"></i> Срок сдачи: ${assignment.deadline}</p>
-                <p><i class="fas fa-user"></i> Преподаватель: ${assignment.teacher}</p>
+                    <p><i class="fas fa-book"></i> ${subject}</p>
+                    <p><i class="fas fa-calendar"></i> Срок сдачи: ${deadline}</p>
+                    ${teacher !== 'Преподаватель' ? `<p><i class="fas fa-user"></i> Преподаватель: ${teacher}</p>` : ''}
             </div>
+                ${status !== 'completed' ? `
             <div class="assignment-progress">
                 <div class="progress-bar">
-                    <div class="progress" style="width: ${assignment.progress}%;"></div>
+                            <div class="progress" style="width: ${progress}%;"></div>
                 </div>
-                <span class="progress-text">Выполнено: ${assignment.progress}%</span>
+                        <span class="progress-text">Выполнено: ${progress}%</span>
             </div>
+                ` : ''}
             <div class="assignment-actions">
+                    ${status !== 'completed' ? `
                 <button class="btn-primary" onclick="submitAssignment(${assignment.id})">
                     <i class="fas fa-upload"></i> Сдать работу
                 </button>
+                    ` : '<span style="color: #4caf50;"><i class="fas fa-check-circle"></i> Сдано</span>'}
                 <button class="btn-secondary" onclick="viewAssignment(${assignment.id})">
                     <i class="fas fa-eye"></i> Подробнее
                 </button>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // Load performance data
@@ -581,21 +717,39 @@ async function loadPerformanceData() {
     try {
         showLoading(true);
         
+        // Проверяем кеш
+        const cacheTimeout = 5 * 60 * 1000; // 5 минут
+        if (studentState.performance && 
+            studentState.lastUpdate.performance && 
+            (Date.now() - studentState.lastUpdate.performance) < cacheTimeout) {
+            displayPerformance(studentState.performance);
+            return;
+        }
+        
         const response = await fetch('/api/user/performance', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+            },
+            credentials: 'include'
         });
         
         if (response.ok) {
             const data = await response.json();
-            if (data.success) {
+            if (data.success && data.performance) {
+                studentState.performance = data.performance;
+                studentState.lastUpdate.performance = Date.now();
                 displayPerformance(data.performance);
+            } else {
+                displayPerformance(null);
             }
+        } else {
+            console.error('Performance response not OK:', response.status);
+            displayPerformance(null);
         }
     } catch (error) {
         console.error('Error loading performance data:', error);
         showNotification('Ошибка загрузки данных успеваемости', 'error');
+        displayPerformance(null);
     } finally {
         showLoading(false);
     }
@@ -603,7 +757,165 @@ async function loadPerformanceData() {
 
 // Display performance data
 function displayPerformance(performance) {
-    // This would display performance charts and statistics
+    const performanceChart = document.getElementById('performanceChart');
+    if (!performanceChart) return;
+    
+    if (!performance || !performance.subjects || performance.subjects.length === 0) {
+        performanceChart.innerHTML = '<div class="loading" style="text-align:center; padding:40px;">Данные об успеваемости пока отсутствуют</div>';
+        displayPerformanceStats(null);
+        displaySubjectsTable([]);
+        return;
+    }
+    
+    // График успеваемости по предметам (балльная система)
+    performanceChart.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            ${performance.subjects.map(subject => {
+                const percentage = subject.average_percent || 0;
+                return `
+                    <div style="display: flex; align-items: center; gap: 15px; padding: 8px; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <div style="width: 180px; font-weight: 500; color: #333;">
+                            <i class="fas fa-book" style="color: #4a6baf; margin-right: 8px;"></i>
+                            ${subject.name}
+                        </div>
+                        <div style="flex: 1; background: #f0f0f0; border-radius: 10px; height: 32px; position: relative; overflow: hidden;">
+                            <div style="width: ${percentage}%; background: ${getGradeColorPercent(percentage)}; height: 100%; border-radius: 10px; transition: width 0.5s ease;"></div>
+                            <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-weight: 600; color: #333; font-size: 14px;">
+                                ${subject.total_points}/${subject.total_max_points}
+                            </span>
+                        </div>
+                        <div style="min-width: 80px; text-align: center; color: #666; font-size: 13px; font-weight: 600;">
+                            ${percentage.toFixed(1)}%
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+    
+    // Обновляем статистику и таблицу
+    displayPerformanceStats(performance);
+    displaySubjectsTable(performance.subjects);
+}
+
+// Отображение статистики успеваемости
+function displayPerformanceStats(performance) {
+    if (!performance || !performance.subjects || performance.subjects.length === 0) {
+        // Показываем заглушку
+        const statsList = document.querySelector('.performance-stats .stats-list');
+        if (statsList) {
+            statsList.innerHTML = `
+                <div class="stat-item">
+                    <span class="stat-label">Средний балл</span>
+                    <span class="stat-value">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Предметов изучается</span>
+                    <span class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Отличных оценок</span>
+                    <span class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Хороших оценок</span>
+                    <span class="stat-value">0</span>
+                </div>
+            `;
+        }
+        return;
+    }
+    
+    // Вычисляем статистику (балльная система)
+    const totalSubjects = performance.subjects.length;
+    const averagePercent = performance.subjects.reduce((sum, s) => sum + s.average_percent, 0) / totalSubjects;
+    const totalPoints = performance.subjects.reduce((sum, s) => sum + s.total_points, 0);
+    const totalMaxPoints = performance.subjects.reduce((sum, s) => sum + s.total_max_points, 0);
+    const excellentSubjects = performance.subjects.filter(s => s.average_percent >= 85).length;
+    const goodSubjects = performance.subjects.filter(s => s.average_percent >= 70 && s.average_percent < 85).length;
+    
+    const statsList = document.querySelector('.performance-stats .stats-list');
+    if (statsList) {
+        statsList.innerHTML = `
+            <div class="stat-item">
+                <span class="stat-label"><i class="fas fa-chart-line"></i> Средний процент</span>
+                <span class="stat-value" style="color: ${getGradeColorPercent(averagePercent)}; font-size: 1.2em; font-weight: 600;">
+                    ${averagePercent.toFixed(1)}%
+                </span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label"><i class="fas fa-star"></i> Набрано баллов</span>
+                <span class="stat-value">${totalPoints}/${totalMaxPoints}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label"><i class="fas fa-trophy"></i> Отлично (≥85%)</span>
+                <span class="stat-value" style="color: #4CAF50;">${excellentSubjects}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label"><i class="fas fa-check"></i> Хорошо (≥70%)</span>
+                <span class="stat-value" style="color: #2196F3;">${goodSubjects}</span>
+            </div>
+        `;
+    }
+}
+
+// Отображение таблицы предметов
+function displaySubjectsTable(subjects) {
+    const tbody = document.getElementById('subjectsTableBody');
+    if (!tbody) return;
+    
+    if (!subjects || subjects.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 40px; color: #999;">
+                    <i class="fas fa-inbox" style="font-size: 2em; margin-bottom: 10px; display: block;"></i>
+                    Данные об оценках пока отсутствуют
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = subjects.map(subject => {
+        const status = getSubjectStatusByPercent(subject.average_percent);
+        return `
+            <tr>
+                <td>
+                    <i class="fas fa-book" style="color: #4a6baf; margin-right: 8px;"></i>
+                    ${subject.name}
+                </td>
+                <td>${subject.teacher_name || 'Не указан'}</td>
+                <td>
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                        <span style="font-weight: 600; color: ${getGradeColorPercent(subject.average_percent)};">
+                            ${subject.total_points}/${subject.total_max_points}
+                        </span>
+                        <span style="font-size: 0.85em; color: #666;">
+                            (${subject.average_percent.toFixed(1)}%)
+                        </span>
+                    </div>
+                </td>
+                <td>${subject.count}</td>
+                <td><span class="status-badge status-${status.class}">${status.text}</span></td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Определение статуса предмета по проценту (балльная система)
+function getSubjectStatusByPercent(percent) {
+    if (percent >= 85) return { class: 'excellent', text: 'Отлично' };
+    if (percent >= 70) return { class: 'good', text: 'Хорошо' };
+    if (percent >= 50) return { class: 'satisfactory', text: 'Удовл.' };
+    return { class: 'poor', text: 'Неудовл.' };
+}
+
+// Цвет для балльной системы (по проценту)
+function getGradeColorPercent(percent) {
+    if (percent >= 85) return '#4CAF50'; // Отлично - зеленый
+    if (percent >= 70) return '#2196F3'; // Хорошо - синий
+    if (percent >= 50) return '#FF9800'; // Удовлетворительно - оранжевый
+    return '#f44336'; // Неудовлетворительно - красный
 }
 
 // Load attendance data
@@ -611,21 +923,39 @@ async function loadAttendanceData() {
     try {
         showLoading(true);
         
+        // Проверяем кеш
+        const cacheTimeout = 5 * 60 * 1000; // 5 минут
+        if (studentState.attendance && 
+            studentState.lastUpdate.attendance && 
+            (Date.now() - studentState.lastUpdate.attendance) < cacheTimeout) {
+            displayAttendance(studentState.attendance);
+            return;
+        }
+        
         const response = await fetch('/api/user/attendance', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+            },
+            credentials: 'include'
         });
         
         if (response.ok) {
             const data = await response.json();
-            if (data.success) {
+            if (data.success && data.attendance) {
+                studentState.attendance = data.attendance;
+                studentState.lastUpdate.attendance = Date.now();
                 displayAttendance(data.attendance);
+            } else {
+                displayAttendance([]);
             }
+        } else {
+            console.error('Attendance response not OK:', response.status);
+            displayAttendance([]);
         }
     } catch (error) {
         console.error('Error loading attendance data:', error);
         showNotification('Ошибка загрузки данных посещаемости', 'error');
+        displayAttendance([]);
     } finally {
         showLoading(false);
     }
@@ -633,7 +963,74 @@ async function loadAttendanceData() {
 
 // Display attendance data
 function displayAttendance(attendance) {
-    // This would display attendance calendar and statistics
+    const attendanceContainer = document.querySelector('#attendance .performance-grid');
+    if (!attendanceContainer) return;
+    
+    if (!attendance || attendance.length === 0) {
+        attendanceContainer.innerHTML = '<div class="loading" style="text-align:center; padding:40px; grid-column: 1 / -1;">Данные о посещаемости пока отсутствуют</div>';
+        return;
+    }
+    
+    // Подсчитываем статистику
+    const total = attendance.length;
+    const present = attendance.filter(a => a.status === 'present').length;
+    const absent = attendance.filter(a => a.status === 'absent').length;
+    const late = attendance.filter(a => a.status === 'late').length;
+    const percentage = ((present / total) * 100).toFixed(1);
+    
+    attendanceContainer.innerHTML = `
+        <div class="stat-card">
+            <h3>Общая посещаемость</h3>
+            <div style="font-size: 2.5em; font-weight: bold; color: ${percentage >= 80 ? '#4caf50' : percentage >= 60 ? '#ff9800' : '#f44336'};">
+                ${percentage}%
+            </div>
+            <p>${present} из ${total} занятий</p>
+        </div>
+        <div class="stat-card">
+            <h3>Присутствовал</h3>
+            <div style="font-size: 2em; font-weight: bold; color: #4caf50;">${present}</div>
+            <p>занятий</p>
+        </div>
+        <div class="stat-card">
+            <h3>Отсутствовал</h3>
+            <div style="font-size: 2em; font-weight: bold; color: #f44336;">${absent}</div>
+            <p>занятий</p>
+        </div>
+        <div class="stat-card">
+            <h3>Опоздал</h3>
+            <div style="font-size: 2em; font-weight: bold; color: #ff9800;">${late}</div>
+            <p>раз</p>
+        </div>
+    `;
+}
+
+// Helper function для цвета оценки
+function getGradeColor(average) {
+    if (average >= 90) return '#4caf50';
+    if (average >= 75) return '#2196f3';
+    if (average >= 60) return '#ff9800';
+    return '#f44336';
+}
+
+// Функция принудительного обновления данных (игнорируя кеш)
+async function refreshAllData() {
+    console.log('Принудительное обновление всех данных...');
+    // Сбрасываем все метки времени обновления
+    studentState.lastUpdate = {};
+    
+    // Перезагружаем данные текущей секции
+    const currentSection = document.querySelector('.student-section.active');
+    if (currentSection) {
+        const sectionId = currentSection.id;
+        await loadSectionData(sectionId);
+    }
+}
+
+// Добавляем функцию для сброса кеша конкретной секции
+function clearSectionCache(sectionId) {
+    if (studentState.lastUpdate[sectionId]) {
+        delete studentState.lastUpdate[sectionId];
+    }
 }
 
 // Initialize event listeners
@@ -885,15 +1282,20 @@ function logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('userData');
         localStorage.removeItem('user');
+        localStorage.removeItem('userRole');
+        sessionStorage.clear();
         
         // Show logout message
         if (typeof showNotification === 'function') {
             showNotification('Выход выполнен успешно', 'success');
         }
         
+        // Заменяем текущую страницу в истории, чтобы нельзя было вернуться
+        window.history.replaceState(null, '', '/');
+        
         // Redirect to main page after a short delay
         setTimeout(() => {
-            window.location.href = '/';
+            window.location.replace('/');
         }, 500);
         
     } catch (error) {
@@ -1132,20 +1534,36 @@ async function downloadAssignment(assignmentId) {
 // Просмотр задания
 async function viewAssignment(assignmentId) {
     try {
-        if (!window.assignmentsAPI) {
-            throw new Error('Assignments API not loaded');
-        }
-
-        const response = await assignmentsAPI.getAssignmentById(assignmentId);
+        // Ищем задание в кеше
+        let assignment = studentState.assignments.find(a => a.id === assignmentId);
         
-        if (response.success) {
-            showAssignmentModal(response.assignment);
+        if (!assignment) {
+            // Если не нашли в кеше, загружаем из API
+            const response = await fetch(`/api/user/assignments`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.assignments) {
+                    assignment = data.assignments.find(a => a.id === assignmentId);
+                }
+            }
+        }
+        
+        if (assignment) {
+            showAssignmentModal(assignment);
         } else {
-            throw new Error(response.message);
+            throw new Error('Задание не найдено');
         }
     } catch (error) {
         console.error('Ошибка просмотра задания:', error);
-        notificationSystem.error('Ошибка просмотра', 'Не удалось загрузить задание');
+        if (window.notificationSystem) {
+            window.notificationSystem.error('Ошибка просмотра', 'Не удалось загрузить задание');
+        }
     }
 }
 
@@ -1170,7 +1588,7 @@ function showAssignmentModal(assignment) {
                 <div class="assignment-details">
                     <div class="detail-row">
                         <label>Предмет:</label>
-                        <span>${assignment.subject}</span>
+                        <span>${assignment.subject_name || assignment.subject || 'Не указан'}</span>
                     </div>
                     <div class="detail-row">
                         <label>Преподаватель:</label>
@@ -1185,7 +1603,7 @@ function showAssignmentModal(assignment) {
                     </div>
                     <div class="detail-row">
                         <label>Максимум баллов:</label>
-                        <span>${assignment.max_points}</span>
+                        <span>${assignment.max_points || 100}</span>
                     </div>
                 </div>
                 <div class="assignment-description">

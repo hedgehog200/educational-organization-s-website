@@ -250,13 +250,14 @@
                                     <th>Предмет</th>
                                     <th>Группа</th>
                                     <th>Срок сдачи</th>
+                                    <th>Макс. баллы</th>
                                     <th>Статус</th>
                                     <th>Действия</th>
                                 </tr>
                             </thead>
                             <tbody id="assignmentsTableBody">
                                 <tr>
-                                    <td colspan="7" class="loading">Загрузка заданий...</td>
+                                    <td colspan="8" class="loading">Загрузка заданий...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -376,16 +377,17 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Студент</th>
+                                    <th>№</th>
+                                    <th>ФИО</th>
                                     <th>Группа</th>
+                                    <th>Предмет</th>
                                     <th>Дата</th>
                                     <th>Статус</th>
-                                    <th>Действия</th>
                                 </tr>
                             </thead>
                             <tbody id="attendanceTableBody">
                                 <tr>
-                                    <td colspan="5" class="loading">Загрузка данных посещаемости...</td>
+                                    <td colspan="6" class="loading">Загрузка данных посещаемости...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -492,6 +494,15 @@
                     </label>
                         <input type="datetime-local" id="assignmentDeadline" name="deadline" required>
                 </div>
+                <div class="form-group">
+                        <label for="assignmentMaxPoints">
+                            <i class="fas fa-star"></i> Максимальные баллы *
+                        </label>
+                        <input type="number" id="assignmentMaxPoints" name="max_points" min="1" max="1000" placeholder="Например: 100" required>
+                        <small style="color: #666; font-size: 0.9em; margin-top: 5px; display: block;">
+                            <i class="fas fa-info-circle"></i> Укажите максимальное количество баллов, которое студент может получить за это задание
+                        </small>
+                </div>
                 <div class="form-actions">
                         <button type="button" class="btn-secondary" onclick="closeModal('addAssignmentModal')">
                             <i class="fas fa-times"></i> Отмена
@@ -560,6 +571,138 @@
         </div>
     </div>
 
+    <!-- Edit Assignment Modal -->
+    <div id="editAssignmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <h3>Редактировать задание</h3>
+                </div>
+                <button class="close-btn" onclick="closeModal('editAssignmentModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editAssignmentForm" class="modal-form">
+                    <input type="hidden" id="editAssignmentId" name="id">
+                    <div class="form-group">
+                        <label for="editAssignmentTitle">
+                            <i class="fas fa-heading"></i> Название задания *
+                        </label>
+                        <input type="text" id="editAssignmentTitle" name="title" placeholder="Введите название задания" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAssignmentSubject">
+                            <i class="fas fa-book"></i> Предмет *
+                        </label>
+                        <select id="editAssignmentSubject" name="subject" required>
+                            <option value="">Выберите предмет</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAssignmentGroup">
+                            <i class="fas fa-users"></i> Группа *
+                        </label>
+                        <select id="editAssignmentGroup" name="group" required>
+                            <option value="">Выберите группу</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAssignmentDescription">
+                            <i class="fas fa-align-left"></i> Описание
+                        </label>
+                        <textarea id="editAssignmentDescription" name="description" rows="4" placeholder="Введите описание задания"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAssignmentDeadline">
+                            <i class="fas fa-calendar-alt"></i> Срок сдачи *
+                        </label>
+                        <input type="datetime-local" id="editAssignmentDeadline" name="deadline" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAssignmentMaxPoints">
+                            <i class="fas fa-star"></i> Максимальные баллы *
+                        </label>
+                        <input type="number" id="editAssignmentMaxPoints" name="max_points" min="1" max="1000" placeholder="Например: 100" required>
+                        <small style="color: #666; font-size: 0.9em; margin-top: 5px; display: block;">
+                            <i class="fas fa-info-circle"></i> Укажите максимальное количество баллов, которое студент может получить за это задание
+                        </small>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('editAssignmentModal')">
+                            <i class="fas fa-times"></i> Отмена
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-check"></i> Сохранить
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Material Modal -->
+    <div id="editMaterialModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <h3>Редактировать материал</h3>
+                </div>
+                <button class="close-btn" onclick="closeModal('editMaterialModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editMaterialForm" class="modal-form">
+                    <input type="hidden" id="editMaterialId" name="id">
+                    <div class="form-group">
+                        <label for="editMaterialTitle">
+                            <i class="fas fa-heading"></i> Название материала *
+                        </label>
+                        <input type="text" id="editMaterialTitle" name="title" placeholder="Введите название материала" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editMaterialSubject">
+                            <i class="fas fa-book-open"></i> Предмет *
+                        </label>
+                        <select id="editMaterialSubject" name="subject" required>
+                            <option value="">Выберите предмет</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editMaterialDescription">
+                            <i class="fas fa-align-left"></i> Описание
+                        </label>
+                        <textarea id="editMaterialDescription" name="description" rows="3" placeholder="Введите описание материала"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editMaterialFileUrl">
+                            <i class="fas fa-link"></i> URL файла
+                        </label>
+                        <input type="url" id="editMaterialFileUrl" name="file_url" placeholder="https://...">
+                        <small style="color: var(--light-text); display: block; margin-top: 5px;">
+                            Укажите ссылку на файл (или оставьте пустым)
+                        </small>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('editMaterialModal')">
+                            <i class="fas fa-times"></i> Отмена
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-check"></i> Сохранить
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Add Grade Modal -->
     <div id="addGradeModal" class="modal">
         <div class="modal-content">
@@ -593,22 +736,34 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="gradeValue">
-                            <i class="fas fa-star"></i> Оценка *
+                        <label for="gradePoints">
+                            <i class="fas fa-star"></i> Баллы *
                         </label>
-                        <select id="gradeValue" name="grade" required>
-                            <option value="">Выберите оценку</option>
-                            <option value="5">5 (Отлично)</option>
-                            <option value="4">4 (Хорошо)</option>
-                            <option value="3">3 (Удовлетворительно)</option>
-                            <option value="2">2 (Неудовлетворительно)</option>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="gradePoints" name="points" min="0" max="100" placeholder="Баллы" required style="flex: 1;">
+                            <span style="color: var(--light-text);">из</span>
+                            <input type="number" id="gradeMaxPoints" name="max_points" min="1" max="100" value="100" placeholder="Макс" required style="flex: 1;">
+                        </div>
+                        <small style="color: var(--light-text); display: block; margin-top: 5px;">
+                            Автоматический расчёт оценки: ≥90% = 5, ≥75% = 4, ≥60% = 3, <60% = 2
+                        </small>
+                        <div id="gradePreview" style="margin-top: 10px; padding: 10px; background: var(--light-bg); border-radius: 5px; display: none;">
+                            <strong>Предпросмотр:</strong> <span id="gradePreviewText"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="gradeSubject">
+                            <i class="fas fa-book"></i> Предмет *
+                        </label>
+                        <select id="gradeSubject" name="subject" required>
+                            <option value="">Выберите предмет</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="gradeComment">
                             <i class="fas fa-comment"></i> Комментарий
                         </label>
-                        <textarea id="gradeComment" name="comment" rows="3" placeholder="Введите комментарий к оценке"></textarea>
+                        <textarea id="gradeComment" name="comment" rows="3" placeholder="Введите комментарий"></textarea>
             </div>
             <div class="form-actions">
                         <button type="button" class="btn-secondary" onclick="closeModal('addGradeModal')">
@@ -645,6 +800,14 @@
                         </label>
                         <select id="attendanceGroup" name="group" required>
                             <option value="">Выберите группу</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="attendanceSubject">
+                            <i class="fas fa-book"></i> Предмет *
+                        </label>
+                        <select id="attendanceSubject" name="subject" required>
+                            <option value="">Выберите предмет</option>
                         </select>
                     </div>
                     <div class="form-group">

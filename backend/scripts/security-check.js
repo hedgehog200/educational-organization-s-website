@@ -167,17 +167,30 @@ function checkDatabase() {
   // Проверяем права доступа к файлу
   try {
     const stats = fs.statSync(dbPath);
-    const mode = (stats.mode & parseInt('777', 8)).toString(8);
     
-    if (mode === '600' || mode === '644') {
-      printResult('База данных (права)', true, `Права доступа: ${mode}`);
+    // Проверка для Windows
+    if (process.platform === 'win32') {
+      // В Windows проверяем только наличие файла и его доступность
+      try {
+        fs.accessSync(dbPath, fs.constants.R_OK | fs.constants.W_OK);
+        printResult('База данных (права)', true, 'Файл доступен для чтения/записи');
+      } catch (error) {
+        printResult('База данных (права)', false, 'Проблемы с доступом к файлу', true);
+      }
     } else {
-      printResult(
-        'База данных (права)',
-        false,
-        `Небезопасные права доступа: ${mode}. Рекомендуется 600 или 644`,
-        true
-      );
+      // Проверка для Unix/Linux
+      const mode = (stats.mode & parseInt('777', 8)).toString(8);
+      
+      if (mode === '600' || mode === '644') {
+        printResult('База данных (права)', true, `Права доступа: ${mode}`);
+      } else {
+        printResult(
+          'База данных (права)',
+          false,
+          `Небезопасные права доступа: ${mode}. Рекомендуется 600 или 644`,
+          true
+        );
+      }
     }
   } catch (error) {
     printResult('База данных (права)', false, 'Не удалось проверить права доступа', true);

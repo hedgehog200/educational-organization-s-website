@@ -97,6 +97,33 @@ router.post('/users', requireAdmin, async (req, res) => {
             group_name: group_name || null
         });
         
+        // Если это студент с группой, добавляем в user_groups
+        if (role === 'student' && group_name) {
+            const sqlite3 = require('sqlite3').verbose();
+            const path = require('path');
+            const dbPath = path.join(__dirname, '../database/college.db');
+            const db = new sqlite3.Database(dbPath);
+            
+            // Находим группу по имени и связываем студента
+            db.get('SELECT id FROM groups WHERE name = ?', [group_name], (err, group) => {
+                if (!err && group) {
+                    db.run(`
+                        INSERT OR IGNORE INTO user_groups (user_id, group_id, created_at)
+                        VALUES (?, ?, datetime('now'))
+                    `, [newUser.id, group.id], (err) => {
+                        if (err) {
+                            console.error('Error adding user to group:', err);
+                        } else {
+                            console.log(`✅ Student ${full_name} added to group ${group_name}`);
+                        }
+                        db.close();
+                    });
+                } else {
+                    db.close();
+                }
+            });
+        }
+        
                 res.json({ 
                     success: true, 
                     message: 'Пользователь успешно создан',
@@ -148,6 +175,41 @@ router.put('/users/:id', requireAdmin, async (req, res) => {
         console.log('Update result:', result);
         
         if (result.success) {
+            // Если это студент и группа изменилась, обновляем user_groups
+            if (existingUser.role === 'student' && group_name && group_name.trim() !== '') {
+                const sqlite3 = require('sqlite3').verbose();
+                const path = require('path');
+                const dbPath = path.join(__dirname, '../database/college.db');
+                const db = new sqlite3.Database(dbPath);
+                
+                // Находим группу по имени
+                db.get('SELECT id FROM groups WHERE name = ?', [group_name], (err, group) => {
+                    if (!err && group) {
+                        // Удаляем старые связи
+                        db.run('DELETE FROM user_groups WHERE user_id = ?', [id], (err) => {
+                            if (!err) {
+                                // Добавляем новую связь
+                                db.run(`
+                                    INSERT INTO user_groups (user_id, group_id, created_at)
+                                    VALUES (?, ?, datetime('now'))
+                                `, [id, group.id], (err) => {
+                                    if (err) {
+                                        console.error('Error updating user group:', err);
+                                    } else {
+                                        console.log(`✅ Student group updated to ${group_name}`);
+                                    }
+                                    db.close();
+                                });
+                            } else {
+                                db.close();
+                            }
+                        });
+                    } else {
+                        db.close();
+                    }
+                });
+            }
+            
             res.json({ success: true, message: 'Пользователь успешно обновлен' });
         } else {
             console.error('Update failed:', result);

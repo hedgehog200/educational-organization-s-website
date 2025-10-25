@@ -41,8 +41,12 @@ document.addEventListener('DOMContentLoaded', function() {
         uploadForm.reset();
     }
     
-    closeModal.addEventListener('click', closeUploadModal);
-    cancelBtn.addEventListener('click', closeUploadModal);
+    if (closeModal) {
+        closeModal.addEventListener('click', closeUploadModal);
+    }
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeUploadModal);
+    }
     
     // Close modal when clicking outside
     window.addEventListener('click', function(e) {

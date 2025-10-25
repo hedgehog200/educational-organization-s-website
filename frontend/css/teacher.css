@@ -85,11 +85,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-sm);
-    margin-bottom: var(--spacing-xs);
+    padding: var(--spacing);
+    margin-bottom: var(--spacing-sm);
     background: var(--white);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius);
     border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.student-attendance-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary-color);
 }
 
 .student-attendance-item:last-child {
@@ -99,6 +105,108 @@
 .student-name {
     font-weight: var(--font-medium);
     color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.student-name i {
+    font-size: 1.2em;
+    color: var(--primary-color);
+}
+
+/* Красивые кнопки посещаемости */
+.attendance-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.attendance-btn {
+    position: relative;
+    cursor: pointer;
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.attendance-btn input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.attendance-btn .btn-content {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 2px solid;
+    border-radius: var(--radius);
+    background: var(--white);
+    transition: all 0.3s ease;
+    font-size: var(--font-sm);
+    font-weight: var(--font-medium);
+}
+
+.attendance-btn .btn-content i {
+    font-size: 1.1em;
+}
+
+/* Кнопка "Присутствовал" */
+.attendance-btn.present .btn-content {
+    border-color: #4CAF50;
+    color: #4CAF50;
+}
+
+.attendance-btn.present:hover .btn-content {
+    background: rgba(76, 175, 80, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+}
+
+.attendance-btn.present input[type="radio"]:checked + .btn-content {
+    background: #4CAF50;
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Кнопка "Отсутствовал" */
+.attendance-btn.absent .btn-content {
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.attendance-btn.absent:hover .btn-content {
+    background: rgba(244, 67, 54, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(244, 67, 54, 0.2);
+}
+
+.attendance-btn.absent input[type="radio"]:checked + .btn-content {
+    background: #f44336;
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Кнопка "Опоздал" */
+.attendance-btn.late .btn-content {
+    border-color: #FF9800;
+    color: #FF9800;
+}
+
+.attendance-btn.late:hover .btn-content {
+    background: rgba(255, 152, 0, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 152, 0, 0.2);
+}
+
+.attendance-btn.late input[type="radio"]:checked + .btn-content {
+    background: #FF9800;
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+    transform: translateY(-2px);
 }
 
 .attendance-status select {
@@ -160,7 +268,27 @@
     .student-attendance-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: var(--spacing-xs);
+        gap: var(--spacing-sm);
+    }
+    
+    .attendance-buttons {
+        width: 100%;
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .attendance-btn {
+        width: 100%;
+    }
+    
+    .attendance-btn .btn-content {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .attendance-btn .btn-text {
+        flex: 1;
+        text-align: left;
     }
     
     .attendance-status {

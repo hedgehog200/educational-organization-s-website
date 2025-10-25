@@ -121,21 +121,28 @@ class AuthChecker {
             localStorage.removeItem('token');
             localStorage.removeItem('userData');
             localStorage.removeItem('user');
+            localStorage.removeItem('userRole');
+            
+            // Clear session storage
+            sessionStorage.clear();
             
             // Show logout notification
             if (window.notificationSystem) {
                 window.notificationSystem.success('Выход выполнен', 'Вы успешно вышли из системы');
             }
             
+            // Заменяем текущую страницу в истории, чтобы нельзя было вернуться
+            window.history.replaceState(null, '', '/');
+            
             // Redirect to main page after a short delay
             setTimeout(() => {
-                window.location.href = '/';
+                window.location.replace('/');
             }, 500);
             
         } catch (error) {
             console.error('Error during logout:', error);
             // Even if there's an error, try to redirect
-            window.location.href = '/';
+            window.location.replace('/');
         }
     }
 }

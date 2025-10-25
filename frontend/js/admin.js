@@ -107,22 +107,76 @@ async function checkAuthentication() {
 
 // Initialize navigation
 function initializeNavigation() {
-    const navLinks = document.querySelectorAll('.sidebar nav ul li a');
+    const navLinks = document.querySelectorAll('.sidebar nav ul li a, .mobile-menu-nav a');
     
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href && href.startsWith('#')) {
             e.preventDefault();
             
-            const href = this.getAttribute('href');
-            if (href.startsWith('#')) {
                 const sectionId = href.substring(1);
                 showSection(sectionId);
+                
+                // Update URL hash
+                window.location.hash = sectionId;
                 
                 // Update active state
                 navLinks.forEach(l => l.parentElement.classList.remove('active'));
                 this.parentElement.classList.add('active');
             }
         });
+    });
+    
+    // Handle browser back/forward buttons
+    window.addEventListener('hashchange', () => {
+        // Проверяем аутентификацию перед переключением секции
+        const token = localStorage.getItem('token');
+        const userRole = localStorage.getItem('userRole');
+        if (!token || userRole !== 'admin') {
+            window.location.href = '/';
+            return;
+        }
+        
+        const hash = window.location.hash.replace('#', '');
+        if (hash) {
+            showSection(hash);
+            updateActiveNavigation(hash);
+        } else {
+            showSection('dashboard');
+            updateActiveNavigation('dashboard');
+        }
+    });
+    
+    // Проверка аутентификации при возврате на вкладку
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            const token = localStorage.getItem('token');
+            const userRole = localStorage.getItem('userRole');
+            if (!token || userRole !== 'admin') {
+                window.location.href = '/';
+            }
+        }
+    });
+    
+    // Load section from URL hash on page load
+    const hash = window.location.hash.replace('#', '');
+    if (hash && hash !== 'dashboard') {
+        showSection(hash);
+        updateActiveNavigation(hash);
+    }
+}
+
+// Update active navigation item
+function updateActiveNavigation(sectionId) {
+    const navLinks = document.querySelectorAll('.sidebar nav ul li a, .mobile-menu-nav a');
+    navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === `#${sectionId}`) {
+            link.parentElement.classList.add('active');
+        } else {
+            link.parentElement.classList.remove('active');
+        }
     });
 }
 
@@ -2419,14 +2473,20 @@ function logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('userRole');
         localStorage.removeItem('userId');
+        localStorage.removeItem('userData');
+        localStorage.removeItem('user');
+        sessionStorage.clear();
+        
+        // Заменяем текущую страницу в истории, чтобы нельзя было вернуться
+        window.history.replaceState(null, '', '/');
         
         // Перенаправляем на главную страницу
-        window.location.href = '/';
+        window.location.replace('/');
         
     } catch (error) {
         console.error('Error during logout:', error);
         // В случае ошибки все равно перенаправляем на главную
-        window.location.href = '/';
+        window.location.replace('/');
     }
 }
 

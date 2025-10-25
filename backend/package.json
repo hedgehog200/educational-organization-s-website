@@ -8,6 +8,9 @@
     "dev": "nodemon server.js",
     "setup": "node scripts/generate-secrets.js",
     "security-check": "node scripts/security-check.js",
+    "secure-db": "node scripts/secure-database.js",
+    "secure-db:watch": "node scripts/secure-database.js --watch",
+    "secure-db:watch5": "node scripts/secure-database.js --watch --interval=5",
     "audit": "npm audit && node scripts/security-check.js",
     "prestart": "node scripts/security-check.js",
     "prod": "NODE_ENV=production node server.js"

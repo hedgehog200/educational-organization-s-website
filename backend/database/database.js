@@ -89,8 +89,10 @@ function initializeDatabase() {
             subject_id INTEGER,
             teacher_id INTEGER,
             file_path TEXT,
+            file_url TEXT,
             file_type TEXT,
             file_size INTEGER,
+            type TEXT DEFAULT 'document',
             is_active INTEGER DEFAULT 1,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (subject_id) REFERENCES subjects (id),
@@ -102,7 +104,8 @@ function initializeDatabase() {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
             description TEXT,
-            subject TEXT NOT NULL,
+            subject_id INTEGER,
+            group_id INTEGER,
             teacher_id INTEGER NOT NULL,
             file_path TEXT,
             file_type TEXT,
@@ -112,6 +115,8 @@ function initializeDatabase() {
             is_published INTEGER DEFAULT 0,
             is_active INTEGER DEFAULT 1,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (subject_id) REFERENCES subjects (id),
+            FOREIGN KEY (group_id) REFERENCES groups (id),
             FOREIGN KEY (teacher_id) REFERENCES users (id)
         )`,
         
@@ -211,6 +216,17 @@ function initializeDatabase() {
             FOREIGN KEY (subject_id) REFERENCES subjects (id),
             FOREIGN KEY (assigned_by) REFERENCES users (id),
             UNIQUE(teacher_id, subject_id)
+        )`,
+        
+        // Связь групп и дисциплин
+        `CREATE TABLE IF NOT EXISTS group_subjects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            group_id INTEGER NOT NULL,
+            subject_id INTEGER NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (group_id) REFERENCES groups (id),
+            FOREIGN KEY (subject_id) REFERENCES subjects (id),
+            UNIQUE(group_id, subject_id)
         )`
     ];
 
@@ -521,6 +537,11 @@ const dbOperations = {
         });
     },
 
+    // Алиас для getAllGroups (для совместимости)
+    getGroups: function() {
+        return this.getAllGroups();
+    },
+
     getGroupById: (id) => {
         return new Promise((resolve, reject) => {
             db.get('SELECT * FROM groups WHERE id = ?', [id], (err, row) => {
@@ -573,6 +594,11 @@ const dbOperations = {
                 }
             });
         });
+    },
+
+    // Алиас для getAllSubjects (для совместимости)
+    getSubjects: function() {
+        return this.getAllSubjects();
     },
 
     createSubject: (subjectData) => {

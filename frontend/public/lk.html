@@ -338,42 +338,7 @@
                     </div>
 
                     <div class="materials-grid" id="materialsGrid">
-                        <div class="material-card">
-                            <div class="material-icon">
-                                <i class="fas fa-file-pdf"></i>
-                            </div>
-                            <div class="material-content">
-                                <h3>Лекция №5 по программированию</h3>
-                                <p>Добавлено: 10 сентября</p>
-                                <div class="material-meta">
-                                    <span class="subject-tag">Программирование</span>
-                                    <span class="file-size">2.3 MB</span>
-                                </div>
-                            </div>
-                            <div class="material-actions">
-                                <button class="btn-primary" onclick="downloadMaterial(1)">
-                                    <i class="fas fa-download"></i> Скачать
-                                </button>
-                            </div>
-                        </div>
-                        <div class="material-card">
-                            <div class="material-icon">
-                                <i class="fas fa-file-video"></i>
-                            </div>
-                            <div class="material-content">
-                                <h3>Видеолекция по базам данных</h3>
-                                <p>Добавлено: 8 сентября</p>
-                                <div class="material-meta">
-                                    <span class="subject-tag">Базы данных</span>
-                                    <span class="file-size">45 мин</span>
-                                </div>
-                            </div>
-                            <div class="material-actions">
-                                <button class="btn-primary" onclick="watchVideo(1)">
-                                    <i class="fas fa-play"></i> Смотреть
-                                </button>
-                            </div>
-                        </div>
+                        <div class="loading">Загрузка материалов...</div>
                     </div>
                 </section>
 
@@ -392,31 +357,7 @@
                     </div>
 
                     <div class="assignments-list" id="assignmentsList">
-                        <div class="assignment-item">
-                            <div class="assignment-header">
-                                <h3>Курсовая работа</h3>
-                                <span class="assignment-status pending">В процессе</span>
-                            </div>
-                            <div class="assignment-details">
-                                <p><i class="fas fa-book"></i> Базы данных</p>
-                                <p><i class="fas fa-calendar"></i> Срок сдачи: 25 сентября</p>
-                                <p><i class="fas fa-user"></i> Преподаватель: Слепова О.С.</p>
-                            </div>
-                            <div class="assignment-progress">
-                                <div class="progress-bar">
-                                    <div class="progress" style="width: 60%;"></div>
-                                </div>
-                                <span class="progress-text">Выполнено: 60%</span>
-                            </div>
-                            <div class="assignment-actions">
-                                <button class="btn-primary" onclick="submitAssignment(1)">
-                                    <i class="fas fa-upload"></i> Сдать работу
-                                </button>
-                                <button class="btn-secondary" onclick="viewAssignment(1)">
-                                    <i class="fas fa-eye"></i> Подробнее
-                                </button>
-                            </div>
-                        </div>
+                        <div class="loading">Загрузка заданий...</div>
                     </div>
                 </section>
 
@@ -445,22 +386,7 @@
                         <div class="performance-stats">
                             <h3>Статистика</h3>
                             <div class="stats-list">
-                                <div class="stat-item">
-                                    <span class="stat-label">Общий средний балл</span>
-                                    <span class="stat-value">4.7</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Выполнено заданий</span>
-                                    <span class="stat-value">24/30</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Отличных оценок</span>
-                                    <span class="stat-value">18</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Хороших оценок</span>
-                                    <span class="stat-value">6</span>
-                                </div>
+                                <div class="loading">Загрузка статистики...</div>
                             </div>
                         </div>
                     </div>
@@ -473,25 +399,16 @@
                                     <tr>
                                         <th>Предмет</th>
                                         <th>Преподаватель</th>
-                                        <th>Средний балл</th>
-                                        <th>Оценок</th>
+                                        <th>Баллы</th>
+                                        <th>Работ</th>
                                         <th>Статус</th>
                                     </tr>
                                 </thead>
                                 <tbody id="subjectsTableBody">
                                     <tr>
-                                        <td>Программирование</td>
-                                        <td>Сидоров С.С.</td>
-                                        <td>4.8</td>
-                                        <td>12</td>
-                                        <td><span class="status-badge status-excellent">Отлично</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Базы данных</td>
-                                        <td>Слепова О.С.</td>
-                                        <td>4.5</td>
-                                        <td>8</td>
-                                        <td><span class="status-badge status-good">Хорошо</span></td>
+                                        <td colspan="5" class="loading" style="text-align: center; padding: 40px;">
+                                            Загрузка данных...
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
