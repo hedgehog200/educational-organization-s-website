@@ -2467,8 +2467,21 @@ async function handleAssignTeacher(event) {
 }
 
 // Функция выхода из системы
-function logout() {
+async function logout() {
     try {
+        // Вызываем API для выхода на сервере
+        try {
+            await apiRequest('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+        } catch (apiError) {
+            console.error('Server logout error:', apiError);
+            // Продолжаем выход даже если запрос к серверу не удался
+        }
+        
         // Очищаем токен аутентификации
         localStorage.removeItem('token');
         localStorage.removeItem('userRole');
@@ -2481,12 +2494,12 @@ function logout() {
         window.history.replaceState(null, '', '/');
         
         // Перенаправляем на главную страницу
-        window.location.replace('/');
+        window.location.replace('../public/index.html');
         
     } catch (error) {
         console.error('Error during logout:', error);
         // В случае ошибки все равно перенаправляем на главную
-        window.location.replace('/');
+        window.location.replace('../public/index.html');
     }
 }
 

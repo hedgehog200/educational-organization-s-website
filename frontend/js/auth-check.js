@@ -115,13 +115,29 @@ class AuthChecker {
     }
 
     // Выход из системы
-    logout() {
+    async logout() {
         try {
+            // Вызываем API для выхода на сервере
+            try {
+                if (typeof apiRequest === 'function') {
+                    await apiRequest('/api/auth/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                }
+            } catch (apiError) {
+                console.error('Server logout error:', apiError);
+                // Продолжаем выход даже если запрос к серверу не удался
+            }
+            
             // Clear local storage
             localStorage.removeItem('token');
             localStorage.removeItem('userData');
             localStorage.removeItem('user');
             localStorage.removeItem('userRole');
+            localStorage.removeItem('userId');
             
             // Clear session storage
             sessionStorage.clear();
@@ -136,13 +152,13 @@ class AuthChecker {
             
             // Redirect to main page after a short delay
             setTimeout(() => {
-                window.location.replace('/');
+                window.location.replace('../public/index.html');
             }, 500);
             
         } catch (error) {
             console.error('Error during logout:', error);
             // Even if there's an error, try to redirect
-            window.location.replace('/');
+            window.location.replace('../public/index.html');
         }
     }
 }

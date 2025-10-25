@@ -1276,13 +1276,27 @@ function saveProfile() {
 }
 
 // Logout function
-function logout() {
+async function logout() {
     try {
+        // Вызываем API для выхода на сервере
+        try {
+            await apiRequest('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+        } catch (apiError) {
+            console.error('Server logout error:', apiError);
+            // Продолжаем выход даже если запрос к серверу не удался
+        }
+        
         // Clear local storage
         localStorage.removeItem('token');
         localStorage.removeItem('userData');
         localStorage.removeItem('user');
         localStorage.removeItem('userRole');
+        localStorage.removeItem('userId');
         sessionStorage.clear();
         
         // Show logout message
@@ -1295,13 +1309,13 @@ function logout() {
         
         // Redirect to main page after a short delay
         setTimeout(() => {
-            window.location.replace('/');
+            window.location.replace('../public/index.html');
         }, 500);
         
     } catch (error) {
         console.error('Error during logout:', error);
         // Even if there's an error, try to redirect
-        window.location.href = '/';
+        window.location.href = '../public/index.html';
     }
 }
 
