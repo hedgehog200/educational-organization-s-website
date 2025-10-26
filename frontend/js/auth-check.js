@@ -120,11 +120,19 @@ class AuthChecker {
             // Вызываем API для выхода на сервере
             try {
                 if (typeof apiRequest === 'function') {
+                    const token = localStorage.getItem('token');
+                    const headers = {
+                        'Content-Type': 'application/json',
+                    };
+                    
+                    // Добавляем Authorization header если есть токен
+                    if (token) {
+                        headers['Authorization'] = `Bearer ${token}`;
+                    }
+                    
                     await apiRequest('/api/auth/logout', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
+                        headers: headers
                     });
                 }
             } catch (apiError) {

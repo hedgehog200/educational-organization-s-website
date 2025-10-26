@@ -30,15 +30,24 @@ function checkAuthOnLoad() {
         try {
             const user = JSON.parse(userData);
             actualRole = user.role;
-            localStorage.setItem('userRole', actualRole);
+            if (actualRole) {
+                localStorage.setItem('userRole', actualRole);
+            }
         } catch (e) {
             console.error('Error parsing user data:', e);
         }
     }
     
-    if (actualRole !== 'admin') {
-        // Не очищаем localStorage сразу, возможно это временная проблема
-        window.location.href = '/';
+    // Редиректим только если роль ТОЧНО не admin
+    // Если роли нет вообще - даем шанс checkAuthentication() проверить на сервере
+    if (actualRole && actualRole !== 'admin') {
+        if (actualRole === 'teacher') {
+            window.location.href = '/teacher.html';
+        } else if (actualRole === 'student') {
+            window.location.href = '/lk.html';
+        } else {
+            window.location.href = '/';
+        }
         return false;
     }
     
@@ -94,7 +103,11 @@ async function checkAuthentication() {
             
             // Update admin name
             document.getElementById('adminName').textContent = user.fullName || user.name || 'Администратор';
+            
+            // Сохраняем все данные пользователя в localStorage
             localStorage.setItem('userData', JSON.stringify(user));
+            localStorage.setItem('userRole', user.role);
+            localStorage.setItem('userId', user.id);
             
         } else {
             window.location.href = '/';
@@ -132,9 +145,31 @@ function initializeNavigation() {
     window.addEventListener('hashchange', () => {
         // Проверяем аутентификацию перед переключением секции
         const token = localStorage.getItem('token');
-        const userRole = localStorage.getItem('userRole');
-        if (!token || userRole !== 'admin') {
+        if (!token) {
             window.location.href = '/';
+            return;
+        }
+        
+        // Проверяем роль из userRole или userData
+        let userRole = localStorage.getItem('userRole');
+        if (!userRole) {
+            const userData = localStorage.getItem('userData');
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    userRole = user.role;
+                    if (userRole) {
+                        localStorage.setItem('userRole', userRole);
+                    }
+                } catch (e) {
+                    console.error('Error parsing userData:', e);
+                }
+            }
+        }
+        
+        // Редиректим только если роль ТОЧНО не admin
+        if (userRole && userRole !== 'admin') {
+            window.location.href = '/lk.html';
             return;
         }
         
@@ -152,9 +187,31 @@ function initializeNavigation() {
     document.addEventListener('visibilitychange', () => {
         if (!document.hidden) {
             const token = localStorage.getItem('token');
-            const userRole = localStorage.getItem('userRole');
-            if (!token || userRole !== 'admin') {
+            if (!token) {
                 window.location.href = '/';
+                return;
+            }
+            
+            // Проверяем роль из userRole или userData
+            let userRole = localStorage.getItem('userRole');
+            if (!userRole) {
+                const userData = localStorage.getItem('userData');
+                if (userData) {
+                    try {
+                        const user = JSON.parse(userData);
+                        userRole = user.role;
+                        if (userRole) {
+                            localStorage.setItem('userRole', userRole);
+                        }
+                    } catch (e) {
+                        console.error('Error parsing userData:', e);
+                    }
+                }
+            }
+            
+            // Редиректим только если роль ТОЧНО не admin
+            if (userRole && userRole !== 'admin') {
+                window.location.href = '/lk.html';
             }
         }
     });
@@ -2471,11 +2528,19 @@ async function logout() {
     try {
         // Вызываем API для выхода на сервере
         try {
+            const token = localStorage.getItem('token');
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+            
+            // Добавляем Authorization header если есть токен
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
             await apiRequest('/api/auth/logout', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
+                headers: headers
             });
         } catch (apiError) {
             console.error('Server logout error:', apiError);
@@ -2514,25 +2579,6 @@ window.addEventListener('beforeunload', function(e) {
     }
 });
 
-// Обработка кнопки "Назад" браузера
-window.addEventListener('popstate', function(e) {
-    // Если пользователь нажал кнопку "Назад" в админ панели
-    if (window.location.pathname.includes('admin.html')) {
-        // Выполняем logout
-        logout();
-    }
-});
-
-// Добавляем запись в историю браузера для предотвращения навигации
-window.addEventListener('load', function() {
-    // Добавляем запись в историю, чтобы кнопка "Назад" не работала
-    history.pushState(null, null, location.href);
-    
-    // Обрабатываем попытки навигации
-    window.onpopstate = function(event) {
-        // Возвращаем пользователя на текущую страницу
-        history.pushState(null, null, location.href);
-        // И выполняем logout
-        logout();
-    };
-});
+// Обработка кнопки "Назад" браузера - отключено, мешает работе вкладок
+// ПРИМЕЧАНИЕ: hashchange обрабатывается в initializeNavigation()
+// Переходы между вкладками (hash navigation) должны работать свободно

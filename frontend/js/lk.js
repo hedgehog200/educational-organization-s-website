@@ -78,7 +78,10 @@ async function checkAuthentication() {
                 }
             }
             
+            // Сохраняем все данные пользователя в localStorage
             localStorage.setItem('userData', JSON.stringify(user));
+            localStorage.setItem('userRole', user.role);
+            localStorage.setItem('userId', user.id);
             
         } else {
             window.location.href = '/index.html';
@@ -1280,11 +1283,19 @@ async function logout() {
     try {
         // Вызываем API для выхода на сервере
         try {
+            const token = localStorage.getItem('token');
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+            
+            // Добавляем Authorization header если есть токен
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
             await apiRequest('/api/auth/logout', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
+                headers: headers
             });
         } catch (apiError) {
             console.error('Server logout error:', apiError);

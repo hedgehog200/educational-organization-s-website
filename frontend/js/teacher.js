@@ -33,24 +33,48 @@ class TeacherDashboard {
 
     async checkAuthentication() {
         const token = localStorage.getItem('token');
-        const userRole = localStorage.getItem('userRole');
         
         if (!token) {
             window.location.href = '/';
             return;
         }
         
-        if (userRole !== 'teacher') {
-            if (userRole === 'admin') {
-                window.location.href = '/admin.html';
+        try {
+            // Проверяем токен на сервере
+            const response = await fetch('/api/auth/me', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const user = data.user;
+                
+                // Сохраняем данные пользователя в localStorage
+                localStorage.setItem('userData', JSON.stringify(user));
+                localStorage.setItem('userRole', user.role);
+                localStorage.setItem('userId', user.id);
+                
+                // Проверяем роль
+                if (user.role !== 'teacher') {
+                    if (user.role === 'admin') {
+                        window.location.href = '/admin.html';
+                    } else {
+                        window.location.href = '/lk.html';
+                    }
+                    return;
+                }
+                
+                // Загружаем данные преподавателя
+                await this.loadTeacherInfo();
             } else {
-                window.location.href = '/lk.html';
+                window.location.href = '/';
             }
-            return;
+        } catch (error) {
+            console.error('Authentication error:', error);
+            window.location.href = '/';
         }
-        
-        // Загружаем данные преподавателя
-        await this.loadTeacherInfo();
     }
 
     async loadTeacherInfo() {
