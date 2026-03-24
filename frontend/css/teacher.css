@@ -1,0 +1,301 @@
+/* =============================================
+   СТИЛИ ЛИЧНОГО КАБИНЕТА ПРЕПОДАВАТЕЛЯ
+   Наследует все стили из admin.css
+   ============================================= */
+
+/* Все базовые стили наследуются из admin.css */
+/* Здесь только специфичные переопределения для преподавателя */
+
+/* Цветовые акценты для преподавателя (если нужны отличия) */
+:root {
+    --teacher-primary: #4a6baf;
+    --teacher-secondary: #5c7cbe;
+}
+
+/* Специфичные стили для секций преподавателя */
+#schedule .dashboard-card {
+    min-height: 400px;
+}
+
+/* Стили для расписания */
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.schedule-table th,
+.schedule-table td {
+    border: 1px solid var(--border-color);
+    padding: var(--spacing);
+    text-align: center;
+}
+
+.schedule-table th {
+    background: var(--primary-color);
+    color: var(--white);
+    font-weight: var(--font-semibold);
+}
+
+.schedule-table td {
+    background: var(--white);
+}
+
+.schedule-table td.has-class {
+    background: linear-gradient(135deg, rgba(74, 107, 175, 0.1), rgba(92, 124, 190, 0.1));
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.schedule-table td.has-class:hover {
+    background: linear-gradient(135deg, rgba(74, 107, 175, 0.2), rgba(92, 124, 190, 0.2));
+}
+
+.class-info {
+    font-size: var(--font-sm);
+    line-height: 1.4;
+}
+
+.class-subject {
+    font-weight: var(--font-semibold);
+    color: var(--primary-color);
+}
+
+.class-group {
+    color: var(--light-text);
+    font-size: var(--font-xs);
+}
+
+.class-time {
+    color: var(--muted-text);
+    font-size: var(--font-xs);
+    margin-top: 4px;
+}
+
+/* Стили для списка студентов в посещаемости */
+.students-attendance-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: var(--spacing);
+    background: var(--light-bg);
+}
+
+.student-attendance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing);
+    margin-bottom: var(--spacing-sm);
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.student-attendance-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary-color);
+}
+
+.student-attendance-item:last-child {
+    margin-bottom: 0;
+}
+
+.student-name {
+    font-weight: var(--font-medium);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.student-name i {
+    font-size: 1.2em;
+    color: var(--primary-color);
+}
+
+/* Красивые кнопки посещаемости */
+.attendance-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.attendance-btn {
+    position: relative;
+    cursor: pointer;
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.attendance-btn input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.attendance-btn .btn-content {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 2px solid;
+    border-radius: var(--radius);
+    background: var(--white);
+    transition: all 0.3s ease;
+    font-size: var(--font-sm);
+    font-weight: var(--font-medium);
+}
+
+.attendance-btn .btn-content i {
+    font-size: 1.1em;
+}
+
+/* Кнопка "Присутствовал" */
+.attendance-btn.present .btn-content {
+    border-color: #4CAF50;
+    color: #4CAF50;
+}
+
+.attendance-btn.present:hover .btn-content {
+    background: rgba(76, 175, 80, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+}
+
+.attendance-btn.present input[type="radio"]:checked + .btn-content {
+    background: #4CAF50;
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Кнопка "Отсутствовал" */
+.attendance-btn.absent .btn-content {
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.attendance-btn.absent:hover .btn-content {
+    background: rgba(244, 67, 54, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(244, 67, 54, 0.2);
+}
+
+.attendance-btn.absent input[type="radio"]:checked + .btn-content {
+    background: #f44336;
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Кнопка "Опоздал" */
+.attendance-btn.late .btn-content {
+    border-color: #FF9800;
+    color: #FF9800;
+}
+
+.attendance-btn.late:hover .btn-content {
+    background: rgba(255, 152, 0, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 152, 0, 0.2);
+}
+
+.attendance-btn.late input[type="radio"]:checked + .btn-content {
+    background: #FF9800;
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.attendance-status select {
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-sm);
+    background: var(--white);
+    cursor: pointer;
+}
+
+.attendance-status select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(74, 107, 175, 0.1);
+}
+
+/* Дополнительные стили для оценок */
+.grade-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-xs);
+    font-weight: var(--font-semibold);
+    color: var(--white);
+}
+
+.grade-badge.grade-5 {
+    background: var(--success-color);
+}
+
+.grade-badge.grade-4 {
+    background: #4CAF50;
+}
+
+.grade-badge.grade-3 {
+    background: var(--warning-color);
+}
+
+.grade-badge.grade-2 {
+    background: var(--error-color);
+}
+
+/* Адаптивность для специфичных элементов преподавателя */
+@media (max-width: 768px) {
+    .schedule-table {
+        font-size: var(--font-xs);
+    }
+    
+    .schedule-table th,
+    .schedule-table td {
+        padding: var(--spacing-xs);
+    }
+    
+    .students-attendance-list {
+        max-height: 300px;
+    }
+    
+    .student-attendance-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+    
+    .attendance-buttons {
+        width: 100%;
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .attendance-btn {
+        width: 100%;
+    }
+    
+    .attendance-btn .btn-content {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .attendance-btn .btn-text {
+        flex: 1;
+        text-align: left;
+    }
+    
+    .attendance-status {
+        width: 100%;
+    }
+    
+    .attendance-status select {
+        width: 100%;
+    }
+}

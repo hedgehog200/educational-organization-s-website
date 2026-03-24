@@ -1,0 +1,356 @@
+/* ===== ЕДИНЫЕ СТИЛИ ФОРМ ===== */
+
+/* Базовые стили для групп форм */
+.form-group {
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: var(--font-semibold);
+    color: var(--text-color);
+    font-size: var(--font-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-group label i {
+    color: var(--primary-color);
+    font-size: var(--font-base);
+    margin-right: var(--spacing-xs);
+}
+
+/* Поля ввода */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: var(--spacing) var(--spacing-lg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: var(--font-base);
+    transition: all 0.3s ease;
+    background: var(--white);
+    color: var(--text-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(74, 107, 175, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-group input:not(:placeholder-shown),
+.form-group select:not([value=""]),
+.form-group textarea:not(:placeholder-shown) {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, var(--white) 0%, rgba(74, 107, 175, 0.02) 100%);
+}
+
+/* Стили для чекбоксов */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    font-size: var(--font-sm);
+    color: var(--text-color);
+    padding: var(--spacing-sm);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.checkbox-label:hover {
+    background: rgba(74, 107, 175, 0.05);
+    color: var(--primary-color);
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+
+/* Стили для радиокнопок */
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    font-size: var(--font-sm);
+    color: var(--text-color);
+    padding: var(--spacing-sm);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.radio-label:hover {
+    background: rgba(74, 107, 175, 0.05);
+    color: var(--primary-color);
+}
+
+.radio-label input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+
+/* Стили для файловых полей */
+.file-input {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    background: var(--light-bg);
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    padding: var(--spacing-xl);
+    text-align: center;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.file-input:hover {
+    border-color: var(--primary-color);
+    background: rgba(74, 107, 175, 0.05);
+}
+
+.file-input input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-input-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--text-color);
+    font-weight: var(--font-semibold);
+}
+
+.file-input-label i {
+    font-size: var(--font-2xl);
+    color: var(--primary-color);
+}
+
+/* Стили для селектов */
+.form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+    appearance: none;
+}
+
+.form-select:focus {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%234a6baf' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+}
+
+/* Стили для полей поиска */
+.search-input {
+    position: relative;
+}
+
+.search-input input {
+    padding-left: 40px;
+}
+
+.search-input i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: var(--font-base);
+}
+
+.search-input input:focus + i {
+    color: var(--primary-color);
+}
+
+/* Стили для полей с иконками */
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon input {
+    padding-left: 40px;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: var(--font-base);
+    transition: color 0.3s ease;
+}
+
+.input-with-icon input:focus + i {
+    color: var(--primary-color);
+}
+
+/* Стили для полей с валидацией */
+.form-group.error input,
+.form-group.error select,
+.form-group.error textarea {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-group.success input,
+.form-group.success select,
+.form-group.success textarea {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.form-group .error-message {
+    color: #ef4444;
+    font-size: var(--font-sm);
+    margin-top: var(--spacing-xs);
+    display: none;
+}
+
+.form-group.error .error-message {
+    display: block;
+}
+
+.form-group .success-message {
+    color: #10b981;
+    font-size: var(--font-sm);
+    margin-top: var(--spacing-xs);
+    display: none;
+}
+
+.form-group.success .success-message {
+    display: block;
+}
+
+/* Стили для групп полей */
+.form-row {
+    display: flex;
+    gap: var(--spacing);
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+/* Стили для секций форм */
+.form-section {
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, var(--light-bg) 0%, rgba(74, 107, 175, 0.02) 100%);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.form-section h4 {
+    margin: 0 0 var(--spacing) 0;
+    color: var(--text-color);
+    font-size: var(--font-lg);
+    font-weight: var(--font-semibold);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.form-section h4 i {
+    color: var(--primary-color);
+    font-size: var(--font-base);
+}
+
+/* Стили для компактных форм */
+.compact-form .form-group {
+    margin-bottom: var(--spacing);
+}
+
+.compact-form .form-group label {
+    font-size: var(--font-xs);
+    margin-bottom: var(--spacing-xs);
+}
+
+.compact-form .form-group input,
+.compact-form .form-group select,
+.compact-form .form-group textarea {
+    padding: var(--spacing-sm) var(--spacing);
+    font-size: var(--font-sm);
+}
+
+/* Стили для больших форм */
+.large-form .form-group {
+    margin-bottom: var(--spacing-xl);
+}
+
+.large-form .form-group label {
+    font-size: var(--font-base);
+    margin-bottom: var(--spacing);
+}
+
+.large-form .form-group input,
+.large-form .form-group select,
+.large-form .form-group textarea {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    font-size: var(--font-lg);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .form-row .form-group {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px; /* Предотвращает зум на iOS */
+    }
+    
+    .form-section {
+        padding: var(--spacing);
+    }
+    
+    .checkbox-label,
+    .radio-label {
+        font-size: var(--font-base);
+        padding: var(--spacing);
+    }
+}
+
+/* Touch-friendly для мобильных устройств */
+@media (hover: none) and (pointer: coarse) {
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        min-height: 44px;
+        font-size: 16px;
+    }
+    
+    .checkbox-label,
+    .radio-label {
+        min-height: 44px;
+        padding: var(--spacing);
+    }
+}
